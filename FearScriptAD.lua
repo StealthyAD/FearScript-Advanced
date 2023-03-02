@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.21.5"
+    local FearVersion = "0.22"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -31,7 +31,7 @@
     local FearToast = util.toast
 
     local aalib = require("aalib")
-    local FearStandify_ver = "0.22"
+    local FearStandify_ver = "0.20.5"
     local FearScriptStandify = "> FearScript Standify "..FearStandify_ver
     local FearPlaySound = aalib.play_sound
     local SND_ASYNC<const> = 0x0001
