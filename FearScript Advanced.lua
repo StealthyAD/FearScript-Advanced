@@ -28,6 +28,7 @@
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.4
+    local FearToast = util.toast
 
     local aalib = require("aalib")
     local FearStandify_ver = "0.20.5"
@@ -553,7 +554,6 @@
     ---   Quick Variables
     ------===============------
 
-        local FearToast = util.toast
         local FearCommand = menu.trigger_command
         local FearCommands = menu.trigger_commands
         local FearPath = menu.ref_by_path
