@@ -785,7 +785,7 @@
             ---     All of the functions, Bounty Functions
             ----=====================================================----
 
-                    local FearWantedSess_value = 5
+                    local FearWantedSess_value = 0
                     FearWantedSess:divider("FearWanted Advanced")
                     FearWantedSess:slider("Wanted Slider", {"fearwantedselect"}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function(value)
                         for _,pid in pairs(players.list(FearToggleSelf)) do
