@@ -513,20 +513,20 @@
         -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
         local status, auto_updater = pcall(require, "auto-updater")
         if not status then
-            local auto_update_complete = nil StandifyToast("Installing auto-updater...", TOAST_ALL)
+            local auto_update_complete = nil FearToast("Installing auto-updater...", TOAST_ALL)
             async_http.init("raw.githubusercontent.com", "/hexarobi/stand-lua-auto-updater/main/auto-updater.lua",
                 function(result, headers, status_code)
                     local function parse_auto_update_result(result, headers, status_code)
                         local error_prefix = "Error downloading auto-updater: "
-                        if status_code ~= 200 then StandifyToast(error_prefix..status_code, TOAST_ALL) return false end
-                        if not result or result == "" then StandifyToast(error_prefix.."Found empty file.", TOAST_ALL) return false end
+                        if status_code ~= 200 then FearToast(error_prefix..status_code, TOAST_ALL) return false end
+                        if not result or result == "" then FearToast(error_prefix.."Found empty file.", TOAST_ALL) return false end
                         filesystem.mkdir(filesystem.scripts_dir() .. "lib")
                         local file = io.open(filesystem.scripts_dir() .. "lib\\auto-updater.lua", "wb")
-                        if file == nil then StandifyToast(error_prefix.."Could not open file for writing.", TOAST_ALL) return false end
-                        file:write(result) file:close() StandifyToast("Successfully installed auto-updater lib", TOAST_ALL) return true
+                        if file == nil then FearToast(error_prefix.."Could not open file for writing.", TOAST_ALL) return false end
+                        file:write(result) file:close() FearToast("Successfully installed auto-updater lib", TOAST_ALL) return true
                     end
                     auto_update_complete = parse_auto_update_result(result, headers, status_code)
-                end, function() StandifyToast("Error downloading auto-updater lib. Update failed to download.", TOAST_ALL) end)
+                end, function() FearToast("Error downloading auto-updater lib. Update failed to download.", TOAST_ALL) end)
             async_http.dispatch() local i = 1 while (auto_update_complete == nil and i < 40) do util.yield(250) i = i + 1 end
             if auto_update_complete == nil then error("Error downloading auto-updater lib. HTTP Request timeout") end
             auto_updater = require("auto-updater")
@@ -1008,7 +1008,7 @@
 	    FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
         auto_update_config.check_interval = 0
             if auto_updater.run_auto_update(auto_update_config) then
-                StandifyToast(FearScriptNotif.."\nNo updates found.")
+                FearToast(FearScriptNotif.."\nNo updates found.")
             end
         end)
 
