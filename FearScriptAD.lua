@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.21.4"
+    local FearVersion = "0.21.5"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -503,7 +503,7 @@
     
         local default_check_interval = 604800
         local auto_update_config = {
-            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/FearScript%20Advanced.lua",
+            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/FearScriptAD.lua",
             script_relpath=SCRIPT_RELPATH,
             switch_to_branch=selected_branch,
             verify_file_begins_with="--",
@@ -536,7 +536,7 @@
         
         -- Run Auto Update
         auto_updater.run_auto_update({
-            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/FearScript%20Advanced.lua",
+            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/FearScriptAD.lua",
             script_relpath=SCRIPT_RELPATH,
             verify_file_begins_with="--"
         })
