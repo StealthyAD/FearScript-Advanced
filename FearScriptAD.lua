@@ -31,7 +31,7 @@
     local FearToast = util.toast
 
     local aalib = require("aalib")
-    local FearStandify_ver = "0.20.5"
+    local FearStandify_ver = "0.21"
     local FearScriptStandify = "> FearScript Standify "..FearStandify_ver
     local FearPlaySound = aalib.play_sound
     local SND_ASYNC<const> = 0x0001
@@ -188,6 +188,32 @@
         end
     
         util.toast(FearScriptNotif.."\nWe are not able to kill " .. players.get_name(pid) .. ". Verify if the player is not in ragdoll mode or godmode.")
+    end
+
+    local function request_control_of_entity(ent, time)
+        if ent and ent ~= 0 then
+            local end_time = os.clock() + (time or 3)
+            while not NETWORK.NETWORK_HAS_CONTROL_OF_ENTITY(ent) and os.clock() < end_time do
+                NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(ent)
+                util.yield()
+            end
+            return NETWORK.NETWORK_HAS_CONTROL_OF_ENTITY(ent)
+        end
+        return false
+    end
+    
+    local function load_model(hash)
+        local request_time = os.time()
+        if not STREAMING.IS_MODEL_VALID(hash) then
+            return
+        end
+        STREAMING.REQUEST_MODEL(hash)
+        while not STREAMING.HAS_MODEL_LOADED(hash) do
+            if os.time() - request_time >= 10 then
+                break
+            end
+            util.yield()
+        end
     end
     
     ------=============================------
@@ -718,11 +744,171 @@
                     FearTime()
                 end)
 
-                FearSessionL:divider("Tweaks")
+                FearSessionL:divider("Main Tweaks")
                 FearSessionL:toggle_loop("Exclude Self", {"fexcludeself"}, "Exclude Self for using these features", function()
                     FearToggleSelf = on == false
                 end)
+                local FearBountySess = FearSessionL:list("Bounty Features")
+                local FearWantedSess = FearSessionL:list("Wanted Features")
 
+            ----=====================================================----
+            ---                 Bounty Features
+            ---     All of the functions, Bounty Functions
+            ----=====================================================----
+
+                    local FearBountySess_value = 0
+                    FearBountySess:divider("FearBounty Advanced")
+                    FearBountySess:slider("Bounty Value",{"fearbounty"}, "Chose the amount of the bounty offered automatically.", 0, 10000, 0 , 1, function(value)
+                        FearBountySess_value = value
+                    end)
+                    
+                    FearBountySess:toggle("Auto Bounty", {"fearautob"}, "Put everyone automatically Bounty to all players." ,function()
+                        for _,pid in pairs(players.list(FearToggleSelf)) do
+                            if FearSession() and players.get_bounty(pid) ~= FearBountySess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("bounty"..players.get_name(pid).." "..FearBountySess_value)
+                            end
+                        end
+                        util.yield(1000)
+                    end)
+
+
+                    FearBountySess:action("Manual Bounty", {"fearmanualb"}, "Put everyone manually Bounty to all players." ,function()
+                        for _,pid in pairs(players.list(FearToggleSelf)) do
+                            if FearSession() and players.get_bounty(pid) ~= FearBountySess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("bounty"..players.get_name(pid).." "..FearBountySess_value)
+                            end
+                        end
+                        util.yield(1000)
+                    end, nil, nil, COMMANDPERM_RUDE)
+
+            ----=====================================================----
+            ---                 Wanted Features
+            ---     All of the functions, Bounty Functions
+            ----=====================================================----
+
+                    local FearWantedSess_value = 5
+                    FearWantedSess:divider("FearWanted Advanced")
+                    FearWantedSess:slider("Wanted Value", {"fearwanteds"}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function(value)
+                        FearWantedSess_value = value
+                    end)
+                    
+                    FearWantedSess:toggle("Auto Wanted", {"fearautowt"}, "Put everyone automatically Cops to all players." ,function()
+                        for _,pid in pairs(players.list(FearToggleSelf)) do
+                            if FearSession() and players.set_wanted_level(pid, FearWantedSess_value) ~= FearWantedSess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("pwanted"..players.get_name(pid).." "..FearWantedSess_value)
+                            end
+                        end
+                        FearTime(1000)
+                    end)
+
+                    FearWantedSess:action("Manual Wanted", {"fearmanualw"}, "Put everyone manually Cops to all players." ,function()
+                        for _,pid in pairs(players.list(FearToggleSelf)) do
+                            if FearSession() and players.set_wanted_level(pid, FearWantedSess_value) ~= FearWantedSess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("pwanted"..players.get_name(pid).." "..FearWantedSess_value)
+                            end
+                        end
+                        FearTime(1000)
+                    end, nil, nil, COMMANDPERM_RUDE)
+
+                    FearWantedSess:action("Never Wanted", {"fearneverw"}, "Put everyone manually Cops to all players." ,function()
+                        for _,pid in pairs(players.list(FearToggleSelf)) do
+                            if FearSession() and players.set_wanted_level(pid, FearWantedSess_value) ~= FearWantedSess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("pwanted"..players.get_name(pid).." 0")
+                            end
+                        end
+                        FearTime(1000)
+                    end, nil, nil, COMMANDPERM_FRIENDLY)
+
+            ----=====================================================----
+            ---                 Vehicle Tweaks
+            ---     All of the functions, spawning cars, etc...
+            ----=====================================================----
+
+                FearSessionL:divider("Vehicle Tweaks")
+                FearSessionL:action("Spawn Vehicle", {"fearspawnvehall"}, "Spawn everyone a vehicle", function (click_type)
+                    menu.show_command_box_click_based(click_type, "fearspawnvehall ")
+                end,
+                function (txt)
+                    local hash = util.joaat(txt)
+                    
+                    if not STREAMING.HAS_MODEL_LOADED(hash) then
+                        load_model(hash)
+                    end
+                    
+                    for k,v in pairs(players.list(true, true, true)) do
+                        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(v)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                    
+                        local vehicle = entities.create_vehicle(hash, c, 0)
+                    
+                        request_control_of_entity(vehicle)
+                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone.")
+                        util.yield()
+                    end
+                end)
+
+                FearSessionL:action("Oppresor Land", {"fearoppressorland"}, "Spawn everyone OppressorLand", function ()
+                    local function upgrade_vehicle(vehicle)
+                        for i = 0, 49 do
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                        end
+                    end
+                    local function give_oppressor(pid)
+                        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                    
+                        local hash = util.joaat("oppressor2")
+                    
+                        if not STREAMING.HAS_MODEL_LOADED(hash) then
+                            load_model(hash)
+                        end
+                    
+                        local oppressor = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+                        ENTITY.SET_ENTITY_INVINCIBLE(oppressor)
+                    
+                        upgrade_vehicle(oppressor)
+                    end
+                    for k,v in pairs(players.list(true, true, true)) do
+                        give_oppressor(v)
+                        util.yield()
+                    end
+                end)
+
+                FearSessionL:action("Tankman Summon", {"feartankman"}, "Spawn everyone Tank", function ()
+                    local function upgrade_vehicle(vehicle)
+                        for i = 0, 49 do
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                        end
+                    end
+                    local function give_tank(pid)
+                        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                    
+                        local hash = util.joaat("rhino")
+                    
+                        if not STREAMING.HAS_MODEL_LOADED(hash) then
+                            load_model(hash)
+                        end
+                    
+                        local tank = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+                        ENTITY.SET_ENTITY_INVINCIBLE(tank)
+                    
+                        upgrade_vehicle(oppressor)
+                    end
+                    for k,v in pairs(players.list(true, true, true)) do
+                        give_tank(v)
+                        util.yield()
+                    end
+                end)
+
+            ----=====================================================----
+            ---                 Game Tweaks
+            ---     All of the functions, improving the sessions
+            ----=====================================================----
+
+                FearSessionL:divider("Game Tweaks")
                 FearSessionL:toggle_loop("Disarm all Weapons Permanently",{'feardisarmall'}, "Disarm weapon entirely in the session?\nNOTE: It may cause crash sometimes, be careful",function()
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
