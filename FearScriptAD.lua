@@ -42,12 +42,12 @@
     --- Locate songs.wav and stop music easily.
     ----=======================================----
     
-        local script_store_dir = filesystem.store_dir() .. SCRIPT_NAME .. '\\songs' -- Redirects to %appdata%\Stand\Lua Scripts\store\FearScript\songs
+        local script_store_dir = filesystem.store_dir() .. SCRIPT_NAME .. '\\songs' -- Redirects to %appdata%\Stand\Lua Scripts\store\FearScriptAD\songs
         if not filesystem.is_dir(script_store_dir) then
             filesystem.mkdirs(script_store_dir)
         end
     
-        local script_store_dir_stop = filesystem.store_dir() .. SCRIPT_NAME .. '/stop_sounds' -- Redirects to %appdata%\Stand\Lua Scripts\store\FearScript\stop_sounds
+        local script_store_dir_stop = filesystem.store_dir() .. SCRIPT_NAME .. '/stop_sounds' -- Redirects to %appdata%\Stand\Lua Scripts\store\FearScriptAD\stop_sounds
         if not filesystem.is_dir(script_store_dir_stop) then
             filesystem.mkdirs(script_store_dir_stop)
         end
