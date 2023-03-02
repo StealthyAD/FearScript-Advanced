@@ -8,7 +8,6 @@
 
     Features:
     - Compatible All Stand Versions.
-    - Multi Language Included (English (default), French, Spanish, Portuguese, Russian)
     - Includes Standify & Cruise Missile Tool (GitHub)
 
 ]]--
@@ -23,7 +22,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.22"
+    local FearVersion = "0.22.3"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -819,7 +818,7 @@
                         FearTime(1000)
                     end, nil, nil, COMMANDPERM_RUDE)
 
-                    FearWantedSess:action("Never Wanted", {"fearneverw"}, "Put everyone manually Cops to all players." ,function()
+                    FearWantedSess:action("Never Wanted", {"fearneverw"}, "Put everyone manually No Cops to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
                             if FearSession() and players.set_wanted_level(pid, FearWantedSess_value) ~= FearWantedSess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
                                 FearCommands("pwanted"..players.get_name(pid).." 0")
