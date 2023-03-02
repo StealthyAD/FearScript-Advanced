@@ -788,6 +788,15 @@
 
                     local FearWantedSess_value = 5
                     FearWantedSess:divider("FearWanted Advanced")
+                    FearWantedSess:slider("Wanted Slider", {"fearwantedselect"}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function(value)
+                        for _,pid in pairs(players.list(FearToggleSelf)) do
+                            if FearSession() and players.set_wanted_level(pid, value) ~= value and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                players.set_wanted_level(pid, value)
+                                FearCommands("pwanted"..players.get_name(pid).." "..value)
+                            end
+                        end
+                        FearTime(1000)
+                    end)
                     FearWantedSess:slider("Wanted Value", {"fearwanteds"}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function(value)
                         FearWantedSess_value = value
                     end)
