@@ -1660,33 +1660,44 @@
 
             FearNeutralList:action("Detection Language", {"fdetectl"}, "Notifies you if someone speak another language.", function()
                 if FearSession() then
-
                     if players.get_language(pid) == 0 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is English/or non-recognized language.") -- English/non-recognize Detection
                     end
-
                     if players.get_language(pid) == 1 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is French.") -- French Detection
                     end
-
                     if players.get_language(pid) == 2 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is German.") -- German Detection
                     end
-
                     if players.get_language(pid) == 3 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Italian.") -- Italian Detection
                     end
-
                     if players.get_language(pid) == 4 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Spanish.") -- Spanish Detection
                     end
-
+                    if players.get_language(pid) == 5 then
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Portuguese/Brazilian.") -- Portuguese/Brazilian Detection
+                    end
                     if players.get_language(pid) == 6 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Polish.") -- Polish Detection
                     end
-
                     if players.get_language(pid) == 7 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Russian.") -- Russian Detection
+                    end
+                    if players.get_language(pid) == 8 then
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Korean.") -- Korean Detection
+                    end
+                    if players.get_language(pid) == 9 then
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is from Taiwan.") -- Chinese Tradition (Taiwan) Detection
+                    end
+                    if players.get_language(pid) == 10 then
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Japanese.") -- Japanese Detection
+                    end
+                    if players.get_language(pid) == 11 then
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Spanish (Mexican).") -- Mexican Detection
+                    end
+                    if players.get_language(pid) == 12 then
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is from China Mainland.") -- Chinese Detection
                     end
                 end
             end)
