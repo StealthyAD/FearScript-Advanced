@@ -1333,6 +1333,28 @@
                 request_control_of_entity(vehicle)
             end)
 
+            FearFriendlyList:action("Oppresor Land", {"fearopr"}, "Spawn OppressorLand for "..FearPlayerName, function ()
+            local function upgrade_vehicle(vehicle)
+                for i = 0, 49 do
+                    local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                    VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                end
+            end
+            local function give_ind_oppressor(pid)
+            local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+            local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+            local hash = util.joaat("oppressor2")
+            if not STREAMING.HAS_MODEL_LOADED(hash) then
+                load_model(hash)
+            end
+            local oppressor = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+            ENTITY.SET_ENTITY_INVINCIBLE(oppressor)
+                upgrade_vehicle(oppressor)
+            end
+                give_ind_oppressor(pid)
+                util.yield()
+            end)
+
         ----=====================----
         --- Griefing     Features
         ----=====================----
