@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.24.7"
+    local FearVersion = "0.24.9"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1699,6 +1699,18 @@
                     if players.get_language(pid) == 12 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is from China Mainland.") -- Chinese Detection
                     end
+                end
+            end)
+            FearNeutralList:action("Spoof Chat ", {"spoofchat"}, "Spoofs your chat username name", 
+            function (click_type)
+                menu.show_command_box_click_based(click_type, "spoofchat" .. FearPlayerName .. " ")
+            end,
+            function (txt)
+                local from = pid
+                local message = txt
+    
+                for k,v in pairs(players.list(true, true, true)) do
+                    chat.send_targeted_message(v, from, message, false)
                 end
             end)
 
