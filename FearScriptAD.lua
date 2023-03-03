@@ -1306,6 +1306,14 @@
                     end
                 end
             end, nil, nil, COMMANDPERM_FRIENDLY)
+
+            FearFriendlyList:toggle_loop("Never Wanted", {"fearnw"}, "Never Wanted Cops to players.\nAlternative to Stand but easily lose cops." ,function()
+                if FearSession() then
+                    FearCommands("pwanted"..FearPlayerName.." 0")
+                end
+                util.yield(1000)
+            end, nil, nil, COMMANDPERM_FRIENDLY)
+
             FearFriendlyList:divider("Vehicle Tweaks")
             FearFriendlyList:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
             menu.show_command_box_click_based(click_type, "fearspawnv" .. FearPlayerName .. " ")end,
@@ -1368,9 +1376,9 @@
             --- Wanted   Features
             ----=================----        
 
-                local FearWanted_value = 0
+                local FearWanted_value = 1
                 FearWanted:divider("FearWanted Advanced")
-                FearWanted:slider("Wanted Level",{"fearwanted"}, "Chose the amount of the bounty offered automatically.", 0, 5, 0 , 1, function(value)
+                FearWanted:slider("Wanted Level",{"fearwanted"}, "Chose the amount of the wanted level offered automatically.", 1, 5, 1 , 1, function(value)
                     FearWanted_value = value
                 end)
                 
@@ -1379,35 +1387,18 @@
                         if players.set_wanted_level(pid, FearWanted_value) ~= FearWanted_value then
                             FearCommands("pwanted"..FearPlayerName.." "..FearWanted_value)
                             FearToast(FearScriptNotif.."\nYou have automatically sent cops to "..FearPlayerName.." with "..FearWanted_value.." stars.")
+                        elseif players.set_wanted_level(pid, FearWanted_value) == 0 then
+                            FearToast(FearScriptNotif.."\nYou have automatically sent no cops to "..FearPlayerName)
                         end
                     end
                     util.yield(1000)
                 end, nil, nil, COMMANDPERM_RUDE)
-
-                FearWanted:toggle_loop("Auto Never Wanted", {"fearautonw"}, "Never Wanted Cops to players." ,function()
-                    if FearSession() then
-                        if players.set_wanted_level(pid, FearWanted_value) ~= FearWanted_value then
-                            FearCommands("pwanted"..FearPlayerName.." 0")
-                        end
-                    end
-                    util.yield(1000)
-                end, nil, nil, COMMANDPERM_FRIENDLY)
 
                 FearWanted:action("Manual Wanted Level", {"fearmanualw"}, "Put the guy cops and make sure cops come to his home." ,function()
                     if FearSession() then
                         if players.set_wanted_level(pid, FearWanted_value) ~= FearWanted_value then
                             FearCommands("pwanted"..FearPlayerName.." "..FearWanted_value)
                             FearToast(FearScriptNotif.."\nYou have manually sent cops to "..FearPlayerName.." with "..FearWanted_value.." stars.")
-                        end
-                    end
-                    util.yield(1000)
-                end)
-                
-                FearWanted:action("Manual Never Wanted Level", {"fearneverw"}, "No cops are trying to pursuit you.\nNOTE: It will be useful to be safe." ,function()
-                    if FearSession() then
-                        if players.set_wanted_level(pid, FearWanted_value) ~= FearWanted_value then
-                            FearCommands("pwanted"..FearPlayerName.." 0")
-                            FearToast(FearScriptNotif.."\nYou have removed cops to "..FearPlayerName.." with 0 stars.")
                         end
                     end
                     util.yield(1000)
