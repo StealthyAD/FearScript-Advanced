@@ -1412,6 +1412,36 @@
                     util.yield(1000)
                 end)
 
+            ----=================----
+            --- Bounty   Features
+            ----=================----        
+
+                local FearBounty_value = 0
+                FearBounty:divider("FearBounty Advanced")
+                FearBounty:slider("Bounty Value",{"fearbounty"}, "Chose the amount of the bounty offered automatically to "..FearPlayerName..".", 0, 10000, 0, 1, function(value)
+                    FearBounty_value = value
+                end)
+                
+                FearBounty:toggle("Auto Bounty", {"fearautobounty"}, "Put automatically bounty to "..FearPlayerName.."." ,function()
+                    if FearSession() then
+                        if players.get_bounty(pid) ~= FearBounty_value then
+                            FearCommands("bounty"..FearPlayerName.." "..FearBounty_value)
+                            FearToast(FearScriptNotif.."\nYou have automatically sent bounty to "..FearPlayerName.." with $"..FearBounty_value..".")
+                        end
+                    end
+                    util.yield(1000)
+                end, nil, nil, COMMANDPERM_RUDE)
+
+                FearBounty:action("Manual Bounty", {"fearmanualb"}, "Put manually bounty to "..FearPlayerName.."." ,function()
+                    if FearSession() then
+                        if players.get_bounty(pid) ~= FearBounty_value then
+                            FearCommands("bounty"..FearPlayerName.." "..FearBounty_value)
+                            FearToast(FearScriptNotif.."\nYou have manually sent bounty to "..FearPlayerName.." with $"..FearBounty_value..".")
+                        end
+                    end
+                    util.yield(1000)
+                end, nil, nil, COMMANDPERM_RUDE)
+
         ----=====================----
         ---    Neutral Features 
         ----=====================----
@@ -1422,31 +1452,31 @@
                 if FearSession() then
 
                     if players.get_language(pid) == 0 then
-                        FearToast(FearScriptNotif.."\n"..players.get_name(pid).. " is English/or non-recognized language.") -- English/non-recognize Detection
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is English/or non-recognized language.") -- English/non-recognize Detection
                     end
 
                     if players.get_language(pid) == 1 then
-                        FearToast(FearScriptNotif.."\n"..players.get_name(pid).. " is French.") -- French Detection
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is French.") -- French Detection
                     end
 
                     if players.get_language(pid) == 2 then
-                        FearToast(FearScriptNotif.."\n"..players.get_name(pid).. " is German.") -- German Detection
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is German.") -- German Detection
                     end
 
                     if players.get_language(pid) == 3 then
-                        FearToast(FearScriptNotif.."\n"..players.get_name(pid).. " is Italian.") -- Italian Detection
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Italian.") -- Italian Detection
                     end
 
                     if players.get_language(pid) == 4 then
-                        FearToast(FearScriptNotif.."\n"..players.get_name(pid).. " is Spanish.") -- Spanish Detection
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Spanish.") -- Spanish Detection
                     end
 
                     if players.get_language(pid) == 6 then
-                        FearToast(FearScriptNotif.."\n"..players.get_name(pid).. " is Polish.") -- Polish Detection
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Polish.") -- Polish Detection
                     end
 
                     if players.get_language(pid) == 7 then
-                        FearToast(FearScriptNotif.."\n"..players.get_name(pid).. " is Russian.") -- Russian Detection
+                        FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is Russian.") -- Russian Detection
                     end
                 end
             end)
