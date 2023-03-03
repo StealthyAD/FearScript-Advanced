@@ -1328,6 +1328,7 @@
 
             FearGriefingList:divider("FearGriefing Advanced")
             local FearWanted = FearGriefingList:list("Wanted Features",{},"")
+	    local FearBounty = FearGriefingList:list("Bounty Features",{},"")
 
             FearGriefingList:toggle_loop("Remove Entire Weapons",{'feardisarm'}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
