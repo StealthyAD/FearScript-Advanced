@@ -914,7 +914,7 @@
 
                 FearSessionL:divider("Vehicle Tweaks")
                 local FearPlateName
-                FearSessionL:text_input("Plate Name", {"fearplateall"}, "", function(name)
+                FearSessionL:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.", function(name)
                     FearPlateName = name
                 end)
 
@@ -1422,6 +1422,15 @@
             FearFriendlyList:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
             menu.show_command_box_click_based(click_type, "fearspawnv" .. FearPlayerName .. " ")end,
             function(txt)
+                local function platechanger(vehicle)
+                    for i = 0, 49 do
+                        if FearPlateName == nil then
+                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
+                        else
+                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+                        end
+                    end
+                end
                 local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                 local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
         
@@ -1431,6 +1440,7 @@
                     load_model(hash)
                 end
                 local vehicle = entities.create_vehicle(hash, c, 0)
+                platechanger(vehicle)
                 request_control_of_entity(vehicle)
             end)
 
@@ -1459,10 +1469,10 @@
             FearFriendlyList:action("Adder Race", {"fearadder"}, "Spawn Adder for "..FearPlayerName, function ()
             local function upgrade_vehicle(vehicle)
                 for i = 0, 49 do
-                    if FearPlayerPlate == nil then
+                    if FearPlateName == nil then
                         VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
                     else
-                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlayerPlate)
+                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
                     end
                     local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
                     VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
