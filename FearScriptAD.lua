@@ -1449,7 +1449,7 @@
                 end
             end, nil, nil, COMMANDPERM_RUDE)
 
-            FearGriefingList:action("Summon Boeing", {"fearboeing"}, "Spawn Big Boeing 747 for "..FearPlayerName.."\nNOTE: Spawning Boeing yourself will result to spawning only One Cargo Plane.\nSpawning Boeing to uses will create +50 entites Boeing.", function ()
+            FearGriefingList:action("Summon Boeing", {"fearboeing"}, "Spawn Big Boeing 747 for "..FearPlayerName.."\nNOTE: Spawning Boeing 747 yourself will result to spawning only Boeing 747.\nSpawning Boeing to uses will create +50 entites Boeing 747.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
                         local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
