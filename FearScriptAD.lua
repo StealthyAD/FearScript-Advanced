@@ -1301,8 +1301,8 @@
         ------===============------
 
             FearMiscs:divider("FearScript Miscs")
-            FearMiscs:readonly("FearScript Version: ", FearVersion)
-            FearMiscs:readonly("Stand Version: ", FearSEdition)
+            FearMiscs:readonly("FearScript Version", FearVersion)
+            FearMiscs:readonly("Stand Version", FearSEdition)
             FearMiscs:divider("FearScript Credits")
             FearMiscs:readonly("StealthyAD (Putin fanboy)")
 	    FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
