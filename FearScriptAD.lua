@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.23.7"
+    local FearVersion = "0.24"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -212,6 +212,23 @@
             end
             util.yield()
         end
+    end
+
+    local function FearGeneratorPlate()
+        local plate = ""
+            for i=1,8 do
+                local r = math.random(1,36)
+                if r <= 10 then
+                    plate = plate .. tostring(r-1) 
+                    else
+                    r = r + 54 
+                    if r > 90 then
+                    r = r + 6 
+                    end
+                    plate = plate .. string.char(r)
+                end
+            end
+        return plate
     end
     
     ------=============================------
@@ -597,6 +614,7 @@
         ---   Self Functions
         ------==============------  
 
+
             FearSelf:divider("FearScript Self")
             FearSelf:action("Fall on the ground", {'fearragdoll'}, "Just fall yourself on the ground.", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false) 
@@ -709,22 +727,6 @@
                 FearToast(FearScriptNotif.."\nEnjoy your dogfight at cruise altitude with your "..vehicle.." !")
             end)
 
-            FearVehicles:action("Oppressor Party", {"fearopr"}, "Summon Oppressor.\nNOTE: Some vehicles are randomly spawned.", function()
-                local vehicles = {"Oppressor", "Oppressor Mk II"}
-                local index = math.random(#vehicles)
-                local vehicle = vehicles[index]
-                table.remove(vehicles, index)
-                FearCommands("spawntune full")
-                if vehicle == "Oppressor" then
-                   FearCommands("oppressor")
-                   FearTime(250)
-                elseif vehicle == "Oppressor Mk II" then
-                   FearCommands("oppressor2")
-                   FearTime(250)
-                end
-                FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
-            end)
-
             FearVehicles:action("Strategic Bomber Planes", {"fearstratbomb"}, "Summon Strategic Bomber Planes and flight harder.\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"B-1B Lancer", "Avro Vulcan", "AC-130"}
                 local index = math.random(#vehicles)
@@ -750,7 +752,7 @@
                 FearToast(FearScriptNotif.."\nEnjoy your Strategic Bomber at cruise altitude with your "..vehicle.." !")
             end)
              
-            FearVehicles:action("Summon Tank", {"feartank"}, "Summon Leopard 2A (Rhino Tank) / PL-01 Concept (TM-02 Khanjali) or BRDM-2 (APC).\nNOTE: Some vehicles are randomly spawned.", function()
+            FearVehicles:action("Tank Spawner", {"feartank"}, "Summon Leopard 2A (Rhino Tank) / PL-01 Concept (TM-02 Khanjali) or BRDM-2 (APC).\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"Leopard 2A", "PL-01 Concept", "BRDM-2"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
@@ -769,6 +771,21 @@
                 FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
             end)
 
+            FearVehicles:action("Oppressor Party", {"fearopr"}, "Summon Oppressor.\nNOTE: Some vehicles are randomly spawned.", function()
+                local vehicles = {"Oppressor", "Oppressor Mk II"}
+                local index = math.random(#vehicles)
+                local vehicle = vehicles[index]
+                table.remove(vehicles, index)
+                FearCommands("spawntune full")
+                if vehicle == "Oppressor" then
+                   FearCommands("oppressor")
+                   FearTime(250)
+                elseif vehicle == "Oppressor Mk II" then
+                   FearCommands("oppressor2")
+                   FearTime(250)
+                end
+                FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
+            end)
             FearVehicles:divider("Vehicle Tweaks")
             FearVehicles:toggle_loop("Toggle Engine", {'fearturnengine'}, "Cut off/On your Engine", function()
                 FearCommands("turnengineoff")
@@ -896,6 +913,11 @@
             ----=====================================================----
 
                 FearSessionL:divider("Vehicle Tweaks")
+                local FearPlateName
+                FearSessionL:text_input("Plate Name", {"fearplateall"}, "", function(name)
+                    FearPlateName = name
+                end)
+
                 FearSessionL:action("Spawn Vehicle", {"fearspawnvehall"}, "Spawn everyone a vehicle", function (click_type)
                     menu.show_command_box_click_based(click_type, "fearspawnvehall ")
                 end,
@@ -905,13 +927,21 @@
                     if not STREAMING.HAS_MODEL_LOADED(hash) then
                         load_model(hash)
                     end
-                    
+                    local function upgrade_vehicle(vehicle)
+                        for i = 0, 49 do
+                            if FearPlateName == nil then
+                                VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
+                            else
+                                VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+                            end
+                        end
+                    end
                     for k,v in pairs(players.list(true, true, true)) do
                         local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(v)
                         local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
                     
                         local vehicle = entities.create_vehicle(hash, c, 0)
-                    
+                        upgrade_vehicle(vehicle)
                         request_control_of_entity(vehicle)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone.")
                         FearTime()
@@ -1301,17 +1331,17 @@
         ------===============------
 
             FearMiscs:divider("FearScript Miscs")
-            FearMiscs:readonly("FearScript Version", FearVersion)
-            FearMiscs:readonly("Stand Version", FearSEdition)
+            FearMiscs:readonly("FearScript Version: "..FearVersion)
+            FearMiscs:readonly("Stand Version: "..FearSEdition)
             FearMiscs:divider("FearScript Credits")
             FearMiscs:readonly("StealthyAD (Putin fanboy)")
-	    FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
-		auto_update_config.check_interval = 0
-		    if auto_updater.run_auto_update(auto_update_config) then
-			FearToast(FearScriptNotif.."\nNo updates found.")
-		    end
-		end)
-	    FearMiscs:hyperlink("GitHub Source", "https://github.com/StealthyAD/FearScript-Advanced")
+	        FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
+                auto_update_config.check_interval = 0
+                if auto_updater.run_auto_update(auto_update_config) then
+                    FearToast(FearScriptNotif.."\nNo updates found.")
+                end
+		    end)
+	        FearMiscs:hyperlink("GitHub Source", "https://github.com/StealthyAD/FearScript-Advanced")
 
     ------===============------
     ---   Player Features
@@ -1385,6 +1415,10 @@
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
             FearFriendlyList:divider("Vehicle Tweaks")
+            local FearPlayerPlate
+            FearFriendlyList:text_input("Plate Name", {"fearplate"}, "", function(name)
+                FearPlayerPlate = name
+            end)
             FearFriendlyList:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
             menu.show_command_box_click_based(click_type, "fearspawnv" .. FearPlayerName .. " ")end,
             function(txt)
@@ -1425,6 +1459,11 @@
             FearFriendlyList:action("Adder Race", {"fearadder"}, "Spawn Adder for "..FearPlayerName, function ()
             local function upgrade_vehicle(vehicle)
                 for i = 0, 49 do
+                    if FearPlayerPlate == nil then
+                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
+                    else
+                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlayerPlate)
+                    end
                     local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
                     VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
                 end
