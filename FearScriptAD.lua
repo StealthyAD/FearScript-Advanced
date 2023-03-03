@@ -597,7 +597,6 @@
         ---   Self Functions
         ------==============------  
 
-
             FearSelf:divider("FearScript Self")
             FearSelf:action("Fall on the ground", {'fearragdoll'}, "Just fall yourself on the ground.", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false) 
@@ -752,7 +751,7 @@
             end)
              
             FearVehicles:action("Tank Spawner", {"feartank"}, "Summon Leopard 2A (Rhino Tank) / PL-01 Concept (TM-02 Khanjali) or BRDM-2 (APC).\nNOTE: Some vehicles are randomly spawned.", function()
-                local vehicles = {"Leopard 2A", "TM-02 Khanjali", "APC"}
+                local vehicles = {"Leopard 2A", "PL-01 Concept", "BRDM-2"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
                 table.remove(vehicles, index)
