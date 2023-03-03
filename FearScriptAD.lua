@@ -22,7 +22,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.23.1"
+    local FearVersion = "0.23.2"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -985,6 +985,19 @@
                     end
                 end)
 
+                if menu.get_edition() >= 3 then
+                    local FearToggleSelf_mugger = false
+                    FearSessionL:toggle_loop("Mugger Loop", {'fearmglall'}, "Send Mugger Loop to the entire session?\nNOTE: It may be detected by any modders and may karma you.",function()
+                        for _,pid in pairs(players.list(FearToggleSelf_mugger)) do
+                            if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("mugloop"..players.get_name(pid))
+                            end
+                            FearTime(30)
+                        end
+                        FearTime(100)
+                    end)
+                end
+
                 FearSessionL:action("Earrape Session", {"fearearrapeall"}, "Put Earrape Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.",function()
                     for i = 0, 100 do
                         for _, pid in pairs(players.list(FearToggleSelf)) do
@@ -1298,7 +1311,7 @@
                 end
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
-            FearFriendlyList:toggle_loop("Never Wanted", {"fearnw"}, "Never Wanted Cops to players.\nAlternative to Stand but easily lose cops." ,function()
+            FearFriendlyList:toggle_loop("Never Wanted", {"fearnw"}, "Never Wanted Cops to "..FearPlayerName..".\nAlternative to Stand but easily lose cops." ,function()
                 if FearSession() then
                     FearCommands("pwanted"..FearPlayerName.." 0")
                 end
@@ -1327,7 +1340,7 @@
 
             FearGriefingList:divider("FearGriefing Advanced")
             local FearWanted = FearGriefingList:list("Wanted Features",{},"")
-	    local FearBounty = FearGriefingList:list("Bounty Features",{},"")
+            local FearBounty = FearGriefingList:list("Bounty Features",{},"")
 
             FearGriefingList:toggle_loop("Remove Entire Weapons",{'feardisarm'}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
