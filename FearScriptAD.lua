@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.23.6"
+    local FearVersion = "0.23.7"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1301,16 +1301,17 @@
         ------===============------
 
             FearMiscs:divider("FearScript Miscs")
-            FearMiscs:readonly("FearScript Version: "..FearVersion)
-            FearMiscs:readonly("Stand Version: "..FearSEdition)
+            FearMiscs:readonly("FearScript Version: ", FearVersion)
+            FearMiscs:readonly("Stand Version: ", FearSEdition)
             FearMiscs:divider("FearScript Credits")
             FearMiscs:readonly("StealthyAD (Putin fanboy)")
 	    FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
-        auto_update_config.check_interval = 0
-            if auto_updater.run_auto_update(auto_update_config) then
-                FearToast(FearScriptNotif.."\nNo updates found.")
-            end
-        end)
+		auto_update_config.check_interval = 0
+		    if auto_updater.run_auto_update(auto_update_config) then
+			FearToast(FearScriptNotif.."\nNo updates found.")
+		    end
+		end)
+	    FearMiscs:hyperlink("GitHub Source", "https://github.com/StealthyAD/FearScript-Advanced")
 
     ------===============------
     ---   Player Features
