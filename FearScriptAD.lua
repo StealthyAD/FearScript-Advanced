@@ -1,8 +1,7 @@
 --[[
 
     FearScript Advanced for Stand by StealthyAD.
-
-    "Upload easiest your own musics and use quickly as fast as possible."
+    The All-In-One Script combines every each script.
 
     INTRODUCION: 
 
