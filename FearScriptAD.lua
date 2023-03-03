@@ -616,7 +616,7 @@
                 FearTime(100)
             end)
 
-        ------==================------
+                ------==================------
         ---   Vehicles Functions
         ------==================------  
 
@@ -628,7 +628,7 @@
             local pop_multiplier_id
 
             FearVehicles:divider("FearScript Vehicles")
-
+            FearVehicles:divider("Summon Tweaks")
             FearVehicles:action("Dogfight Spawner", {"feardogfight"}, "Summon plane and Fight.\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"P-996 Lazer", "Mammoth Hydra", "B-11 Strikeforce", "LF-22 Starling", "V-65 Molotok", "P-45 Nokota", "Pyro", "Western Rogue", "Seabreeze"}
                 local index = math.random(#vehicles)
@@ -698,6 +698,22 @@
                 FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
             end)
 
+            FearVehicles:action("Oppressor Party", {"fearopr"}, "Summon Oppressor.\nNOTE: Some vehicles are randomly spawned.", function()
+                local vehicles = {"Oppressor", "Oppressor Mk II"}
+                local index = math.random(#vehicles)
+                local vehicle = vehicles[index]
+                table.remove(vehicles, index)
+                FearCommands("spawntune full")
+                if vehicle == "Oppressor" then
+                   FearCommands("oppressor")
+                   FearTime(250)
+                elseif vehicle == "Oppressor Mk II" then
+                   FearCommands("oppressor2")
+                   FearTime(250)
+                end
+                FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
+            end)
+            FearVehicles:divider("Vehicle Tweaks")
             FearVehicles:toggle_loop("Toggle Engine", {'fearturnengine'}, "Cut off/On your Engine", function()
                 FearCommands("turnengineoff")
             end)
@@ -744,7 +760,7 @@
                 end)
 
                 FearSessionL:divider("Main Tweaks")
-                FearSessionL:toggle_loop("Exclude Self", {"fexcludeself"}, "Exclude Self for using these features", function()
+                FearSessionL:toggle_loop("Exclude Self", {"fexcludeself"}, "Exclude Self for using these features.\nNOTE: It will includes Main Tweaks and Game Tweaks.", function()
                     FearToggleSelf = on == false
                 end)
                 local FearBountySess = FearSessionL:list("Bounty Features")
@@ -842,7 +858,7 @@
                     
                         request_control_of_entity(vehicle)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone.")
-                        util.yield()
+                        FearTime()
                     end
                 end)
 
@@ -870,6 +886,7 @@
                     end
                     for k,v in pairs(players.list(true, true, true)) do
                         give_oppressor(v)
+                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Oppressor MK2 Party'.")
                         util.yield()
                     end
                 end)
@@ -898,6 +915,36 @@
                     end
                     for k,v in pairs(players.list(true, true, true)) do
                         give_tank(v)
+                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Rhino Tank'.")
+                        util.yield()
+                    end
+                end)
+
+                FearSessionL:action("Dogfight Summon", {"feardogplane"}, "Spawn everyone Lazer", function ()
+                    local function upgrade_vehicle(vehicle)
+                        for i = 0, 49 do
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                        end
+                    end
+                    local function give_plane(pid)
+                        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                    
+                        local hash = util.joaat("lazer")
+                    
+                        if not STREAMING.HAS_MODEL_LOADED(hash) then
+                            load_model(hash)
+                        end
+                    
+                        local plane = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+                        ENTITY.SET_ENTITY_INVINCIBLE(plane)
+                    
+                        upgrade_vehicle(lazer)
+                    end
+                    for k,v in pairs(players.list(true, true, true)) do
+                        give_plane(v)
+                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'P-996 Lazer'.")
                         util.yield()
                     end
                 end)
@@ -956,7 +1003,6 @@
                     end
                 end)
 
-                
             --------------------------------------------------------------------------------------
 
             local FearStandID = FearPath("Online>Protections>Detections>Stand User Identification")
