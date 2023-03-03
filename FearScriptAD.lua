@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.24.1"
+    local FearVersion = "0.24.2"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -914,8 +914,9 @@
 
                 FearSessionL:divider("Vehicle Tweaks")
                 local FearPlateName
-                FearSessionL:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.", function(name)
-                    FearPlateName = name
+                FearPlateIndex = FearSessionL:slider("Plate Color", {"fplatecolor"}, "Choose Plate Color", 0, 5, 0, 1, function()end)
+                FearSessionL:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.\nWrite 'default' to get revert plate.", function(name)
+                    FearPlateName = name:sub(1, 8)
                 end)
 
                 FearSessionL:action("Spawn Vehicle", {"fearspawnvehall"}, "Spawn everyone a vehicle", function (click_type)
@@ -929,6 +930,7 @@
                     end
                     local function upgrade_vehicle(vehicle)
                         for i = 0, 49 do
+                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
                             if FearPlateName == nil then
                                 VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
                             else
@@ -1469,6 +1471,7 @@
             FearFriendlyList:action("Adder Race", {"fearadder"}, "Spawn Adder for "..FearPlayerName, function ()
             local function upgrade_vehicle(vehicle)
                 for i = 0, 49 do
+                    VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
                     if FearPlateName == nil then
                         VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
                     else
