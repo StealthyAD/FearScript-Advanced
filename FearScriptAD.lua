@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.24.4"
+    local FearVersion = "0.24.5"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1514,9 +1514,14 @@
             end)
 
             FearGriefingList:toggle_loop("Kill "..FearPlayerName.." Loop", {'fearkillp'}, "Kill "..FearPlayerName.." in Loop?",function()
+                local function KillPlayer(pid)
+                    local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                    local coords = ENTITY.GET_ENTITY_COORDS(entity, true)
+                    FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'] + 2, 7, 1000, false, true, 0)
+                end
                 if FearSession() then
                     if players.get_name(pid) then
-                        FearCommands("kill"..FearPlayerName)
+                        KillPlayer(pid)
                     end
                     FearTime(150)
                 end
