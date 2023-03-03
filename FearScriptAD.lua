@@ -619,18 +619,59 @@
 
             FearVehicles:divider("FearScript Vehicles")
             FearVehicles:divider("Summon Tweaks")
-            FearVehicles:action("Dogfight Spawner", {"feardogfight"}, "Summon plane and Fight.\nNOTE: Some vehicles are randomly spawned.", function()
+
+            FearVehicles:action("Commercial Planes", {"fearcomplane"}, "Summon plane and flight peacefully.\nNOTE: Some vehicles are randomly spawned.", function()
+                local vehicles = {"Boeing 747", "Antonov AN-225", "Nimbus", "Private Jet", "Golden Jet", "Miljet"}
+                local index = math.random(#vehicles)
+                local vehicle = vehicles[index]
+                table.remove(vehicles, index)
+                FearCommands("spawntune full")
+                if vehicle == "Boeing 747" then
+                   FearCommands("tphigh")
+                   FearTime(500)
+                   FearCommands("jet")
+                   FearTime(250)
+                elseif vehicle == "Antonov AN-225" then
+                   FearCommands("tphigh")
+                   FearTime(500)
+                   FearCommands("cargoplane")
+                   FearTime(250)
+                elseif vehicle == "Nimbus" then
+                    FearCommands("tphigh")
+                    FearTime(500)
+                    FearCommands("nimbus")
+                    FearTime(250)
+                elseif vehicle == "Private Jet" then
+                    FearCommands("tphigh")
+                    FearTime(500)
+                    FearCommands("luxor")
+                    FearTime(250)
+                elseif vehicle == "Golden Jet" then
+                    FearCommands("tphigh")
+                    FearTime(500)
+                    FearCommands("luxor2")
+                    FearTime(250)
+                elseif vehicle == "Miljet" then
+                    FearCommands("tphigh")
+                    FearTime(500)
+                    FearCommands("miljet")
+                    FearTime(250)
+                end
+                FearToast(FearScriptNotif.."\nEnjoy your commercial plane at cruise altitude with your "..vehicle.." !")
+            end)
+
+            FearVehicles:action("Dogfight Planes", {"feardogfight"}, "Summon plane and Fight.\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"P-996 Lazer", "Mammoth Hydra", "B-11 Strikeforce", "LF-22 Starling", "V-65 Molotok", "P-45 Nokota", "Pyro", "Western Rogue", "Seabreeze"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
                 table.remove(vehicles, index)
                 FearCommands("spawntune full")
-                if vehicle == "P-996 Lazer" then
+                if vehicle == "P-996 Lazer" then -- Spawning Lazer
                    FearCommands("tphigh")
                    FearTime(500)
                    FearCommands("lazer")
                    FearTime(250)
-                elseif vehicle == "Mammoth Hydra" then
+                elseif vehicle == "Mammoth Hydra" then -- Spawning Hydra
                    FearCommands("tphigh")
                    FearTime(500)
                    FearCommands("hydra")
@@ -668,6 +709,47 @@
                 end
                 FearToast(FearScriptNotif.."\nEnjoy your dogfight at cruise altitude with your "..vehicle.." !")
             end)
+
+            FearVehicles:action("Oppressor Party", {"fearopr"}, "Summon Oppressor.\nNOTE: Some vehicles are randomly spawned.", function()
+                local vehicles = {"Oppressor", "Oppressor Mk II"}
+                local index = math.random(#vehicles)
+                local vehicle = vehicles[index]
+                table.remove(vehicles, index)
+                FearCommands("spawntune full")
+                if vehicle == "Oppressor" then
+                   FearCommands("oppressor")
+                   FearTime(250)
+                elseif vehicle == "Oppressor Mk II" then
+                   FearCommands("oppressor2")
+                   FearTime(250)
+                end
+                FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
+            end)
+
+            FearVehicles:action("Strategic Bomber Planes", {"fearstratbomb"}, "Summon Strategic Bomber Planes and flight harder.\nNOTE: Some vehicles are randomly spawned.", function()
+                local vehicles = {"B-1B Lancer", "Avro Vulcan", "AC-130"}
+                local index = math.random(#vehicles)
+                local vehicle = vehicles[index]
+                table.remove(vehicles, index)
+                FearCommands("spawntune full")
+                if vehicle == "B-1B Lancer" then
+                   FearCommands("tphigh")
+                   FearTime(500)
+                   FearCommands("alkonost")
+                   FearTime(250)
+                elseif vehicle == "Avro Vulcan" then
+                   FearCommands("tphigh")
+                   FearTime(500)
+                   FearCommands("volatol")
+                   FearTime(250)
+                elseif vehicle == "AC-130" then
+                    FearCommands("tphigh")
+                    FearTime(500)
+                    FearCommands("bombushka")
+                    FearTime(250)
+                end
+                FearToast(FearScriptNotif.."\nEnjoy your commercial plane at cruise altitude with your "..vehicle.." !")
+            end)
              
             FearVehicles:action("Tank Spawner", {"feartank"}, "Summon Leopard 2A (Rhino Tank) / PL-01 Concept (TM-02 Khanjali) or BRDM-2 (APC).\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"Leopard 2A", "TM-02 Khanjali", "APC"}
@@ -688,21 +770,6 @@
                 FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
             end)
 
-            FearVehicles:action("Oppressor Party", {"fearopr"}, "Summon Oppressor.\nNOTE: Some vehicles are randomly spawned.", function()
-                local vehicles = {"Oppressor", "Oppressor Mk II"}
-                local index = math.random(#vehicles)
-                local vehicle = vehicles[index]
-                table.remove(vehicles, index)
-                FearCommands("spawntune full")
-                if vehicle == "Oppressor" then
-                   FearCommands("oppressor")
-                   FearTime(250)
-                elseif vehicle == "Oppressor Mk II" then
-                   FearCommands("oppressor2")
-                   FearTime(250)
-                end
-                FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
-            end)
             FearVehicles:divider("Vehicle Tweaks")
             FearVehicles:toggle_loop("Toggle Engine", {'fearturnengine'}, "Cut off/On your Engine", function()
                 FearCommands("turnengineoff")
