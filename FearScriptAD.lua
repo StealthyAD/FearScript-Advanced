@@ -22,7 +22,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.22.5"
+    local FearVersion = "0.22.7"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -679,19 +679,19 @@
                 FearToast(FearScriptNotif.."\nEnjoy your dogfight at cruise altitude with your "..vehicle.." !")
             end)
              
-            FearVehicles:action("Tank Spawner", {"feartank"}, "Summon Leopard.\nNOTE: Some vehicles are randomly spawned.", function()
-                local vehicles = {"Rhino Tank", "TM-02 Khanjali", "APC"}
+            FearVehicles:action("Tank Spawner", {"feartank"}, "Summon Leopard 2A (Rhino Tank) / PL-01 Concept (TM-02 Khanjali) or BRDM-2 (APC).\nNOTE: Some vehicles are randomly spawned.", function()
+                local vehicles = {"Leopard 2A", "TM-02 Khanjali", "APC"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
                 table.remove(vehicles, index)
                 FearCommands("spawntune full")
-                if vehicle == "Rhino Tank" then
+                if vehicle == "Leopard 2A" then
                    FearCommands("rhino")
                    FearTime(250)
-                elseif vehicle == "TM-02 Khanjali" then
+                elseif vehicle == "PL-01 Concept" then
                    FearCommands("khanjali")
                    FearTime(250)
-                elseif vehicle == "APC" then
+                elseif vehicle == "BRDM-2" then
                     FearCommands("apc")
                     FearTime(250)
                 end
