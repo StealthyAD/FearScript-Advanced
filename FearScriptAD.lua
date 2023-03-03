@@ -747,10 +747,10 @@
                     FearCommands("bombushka")
                     FearTime(250)
                 end
-                FearToast(FearScriptNotif.."\nEnjoy your commercial plane at cruise altitude with your "..vehicle.." !")
+                FearToast(FearScriptNotif.."\nEnjoy your Strategic Bomber at cruise altitude with your "..vehicle.." !")
             end)
              
-            FearVehicles:action("Tank Spawner", {"feartank"}, "Summon Leopard 2A (Rhino Tank) / PL-01 Concept (TM-02 Khanjali) or BRDM-2 (APC).\nNOTE: Some vehicles are randomly spawned.", function()
+            FearVehicles:action("Summon Tank", {"feartank"}, "Summon Leopard 2A (Rhino Tank) / PL-01 Concept (TM-02 Khanjali) or BRDM-2 (APC).\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"Leopard 2A", "PL-01 Concept", "BRDM-2"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
