@@ -599,8 +599,8 @@
             local PlayerList = menu.ref_by_path("Players")
 		    menu.trigger_command(PlayerList, "")
         end)
-        local FearStandify = FearRoot:list("Standify")
-        local FearCruiseMissile = FearRoot:list("Cruise Missile")
+        local FearStandify = FearRoot:list("Standify", {""}, "Standify, script related to music.\nMade by StealthyAD.")
+        local FearCruiseMissile = FearRoot:list("Cruise Missile", {""}, "CruiseMissile, script related to Cruise Missile Range.\nMade by StealthyAD.")
         local FearMiscs = FearRoot:list("Miscellaneous")
 
         ------==============------
