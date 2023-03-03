@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.23.2"
+    local FearVersion = "0.23.4"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1355,14 +1355,38 @@
                 util.yield()
             end)
 
+            FearFriendlyList:action("Adder Race", {"fearadder"}, "Spawn Adder for "..FearPlayerName, function ()
+            local function upgrade_vehicle(vehicle)
+                for i = 0, 49 do
+                    local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                    VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                end
+            end
+            local function give_adder(pid)
+            local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+            local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+            local hash = util.joaat("adder")
+            if not STREAMING.HAS_MODEL_LOADED(hash) then
+                load_model(hash)
+            end
+            local adder = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+            ENTITY.SET_ENTITY_INVINCIBLE(adder)
+                upgrade_vehicle(adder)
+            end
+                give_adder(pid)
+                util.yield()
+            end)
+
         ----=====================----
         --- Griefing     Features
         ----=====================----
 
             FearGriefingList:divider("FearGriefing Advanced")
+            FearGriefingList:divider("Game Tweaks")
             local FearWanted = FearGriefingList:list("Wanted Features",{},"")
             local FearBounty = FearGriefingList:list("Bounty Features",{},"")
 
+            FearGriefingList:divider("Player Tweaks")
             FearGriefingList:toggle_loop("Remove Entire Weapons",{'feardisarm'}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
                     if players.get_name(pid) then
@@ -1396,6 +1420,62 @@
                 end
                 FearTime(150)
             end)
+            FearGriefingList:divider("Vehicle Tweaks")
+            FearGriefingList:action("Summon Cargo Plane", {"fearcargoplane"}, "Spawn Big Cargo for "..FearPlayerName.."\nNOTE: Spawning Cargo Plane yourself will result to spawning only One Cargo Plane.\nSpawning Cargo Plane to uses will create +50 entites Cargo Plane.", function ()
+                local function upgrade_vehicle(vehicle)
+                    for i = 0, 49 do
+                        local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                        VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                    end
+                end
+                local function give_cargoplane(pid)
+                    local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                    local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                
+                    local hash = util.joaat("cargoplane")
+                
+                    if not STREAMING.HAS_MODEL_LOADED(hash) then
+                        load_model(hash)
+                    end
+                
+                    local cargoplane = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+                    ENTITY.SET_ENTITY_INVINCIBLE(cargoplane)
+                
+                    upgrade_vehicle(cargoplane)
+                end
+                for k,v in pairs(players.list(true, true, true)) do
+                    give_cargoplane(pid)
+                    util.yield()
+                end
+            end, nil, nil, COMMANDPERM_RUDE)
+
+            FearGriefingList:action("Summon Boeing", {"fearboeing"}, "Spawn Big Boeing 747 for "..FearPlayerName.."\nNOTE: Spawning Boeing yourself will result to spawning only One Cargo Plane.\nSpawning Boeing to uses will create +50 entites Boeing.", function ()
+                local function upgrade_vehicle(vehicle)
+                    for i = 0, 49 do
+                        local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                        VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                    end
+                end
+                local function give_boeing(pid)
+                    local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                    local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                
+                    local hash = util.joaat("jet")
+                
+                    if not STREAMING.HAS_MODEL_LOADED(hash) then
+                        load_model(hash)
+                    end
+                
+                    local boeing = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+                    ENTITY.SET_ENTITY_INVINCIBLE(cargoplane)
+                
+                    upgrade_vehicle(boeing)
+                end
+                for k,v in pairs(players.list(true, true, true)) do
+                    give_boeing(pid)
+                    util.yield()
+                end
+            end, nil, nil, COMMANDPERM_RUDE)
 
             ----=================----
             --- Wanted   Features
