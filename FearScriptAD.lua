@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.24.5"
+    local FearVersion = "0.24.6"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -968,7 +968,6 @@
                         end
                     
                         local oppressor = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-                        ENTITY.SET_ENTITY_INVINCIBLE(oppressor)
                     
                         upgrade_vehicle(oppressor)
                     end
@@ -997,9 +996,8 @@
                         end
                     
                         local tank = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-                        ENTITY.SET_ENTITY_INVINCIBLE(tank)
                     
-                        upgrade_vehicle(oppressor)
+                        upgrade_vehicle(tank)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
                         give_tank(v)
@@ -1025,9 +1023,7 @@
                             load_model(hash)
                         end
                     
-                        local plane = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-                        ENTITY.SET_ENTITY_INVINCIBLE(plane)
-                    
+                        local lazer = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
                         upgrade_vehicle(lazer)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
@@ -1458,7 +1454,6 @@
                 load_model(hash)
             end
             local oppressor = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-            ENTITY.SET_ENTITY_INVINCIBLE(oppressor)
                 upgrade_vehicle(oppressor)
             end
                 give_ind_oppressor(pid)
@@ -1486,8 +1481,7 @@
                 load_model(hash)
             end
             local adder = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-            ENTITY.SET_ENTITY_INVINCIBLE(adder)
-                upgrade_vehicle(adder)
+            upgrade_vehicle(adder)
             end
                 give_adder(pid)
                 util.yield()
@@ -1560,7 +1554,6 @@
                     end
                 
                     local cargoplane = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-                    ENTITY.SET_ENTITY_INVINCIBLE(cargoplane)
                 
                     upgrade_vehicle(cargoplane)
                 end
@@ -1588,7 +1581,6 @@
                     end
                 
                     local boeing = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-                    ENTITY.SET_ENTITY_INVINCIBLE(cargoplane)
                 
                     upgrade_vehicle(boeing)
                 end
