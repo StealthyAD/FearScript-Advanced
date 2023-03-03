@@ -22,7 +22,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.22.4"
+    local FearVersion = "0.22.5"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -787,15 +787,6 @@
 
                     local FearWantedSess_value = 0
                     FearWantedSess:divider("FearWanted Advanced")
-                    FearWantedSess:slider("Wanted Slider", {"fearwantedselect"}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function(value)
-                        for _,pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.set_wanted_level(pid, value) ~= value and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                players.set_wanted_level(pid, value)
-                                FearCommands("pwanted"..players.get_name(pid).." "..value)
-                            end
-                        end
-                        FearTime(1000)
-                    end)
                     FearWantedSess:slider("Wanted Value", {"fearwanteds"}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function(value)
                         FearWantedSess_value = value
                     end)
