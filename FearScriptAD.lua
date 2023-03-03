@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.24.2"
+    local FearVersion = "0.24.3"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1417,10 +1417,6 @@
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
             FearFriendlyList:divider("Vehicle Tweaks")
-            local FearPlayerPlate
-            FearFriendlyList:text_input("Plate Name", {"fearplate"}, "", function(name)
-                FearPlayerPlate = name
-            end)
             FearFriendlyList:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
             menu.show_command_box_click_based(click_type, "fearspawnv" .. FearPlayerName .. " ")end,
             function(txt)
