@@ -22,7 +22,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.22.7"
+    local FearVersion = "0.22.8"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1291,6 +1291,7 @@
         ----=====================----
 
             FearFriendlyList:divider("FearFriendly Advanced")
+            FearFriendlyList:divider("Main Tweaks")
             FearFriendlyList:action("Unstuck Loading Screen", {"fearuls"}, "Unstuck "..FearPlayerName.." to the clouds or something else could be affect the session.", function()
                 FearCommands("givesh"..FearPlayerName)
                 FearCommands("aptme"..FearPlayerName)
@@ -1305,6 +1306,21 @@
                     end
                 end
             end, nil, nil, COMMANDPERM_FRIENDLY)
+            FearFriendlyList:divider("Vehicle Tweaks")
+            FearFriendlyList:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
+            menu.show_command_box_click_based(click_type, "fearspawnv" .. FearPlayerName .. " ")end,
+            function(txt)
+                local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+        
+                local hash = util.joaat(txt)
+        
+                if not STREAMING.HAS_MODEL_LOADED(hash) then
+                    load_model(hash)
+                end
+                local vehicle = entities.create_vehicle(hash, c, 0)
+                request_control_of_entity(vehicle)
+            end)
 
         ----=====================----
         --- Griefing     Features
