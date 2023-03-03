@@ -1421,7 +1421,7 @@
                 FearTime(150)
             end)
             FearGriefingList:divider("Vehicle Tweaks")
-            FearGriefingList:action("Summon Cargo Plane", {"fearcargoplane"}, "Spawn Big Cargo for "..FearPlayerName.."\nNOTE: Spawning Cargo Plane yourself will result to spawning only One Cargo Plane.\nSpawning Cargo Plane to uses will create +50 entites Cargo Plane.", function ()
+            FearGriefingList:action("Summon Cargo Plane", {"fearcargoplane"}, "Spawn Big Cargo for "..FearPlayerName.."\nNOTE: Spawning Cargo Plane yourself will result to spawning only One Cargo Plane.\nSpawning Cargo Plane to "..FearPlayerName.." will create +50 entites Cargo Plane.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
                         local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
@@ -1449,7 +1449,7 @@
                 end
             end, nil, nil, COMMANDPERM_RUDE)
 
-            FearGriefingList:action("Summon Boeing", {"fearboeing"}, "Spawn Big Boeing 747 for "..FearPlayerName.."\nNOTE: Spawning Boeing 747 yourself will result to spawning only Boeing 747.\nSpawning Boeing to uses will create +50 entites Boeing 747.", function ()
+            FearGriefingList:action("Summon Boeing", {"fearboeing"}, "Spawn Big Boeing 747 for "..FearPlayerName.."\nNOTE: Spawning Boeing 747 yourself will result to spawning only Boeing 747.\nSpawning Boeing to "..FearPlayerName.." will create +50 entites Boeing 747.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
                         local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
