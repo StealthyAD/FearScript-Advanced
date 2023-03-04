@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.26.3"
+    local FearVersion = "0.26.3b"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -950,8 +950,8 @@
                 FearVehicleSess:divider("FearVehicle Advanced")
                 local FearPlateName
                 FearToggleGod = FearVehicleSess:toggle_loop("Toggle Invincible Cars", {'ftoggleinvc'}, "Turn On/Off Invincible Car, exception don't use weaponized weapons, I will not recommend you use.\nNOTE: It will be absurd to enable the features make causing griefing constantly.\nNOTE: It will applicable for 'Friendly Features'.", function() end)
-                FearToggleCustom = FearVehicleSess:toggle("Toggle Upgrade Cars", {'ftogglemaxc'}, "Toggle On/Off for Maximum Car.\nNOTE: It will applicable for 'Friendly Features'", function()end)
-                FearPlateIndex = FearVehicleSess:slider("Plate Color", {"fplatecolor"}, "Choose Plate Color", 0, 5, 0, 1, function()end)
+                FearToggleCustom = FearVehicleSess:toggle("Toggle Upgrade Cars", {'ftogglemaxc'}, "Toggle On/Off for Maximum Car.\nNOTE: It will applicable for 'Friendly Features'.", function()end)
+                FearPlateIndex = FearVehicleSess:slider("Plate Color", {"fplatecolor"}, "Choose Plate Color.\nNOTE: It will applicable for 'Friendly Features'.", 0, 5, 0, 1, function()end)
                 FearVehicleSess:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.\nWrite 'default' to get revert plate.\nNOTE: It will applicable for 'Friendly Features'.", function(name)
                     FearPlateName = name:sub(1, 8)
                 end)
