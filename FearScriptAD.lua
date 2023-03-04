@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.26.8"
+    local FearVersion = "0.26.9"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.4
@@ -1171,14 +1171,26 @@
                     end
                 end)
 
-                FearSessionL:action("Random Teleport Homogenous", {'feartprandho'}, "Teleport the entire session into random apartment?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function()
-                    local FearAPPRand = RNGCount(1, 114)
-                        for _, pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                FearCommands("apt"..FearAPPRand..players.get_name(pid))
+                FearTP1Warning = FearSessionL:action("Near Location Teleport", {"feartll"}, "Teleport the entire session?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function(type)
+                    menu.show_warning(FearTP1Warning, type, "Do you really want teleport the entire session to the same apartment location?\nNOTE: Teleporting all players will cost a fight against players.", function()
+                    for _, pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            FearCommands("aptme"..players.get_name(pid))
                             end
                         end
                     end)
+                end)
+
+                FearTPWarning = FearSessionL:action("Random Teleport Homogenous", {'feartprandho'}, "Teleport the entire session into random apartment?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function(type)
+                    menu.show_warning(FearTPWarning, type, "Do you really want teleport the entire session to the random apartment?\nNOTE: Teleporting all players will cost a fight against players.", function()
+                    local FearAPPRand = RNGCount(1, 114)
+                    for _, pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            FearCommands("apt"..FearAPPRand..players.get_name(pid))
+                            end
+                        end
+                    end)
+                end)
 
                 FearSessionL:action("Random Teleport Heterogenous", {'feartprandhe'}, "Teleport each player in the session to a random apartment heterogeneously?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function()
                 local assignedApartments = {}
