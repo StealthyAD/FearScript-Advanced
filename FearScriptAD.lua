@@ -754,7 +754,7 @@
                 FearToast(FearScriptNotif.."\nEnjoy your dogfight at cruise altitude with your "..vehicle.." !")
             end)
 
-            FearVehicles:action("Strategic Bomber Planes", {}, "Summon Strategic Bomber Planes and flight harder.\nNOTE: Some vehicles are randomly spawned.", function()
+            FearVehicles:action("Strategic Bomber Planes", {}, "Summon Strategic Bomber Planes and fly harder to bomb.\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"B-1B Lancer", "Avro Vulcan", "AC-130"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
@@ -915,7 +915,7 @@
                     FearWantedSess:divider("FearWanted Advanced")
                     FearWantedValue = FearWantedSess:slider("Wanted Value", {}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function()end)
                     
-                    FearWantedSess:toggle("Auto Wanted", {}, "Put everyone automatically Cops to all players." ,function()
+                    FearWantedSess:toggle("Auto Wanted", {"fearautowt"}, "Put everyone automatically Cops to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
                             if FearSession() and players.set_wanted_level(pid, menu.get_value(FearWantedValue)) ~= FearWantedValue and players.get_name(pid) ~= "UndiscoveredPlayer" then
                                 FearCommands("pwanted"..players.get_name(pid).." "..menu.get_value(FearWantedValue))
@@ -995,7 +995,7 @@
                     end
                 end)
 
-                FearVehicleSess:action("Summon Adder", {}, "Spawn everyone Adder", function ()
+                FearVehicleSess:action("Adder Land", {}, "Spawn everyone Adder", function ()
                     local function upgrade_vehicle(vehicle)
                         VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
                         if FearPlateName == nil then
@@ -1033,7 +1033,7 @@
                     end
                 end)
 
-                FearVehicleSess:action("Summon Oppressor MK2", {}, "Spawn everyone Oppressor MK2", function ()
+                FearVehicleSess:action("Summon Oppressor MK2", {}, "Spawn everyone Oppressor", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
@@ -1066,7 +1066,7 @@
                     end
                 end)
 
-                FearVehicleSess:action("Summon Leopard 2A (Rhino)", {}, "Spawn everyone Leopard 2A (Rhino)", function ()
+                FearVehicleSess:action("Summon Leopard 2A (Rhino)", {}, "Spawn everyone Tank", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
