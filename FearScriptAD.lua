@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.25.6"
+    local FearVersion = "0.25.7"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -818,17 +818,31 @@
             FearSessionL:divider("FearSession Advanced")
             player_count = FearSessionL:divider(get_player_count())
 
-                FearSessionL:action("Find Public Session (Max)", {}, "Go to Public Session", function()
+            local function RNGCount(min, max)
+                return math.random(min, max)
+            end
+
+                FearSessionL:action("Find Public Session (Max)", {"fearsessmax"}, "Go to Public Session", function()
                     FearCommands("go public")
-                    FearCommands("playermagnet 28")
-                    FearToast(FearScriptNotif.."\nEnjoy to find the session fully.")
+                    local playerCount = RNGCount(16, 30)
+                    FearCommands("playermagnet " ..playerCount)
+                    FearToast(FearScriptNotif.."\nYou will gonna join the session approximately atleast: "..playerCount.." players. (Not Precise, Remember)")
                     FearTime()
                 end)
 
-                FearSessionL:action("Find Public Session (Less)", {}, "Go to Public Session", function()
+                FearSessionL:action("Find Public Session (Less)", {"fearsessless"}, "Go to Public Session", function()
                     FearCommands("go public")
-                    FearCommands("playermagnet 5")
-                    FearToast(FearScriptNotif.."\nEnjoy to find the session less.")
+                    local playerCount = RNGCount(1, 10)
+                    FearCommands("playermagnet " ..playerCount)
+                    FearToast(FearScriptNotif.."\nYou will gonna join the session approximately atleast: "..playerCount.." players. (Not Precise, Remember)")
+                    FearTime()
+                end)
+
+                FearSessionL:action("Find Random Session", {"fearrandsess"}, "Go to Public Session", function()
+                    FearCommands("go public")
+                    local playerCount = RNGCount(1, 29)
+                    FearCommands("playermagnet " ..playerCount)
+                    FearToast(FearScriptNotif.."\nYou will gonna join the session approximately atleast: "..playerCount.." players. (Not Precise, Remember)")
                     FearTime()
                 end)
 
