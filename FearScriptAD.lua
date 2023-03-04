@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.25"
+    local FearVersion = "0.25.1"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1164,7 +1164,7 @@
                 current_sound_handle = FearPlaySound(sound_location, SND_FILENAME | SND_ASYNC)
             end
             
-            FearStandify:list_action("Saved Playlists", {}, "WARNING: Heavy folder, so check if you have big storage, atleast average .wav file: 25-100 MB.", FearStandifyFiles, function(selected_index)
+            FearStandify:list_action("Saved Playlists", {'fplay'}, "WARNING: Heavy folder, so check if you have big storage, atleast average .wav file: 25-100 MB.", FearStandifyFiles, function(selected_index)
                 local selected_file = FearStandifyFiles[selected_index]
                 for _, song in ipairs(FearStandifyLoadedSongs) do
                     if song.file == selected_file then
@@ -1208,7 +1208,7 @@
                 end
             end
 
-            FearStandify:action("Play Random Music", {'fstandifyrandom'}, "Play a random music.\nNOTE: You have each interval to click the action to select random music.", function(selected_index)
+            FearStandify:action("Play Random Music", {'fstandrand'}, "Play a random music.\nNOTE: You have each interval to click the action to select random music.", function(selected_index)
                 FearStandifyAuto()
             end)
 
@@ -1217,7 +1217,7 @@
             ---     Automatically end the musics while playing.
             ----================================================----
 
-            FearStandify:action("Stop Music", {'fstandifystop'}, "It will stop your music instantly.\nNOTE: Don't delete the folder called Stop Sounds, music won't stop and looped. Don't rename file.", function(selected_index) -- Force automatically stop your musics
+            FearStandify:action("Stop Music", {'fstandstop'}, "It will stop your music instantly.\nNOTE: Don't delete the folder called Stop Sounds, music won't stop and looped. Don't rename file.", function(selected_index) -- Force automatically stop your musics
                 local sound_location_1 = join_path(script_store_dir_stop, "stop.wav")
                 if not filesystem.exists(sound_location_1) then
                     FearToast(FearScriptStandify.."\nMusic file does not exist: " .. sound_location_1.. "\n\nNOTE: You need to get the file, otherwise you can't stop the sound.")
@@ -1352,7 +1352,7 @@
             end)
 
             FearRemoverCash = FearMiscs:slider("Choose Value Money", {"fearrm"}, "", 0, 2147483647, 0, 1, function()end)
-            FearWF = FearMiscs:action("Money Remover Tool", {}, "", function(type)
+            FearWF = FearMiscs:action("Money Remover Tool", {}, "READ THIS: You really need Ballistic Armor to do this action.\nNOTE: Without Ballistic Armor, you will not able to remove your own modded money or legitimate money.", function(type)
                 menu.show_warning(FearWF, type, "Do you really want remove the money?\nNOTE: You will able to remove your own modded money. This action is irreversible.", function()
                 SET_INT_GLOBAL(262145 + 20288, menu.get_value(FearRemoverCash))
                 end)
@@ -2345,4 +2345,5 @@ end
 util.on_stop(function()
     local sound_location_1 = join_path(script_store_dir_stop, "stop.wav")
     FearPlaySound(sound_location_1, SND_FILENAME | SND_ASYNC)
+    SET_INT_GLOBAL(262145 + 20288, 5000)
 end)
