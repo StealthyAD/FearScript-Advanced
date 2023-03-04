@@ -879,6 +879,7 @@
                 end)
                 local FearBountySess = FearSessionL:list("Bounty Features")
                 local FearWantedSess = FearSessionL:list("Wanted Features")
+                local FearVehicleSess = FearSessionL:list("Vehicles Features")
 
             ----=====================================================----
             ---                 Bounty Features
@@ -946,16 +947,16 @@
             ---     All of the functions, spawning cars, etc...
             ----=====================================================----
 
-                FearSessionL:divider("Vehicle Tweaks")
+                FearVehicleSess:divider("FearVehicle Advanced")
                 local FearPlateName
-                FearToggleGod = FearSessionL:toggle_loop("Toggle Invincible Cars", {'ftoggleinvc'}, "Turn On/Off Invincible Car, exception don't use weaponized weapons, I will not recommend you use.\nNOTE: It will be absurd to enable the features make causing griefing constantly.", function() end)
-                FearToggleCustom = FearSessionL:toggle("Toggle Max Car", {'ftogglemaxc'}, "Toggle On/Off for Maximum Car.", function()end)
-                FearPlateIndex = FearSessionL:slider("Plate Color", {"fplatecolor"}, "Choose Plate Color", 0, 5, 0, 1, function()end)
-                FearSessionL:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.\nWrite 'default' to get revert plate.", function(name)
+                FearToggleGod = FearVehicleSess:toggle_loop("Toggle Invincible Cars", {'ftoggleinvc'}, "Turn On/Off Invincible Car, exception don't use weaponized weapons, I will not recommend you use.\nNOTE: It will be absurd to enable the features make causing griefing constantly.\nNOTE: It will applicable for 'Friendly Features'.", function() end)
+                FearToggleCustom = FearVehicleSess:toggle("Toggle Upgrade Cars", {'ftogglemaxc'}, "Toggle On/Off for Maximum Car.\nNOTE: It will applicable for 'Friendly Features'", function()end)
+                FearPlateIndex = FearVehicleSess:slider("Plate Color", {"fplatecolor"}, "Choose Plate Color", 0, 5, 0, 1, function()end)
+                FearVehicleSess:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.\nWrite 'default' to get revert plate.\nNOTE: It will applicable for 'Friendly Features'.", function(name)
                     FearPlateName = name:sub(1, 8)
                 end)
 
-                FearSessionL:action("Spawn Vehicle", {"fearspawn"}, "Spawn everyone a vehicle.\nNOTE: It will applied also some modification like Plate License (name/color)", function (click_type)
+                FearVehicleSess:action("Spawn Vehicle", {"fearspawn"}, "Spawn everyone a vehicle.\nNOTE: It will applied also some modification like Plate License (name/color)", function (click_type)
                     menu.show_command_box_click_based(click_type, "fearspawn ")
                 end,
                 function (txt)
@@ -994,7 +995,7 @@
                     end
                 end)
 
-                FearSessionL:action("Adder Land", {"fearadder"}, "Spawn everyone Adder", function ()
+                FearVehicleSess:action("Adder Land", {"fearadder"}, "Spawn everyone Adder", function ()
                     local function upgrade_vehicle(vehicle)
                         VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
                         if FearPlateName == nil then
@@ -1032,7 +1033,7 @@
                     end
                 end)
 
-                FearSessionL:action("Oppresor Land", {"fearoppressorland"}, "Spawn everyone OppressorLand", function ()
+                FearVehicleSess:action("Oppresor Land", {"fearoppressorland"}, "Spawn everyone OppressorLand", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
@@ -1065,7 +1066,7 @@
                     end
                 end)
 
-                FearSessionL:action("Tankman Summon", {"feartankman"}, "Spawn everyone Tank", function ()
+                FearVehicleSess:action("Tankman Summon", {"feartankman"}, "Spawn everyone Tank", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
@@ -1098,7 +1099,7 @@
                     end
                 end)
 
-                FearSessionL:action("Dogfight Summon", {"feardogplane"}, "Spawn everyone Lazer", function ()
+                FearVehicleSess:action("Dogfight Summon", {"feardogplane"}, "Spawn everyone Lazer", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
