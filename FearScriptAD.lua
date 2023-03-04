@@ -832,7 +832,7 @@
 
                 FearSessionL:action("Find Public Session (Less)", {"fearsessless"}, "Go to Public Session", function()
                     FearCommands("go public")
-                    local playerCount = RNGCount(1, 10)
+                    local playerCount = RNGCount(1, 15)
                     FearCommands("playermagnet " ..playerCount)
                     FearToast(FearScriptNotif.."\nYou will gonna join the session approximately atleast: "..playerCount.." players. (Not Precise, Remember)")
                     FearTime()
