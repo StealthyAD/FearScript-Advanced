@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.26.5"
+    local FearVersion = "0.26.6"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -878,7 +878,6 @@
                     FearToggleSelf = on == false
                 end)
                 local FearBountySess = FearSessionL:list("Bounty Features")
-                local FearWantedSess = FearSessionL:list("Wanted Features")
                 local FearVehicleSess = FearSessionL:list("Vehicles Features")
 
             ----=====================================================----
@@ -906,41 +905,6 @@
                         end
                         util.yield(1000)
                     end, nil, nil, COMMANDPERM_RUDE)
-
-            ----=====================================================----
-            ---                 Wanted Features
-            ---     All of the functions, Wanted Functions
-            ----=====================================================----
-
-                    FearWantedSess:divider("FearWanted Advanced")
-                    FearWantedValue = FearWantedSess:slider("Wanted Value", {}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function()end)
-                    
-                    FearWantedSess:toggle("Auto Wanted", {"fearautowt"}, "Put everyone automatically Cops to all players." ,function()
-                        for _,pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.set_wanted_level(pid, menu.get_value(FearWantedValue)) ~= FearWantedValue and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                FearCommands("pwanted"..players.get_name(pid).." "..menu.get_value(FearWantedValue))
-                            end
-                        end
-                        FearTime(1000)
-                    end)
-
-                    FearWantedSess:action("Manual Wanted", {}, "Put everyone manually Cops to all players." ,function()
-                        for _,pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.set_wanted_level(pid, menu.get_value(FearWantedValue)) ~= FearWantedValue and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                FearCommands("pwanted"..players.get_name(pid).." "..menu.get_value(FearWantedValue))
-                            end
-                        end
-                        FearTime(1000)
-                    end, nil, nil, COMMANDPERM_RUDE)
-
-                    FearWantedSess:action("Never Wanted", {}, "Put everyone manually No Cops to all players." ,function()
-                        for _,pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.set_wanted_level(pid, menu.get_value(FearWantedValue)) ~= FearWantedValue and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                FearCommands("pwanted"..players.get_name(pid).." 0")
-                            end
-                        end
-                        FearTime(1000)
-                    end, nil, nil, COMMANDPERM_FRIENDLY)
 
             ----=====================================================----
             ---                 Vehicle Tweaks
@@ -1212,6 +1176,15 @@
                 for _, pid in pairs(players.list(FearToggleSelf)) do
                     if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                         FearCommands("aptme"..players.get_name(pid))
+                        end
+                    end
+                end)
+
+                FearSessionL:action("Random Teleport", {'feartprand'}, "Teleport the entire session into random Appartment?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function()
+                local FearAPPRand = RNGCount(1, 114)
+                for _, pid in pairs(players.list(FearToggleSelf)) do
+                    if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                        FearCommands("apt"..FearAPPRand..players.get_name(pid))
                         end
                     end
                 end)
