@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.26.6"
+    local FearVersion = "0.26.7"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.4
@@ -1698,7 +1698,7 @@
                 FearTime(150)
             end)
             FearGriefingList:divider("Vehicle Tweaks")
-            FearGriefingList:action("Summon Cargo Plane", {"fearcargoplane"}, "Spawn Big Cargo for "..FearPlayerName.."\nNOTE: Spawning Cargo Plane yourself will result to spawning only One Cargo Plane.\nSpawning Cargo Plane to "..FearPlayerName.." will create +50 entites Cargo Plane.", function ()
+            FearGriefingList:action("Summon Cargo Plane", {"fearcargoplane"}, "Spawn Big Cargo for "..FearPlayerName.."\nSpawning Cargo Plane to "..FearPlayerName.." will create +50 entites Cargo Plane.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
                         local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
@@ -1714,6 +1714,13 @@
                     if not STREAMING.HAS_MODEL_LOADED(hash) then
                         load_model(hash)
                     end
+
+                    FearSpam = 400
+                    while FearSpam >= 1 do
+                        entities.create_vehicle(hash, c, 0)
+                        FearSpam = FearSpam - 1
+                        util.yield(10)
+                    end
                 
                     local cargoplane = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
                 
@@ -1725,7 +1732,7 @@
                 end
             end, nil, nil, COMMANDPERM_RUDE)
 
-            FearGriefingList:action("Summon Boeing", {"fearboeing"}, "Spawn Big Boeing 747 for "..FearPlayerName.."\nNOTE: Spawning Boeing 747 yourself will result to spawning only Boeing 747.\nSpawning Boeing to "..FearPlayerName.." will create +50 entites Boeing 747.", function ()
+            FearGriefingList:action("Summon Boeing", {"fearboeing"}, "Spawn Big Boeing 747 for "..FearPlayerName.."\nSpawning Boeing to "..FearPlayerName.." will create +50 entites Boeing 747.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
                         local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
@@ -1741,6 +1748,13 @@
                     if not STREAMING.HAS_MODEL_LOADED(hash) then
                         load_model(hash)
                     end
+
+                    FearSpam = 400
+                    while FearSpam >= 1 do
+                        entities.create_vehicle(hash, c, 0)
+                        FearSpam = FearSpam - 1
+                        util.yield(10)
+                    end
                 
                     local boeing = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
                 
@@ -1748,6 +1762,74 @@
                 end
                 for k,v in pairs(players.list(true, true, true)) do
                     give_boeing(pid)
+                    util.yield()
+                end
+            end, nil, nil, COMMANDPERM_RUDE)
+
+            FearGriefingList:action("Summon B-1B Lancer", {"fearlancer"}, "Spawn Mass B-1B Lancer for "..FearPlayerName.."\nSpawning B-1B Lancer to "..FearPlayerName.." will create +50 entites B-1B Lancer.", function ()
+                local function upgrade_vehicle(vehicle)
+                    for i = 0, 49 do
+                        local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                        VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                    end
+                end
+                local function give_lancer(pid)
+                    local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                    local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                
+                    local hash = util.joaat("alkonost")
+                
+                    if not STREAMING.HAS_MODEL_LOADED(hash) then
+                        load_model(hash)
+                    end
+
+                    FearSpam = 400
+                    while FearSpam >= 1 do
+                        entities.create_vehicle(hash, c, 0)
+                        FearSpam = FearSpam - 1
+                        util.yield(10)
+                    end
+                
+                    local lancer = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+                
+                    upgrade_vehicle(lancer)
+                end
+                for k,v in pairs(players.list(true, true, true)) do
+                    give_lancer(pid)
+                    util.yield()
+                end
+            end, nil, nil, COMMANDPERM_RUDE)
+
+            FearGriefingList:action("Summon Leopard 2A", {"fearleo"}, "Spawn Mass Leopard Tank for "..FearPlayerName.."\nSpawning Leopard 2A to "..FearPlayerName.." will create +50 entites Leopard 2A.", function ()
+                local function upgrade_vehicle(vehicle)
+                    for i = 0, 49 do
+                        local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                        VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                    end
+                end
+                local function give_leopard(pid)
+                    local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                    local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                
+                    local hash = util.joaat("rhino")
+                
+                    if not STREAMING.HAS_MODEL_LOADED(hash) then
+                        load_model(hash)
+                    end
+
+                    FearSpam = 1000
+                    while FearSpam >= 1 do
+                        entities.create_vehicle(hash, c, 0)
+                        FearSpam = FearSpam - 1
+                        util.yield(10)
+                    end
+                
+                    local leopard = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+                
+                    upgrade_vehicle(leopard)
+                end
+                for k,v in pairs(players.list(true, true, true)) do
+                    give_leopard(pid)
                     util.yield()
                 end
             end, nil, nil, COMMANDPERM_RUDE)
