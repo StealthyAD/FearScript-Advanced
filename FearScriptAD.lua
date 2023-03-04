@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.25.1"
+    local FearVersion = "0.25.2"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1100,6 +1100,15 @@
                     end
                 end)
 
+                FearSessionL:action("Manual Teleport", {"feartpme"}, "Teleport the entire session?\nNOTE: It may be detected by any modders and may karma you.\nAlternative to Stand Features but may not karma you.",function()
+                local FearToggleSelf_tp = false
+                for _, pid in pairs(players.list(FearToggleSelf_tp)) do
+                    if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                        FearCommands("aptme"..players.get_name(pid))
+                        end
+                    end
+                end)
+
             --------------------------------------------------------------------------------------
 
             local FearStandID = FearPath("Online>Protections>Detections>Stand User Identification")
@@ -1164,7 +1173,7 @@
                 current_sound_handle = FearPlaySound(sound_location, SND_FILENAME | SND_ASYNC)
             end
             
-            FearStandify:list_action("Saved Playlists", {'fplay'}, "WARNING: Heavy folder, so check if you have big storage, atleast average .wav file: 25-100 MB.", FearStandifyFiles, function(selected_index)
+            FearStandify:list_action("Saved Playlists", {}, "WARNING: Heavy folder, so check if you have big storage, atleast average .wav file: 25-100 MB.", FearStandifyFiles, function(selected_index)
                 local selected_file = FearStandifyFiles[selected_index]
                 for _, song in ipairs(FearStandifyLoadedSongs) do
                     if song.file == selected_file then
@@ -1286,7 +1295,7 @@
             SET_INT_GLOBAL(262145 + 30187, 60000)
         end)
     
-        FearCruiseMissile:action("Execute Cruise Missile", {"fcruisemissilefire"}, "NOTE: For indication detection, it tells you according to the range of the missile.\n\n- 2 to 4 Km - Short Missile\n- 4 to 6 Km - Standard Missile\n- 6 to 10 Km - Medium Missile\n- 10 to 19 Km - Long Range Missile\n- Superior than 20 Km - Extra Long Range Missile\n\nWARNING: Changing the session will put your Cruise Missile to Default State.", function()
+        FearCruiseMissile:action("Execute Cruise Missile", {}, "NOTE: For indication detection, it tells you according to the range of the missile.\n\n- 2 to 4 Km - Short Missile\n- 4 to 6 Km - Standard Missile\n- 6 to 10 Km - Medium Missile\n- 10 to 19 Km - Long Range Missile\n- Superior than 20 Km - Extra Long Range Missile\n\nWARNING: Changing the session will put your Cruise Missile to Default State.", function()
             SET_INT_GLOBAL(262145 + 30188, menu.get_value(FearCruiseMissileRange) * 1000)
     
             if menu.get_value(FearCruiseMissileRange) >= 20 then -- Extra Long Range Range Missile
