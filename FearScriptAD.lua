@@ -887,7 +887,7 @@
 
                     local FearBountySess_value = 0
                     FearBountySess:divider("FearBounty Advanced")
-                    FearBountySess:slider("Bounty Value",{"fearbounty"}, "Chose the amount of the bounty offered automatically.", 0, 10000, 0 , 1, function(value)
+                    FearBountySess:slider("Bounty Value",{"fearbountys"}, "Chose the amount of the bounty offered automatically.", 0, 10000, 0 , 1, function(value)
                         FearBountySess_value = value
                     end)
                     
