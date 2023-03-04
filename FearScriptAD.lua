@@ -23,7 +23,6 @@
     local FearRoot = menu.my_root()
     local FearVersion = "0.26.6"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
-    local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.4
     local FearToast = util.toast
