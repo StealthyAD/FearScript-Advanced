@@ -1171,11 +1171,7 @@
                     FearTime(100)
                 end)
 
-                FearSessionL:toggle("Riot Mode", {"feartwd"}, "Put Riot Mode to everyone.",function(on)
-                for _, pid in pairs(players.list(FearToggleSelf)) do
-                    MISC.SET_RIOT_MODE_ENABLED(on)
-                    end
-                end)
+                FearSessionL:toggle("Riot Mode", {"feartwd"}, "Put Riot Mode to everyone.\nMake sure you don't wanna live this shit world.", function(toggle) MISC.SET_RIOT_MODE_ENABLED(toggle)end)
 
                 if menu.get_edition() >= 3 then
                     local FearToggleSelf_mugger = false
