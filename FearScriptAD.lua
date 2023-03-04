@@ -230,6 +230,33 @@
             end
         return plate
     end
+
+    local function show_custom_rockstar_alert(l1)
+        poptime = os.time()
+        while true do
+            if PAD.IS_CONTROL_JUST_RELEASED(18, 18) then
+                if os.time() - poptime > 0.1 then
+                    break
+                end
+            end
+            native_invoker.begin_call()
+            native_invoker.push_arg_string("ALERT")
+            native_invoker.push_arg_string("JL_INVITE_ND")
+            native_invoker.push_arg_int(2)
+            native_invoker.push_arg_string("")
+            native_invoker.push_arg_bool(true)
+            native_invoker.push_arg_int(-1)
+            native_invoker.push_arg_int(-1)
+            -- line here
+            native_invoker.push_arg_string(l1)
+            -- optional second line here
+            native_invoker.push_arg_int(0)
+            native_invoker.push_arg_bool(true)
+            native_invoker.push_arg_int(0)
+            native_invoker.end_call("701919482C74B5AB")
+            util.yield()
+        end
+    end
     
     ------=============================------
     ---   FearScript Advanced Functions
