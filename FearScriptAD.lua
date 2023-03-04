@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.25.8"
+    local FearVersion = "0.25.9"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -966,6 +966,41 @@
                     end
                 end)
 
+                FearSessionL:action("Adder Land", {"fearadder"}, "Spawn everyone Adder", function ()
+                    local function upgrade_vehicle(vehicle)
+                        for i = 0, 49 do
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
+                            if FearPlateName == nil then
+                                VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
+                            else
+                                VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+                            end
+                        end
+                    end
+                    local function give_adderl(pid)
+                        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                    
+                        local hash = util.joaat("adder")
+                    
+                        if not STREAMING.HAS_MODEL_LOADED(hash) then
+                            load_model(hash)
+                        end
+                    
+                        local adder1 = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+                    
+                        upgrade_vehicle(adder1)
+                    end
+                    for k,v in pairs(players.list(true, true, true)) do
+                        ENTITY.SET_ENTITY_INVINCIBLE(adder1, menu.get_value(FearToggleGod))
+                        give_adderl(v)
+                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Adder Party'.")
+                        util.yield()
+                    end
+                end)
+
                 FearSessionL:action("Oppresor Land", {"fearoppressorland"}, "Spawn everyone OppressorLand", function ()
                     local function upgrade_vehicle(vehicle)
                         for i = 0, 49 do
@@ -988,7 +1023,7 @@
                         upgrade_vehicle(oppressor)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
-                        ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
+                        ENTITY.SET_ENTITY_INVINCIBLE(oppressor, menu.get_value(FearToggleGod))
                         give_oppressor(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Oppressor MK2 Party'.")
                         util.yield()
@@ -1017,7 +1052,7 @@
                         upgrade_vehicle(tank)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
-                        ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
+                        ENTITY.SET_ENTITY_INVINCIBLE(tank, menu.get_value(FearToggleGod))
                         give_tank(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Rhino Tank'.")
                         util.yield()
@@ -1045,7 +1080,7 @@
                         upgrade_vehicle(lazer)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
-                        ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
+                        ENTITY.SET_ENTITY_INVINCIBLE(lazer, menu.get_value(FearToggleGod))
                         give_plane(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'P-996 Lazer'.")
                         util.yield()
@@ -1545,7 +1580,7 @@
             ENTITY.SET_ENTITY_INVINCIBLE(oppressor)
                 upgrade_vehicle(oppressor)
             end
-                ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
+                ENTITY.SET_ENTITY_INVINCIBLE(oppressor, menu.get_value(FearToggleGod))
                 give_ind_oppressor(pid)
                 util.yield()
             end)
@@ -1574,7 +1609,7 @@
             ENTITY.SET_ENTITY_INVINCIBLE(adder)
                 upgrade_vehicle(adder)
             end
-                ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
+                ENTITY.SET_ENTITY_INVINCIBLE(adder, menu.get_value(FearToggleGod))
                 give_adder(pid)
                 util.yield()
             end)
