@@ -1138,7 +1138,7 @@
             ----=====================================================----
 
                 FearSessionL:divider("Game Tweaks")
-                FearSessionL:toggle_loop("Disarm all Weapons Permanently",{'feardisarmall'}, "Disarm weapon entirely in the session?\nNOTE: It may cause crash sometimes, be careful",function()
+                FearSessionL:toggle_loop("Disarm all Weapons Permanently",{'feardisarmall'}, "Disarm weapon entirely in the session?\nNOTE: It may cause crash sometimes, be careful.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             FearCommands("disarm"..players.get_name(pid))
@@ -1149,7 +1149,7 @@
                     util.yield(5000)
                 end)
 
-                FearSessionL:toggle_loop("Loop Explode All Session",{'fearexplodeall'}, "Explode the entire session?\nNOTE: It may be detected by any modders and may karma you.",function()
+                FearSessionL:toggle_loop("Loop Explode All Session",{'fearexplodeall'}, "Explode the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             FearCommands("explode"..players.get_name(pid))
@@ -1160,7 +1160,7 @@
                     util.yield(5000)
                 end)
 
-                FearSessionL:toggle_loop("Ukraine Alarm Loop",{'fearukraineall'}, "Put Ukraine Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.",function()
+                FearSessionL:toggle_loop("Ukraine Alarm Loop",{'fearukraineall'}, "Put Ukraine Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
@@ -1203,7 +1203,7 @@
                     end
                 end)
 
-                FearSessionL:action("Earrape Session", {}, "Put Earrape Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.",function()
+                FearSessionL:action("Earrape Session", {}, "Put Earrape Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for i = 0, 100 do
                         for _, pid in pairs(players.list(FearToggleSelf)) do
                             local player_pos = players.get_position(pid)
@@ -1212,7 +1212,7 @@
                     end
                 end)
 
-                FearSessionL:action("Manual Teleport", {"feartpall"}, "Teleport the entire session?\nNOTE: You will be teleported too if you don't enable 'Exclude Self', be careful.\nAlternative to Stand Features but may not karma you.",function()
+                FearSessionL:action("Manual Teleport", {"feartpall"}, "Teleport the entire session?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                 for _, pid in pairs(players.list(FearToggleSelf)) do
                     if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                         FearCommands("aptme"..players.get_name(pid))
