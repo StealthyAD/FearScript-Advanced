@@ -1173,18 +1173,9 @@
 
                 FearSessionL:action("Random Teleport Homogenous", {'feartprandho'}, "Teleport the entire session into random apartment?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function()
                     local FearAPPRand = RNGCount(1, 114)
-                    for _, pid in pairs(players.list(FearToggleSelf)) do
-                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                            FearCommands("apt"..FearAPPRand..players.get_name(pid))
-                            end
-                        end
-                    end)
-
-                FearSessionL:action("Random Teleport Homogenous", {'feartprandho'}, "Teleport the entire session into random apartment?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function()
-                    local FearAPPRand = RNGCount(1, 114)
-                    for _, pid in pairs(players.list(FearToggleSelf)) do
-                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                            FearCommands("apt"..FearAPPRand..players.get_name(pid))
+                        for _, pid in pairs(players.list(FearToggleSelf)) do
+                            if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("apt"..FearAPPRand..players.get_name(pid))
                             end
                         end
                     end)
