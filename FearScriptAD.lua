@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.26.7"
+    local FearVersion = "0.26.8"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.4
@@ -1179,11 +1179,17 @@
                     end
                 end)
 
-                FearSessionL:action("Random Teleport", {'feartprand'}, "Teleport the entire session into random Appartment?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function()
-                local FearAPPRand = RNGCount(1, 114)
-                for _, pid in pairs(players.list(FearToggleSelf)) do
-                    if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                        FearCommands("apt"..FearAPPRand..players.get_name(pid))
+                FearSessionL:action("Random Teleport", {'feartprand'}, "Teleport each player in the session to a random apartment?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function()
+                local assignedApartments = {}
+                    for _, pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            local FearAPPRand
+                            repeat
+                                FearAPPRand = RNGCount(1, 114)
+                            until not assignedApartments[FearAPPRand]
+                
+                            assignedApartments[FearAPPRand] = true
+                            FearCommands("apt"..FearAPPRand..players.get_name(pid))
                         end
                     end
                 end)
