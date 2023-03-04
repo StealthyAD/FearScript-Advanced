@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.25.2b"
+    local FearVersion = "0.25.4"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -914,6 +914,7 @@
 
                 FearSessionL:divider("Vehicle Tweaks")
                 local FearPlateName
+                FearToggleGod = FearSessionL:toggle_loop("Toggle Invincible while Summon", {'ftoggleinvc'}, "Turn On/Off Invincible Car, exception don't use weaponized weapons, I will not recommend you use.\nNOTE: It will be absurd to enable the features make causing griefing constantly.", function() end)
                 FearPlateIndex = FearSessionL:slider("Plate Color", {"fplatecolor"}, "Choose Plate Color", 0, 5, 0, 1, function()end)
                 FearSessionL:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.\nWrite 'default' to get revert plate.", function(name)
                     FearPlateName = name:sub(1, 8)
@@ -943,6 +944,7 @@
                         local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
                     
                         local vehicle = entities.create_vehicle(hash, c, 0)
+                        ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
                         upgrade_vehicle(vehicle)
                         request_control_of_entity(vehicle)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone.")
@@ -972,6 +974,7 @@
                         upgrade_vehicle(oppressor)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
+                        ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
                         give_oppressor(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Oppressor MK2 Party'.")
                         util.yield()
@@ -1000,6 +1003,7 @@
                         upgrade_vehicle(tank)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
+                        ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
                         give_tank(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Rhino Tank'.")
                         util.yield()
@@ -1027,6 +1031,7 @@
                         upgrade_vehicle(lazer)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
+                        ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
                         give_plane(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'P-996 Lazer'.")
                         util.yield()
@@ -1420,12 +1425,12 @@
 
             FearFriendlyList:divider("FearFriendly Advanced")
             FearFriendlyList:divider("Main Tweaks")
-            FearFriendlyList:action("Unstuck Loading Screen", {"fearunlock"}, "Unstuck "..FearPlayerName.." to the clouds or something else could be affect the session.", function()
+            FearFriendlyList:action("Unstuck Loading Screen", {"fearuls"}, "Unstuck "..FearPlayerName.." to the clouds or something else could be affect the session.", function()
                 FearCommands("givesh"..FearPlayerName)
                 FearCommands("aptme"..FearPlayerName)
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
-            FearFriendlyList:toggle("Infinite Ammo", {"fearammo"}, "Give Infinite Ammo to "..FearPlayerName.." to help to fire constantly his guns.", function()
+            FearFriendlyList:toggle("Infinite Ammo", {"fearbottomammo"}, "Give Infinite Ammo to "..FearPlayerName.." to help to fire constantly his guns.", function()
                 if FearSession() then
                     if players.get_name(pid) then
                         FearCommands("ammo"..FearPlayerName)
@@ -1443,12 +1448,11 @@
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
             FearFriendlyList:divider("Vehicle Tweaks")
-            FearFriendlyList:action("Spawn vehicle", {"fearspv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
-            menu.show_command_box_click_based(click_type, "fearspv" .. FearPlayerName .. " ")end,
+            FearFriendlyList:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
+            menu.show_command_box_click_based(click_type, "fearspawnv" .. FearPlayerName .. " ")end,
             function(txt)
                 local function platechanger(vehicle)
                     for i = 0, 49 do
-			VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
                         if FearPlateName == nil then
                             VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
                         else
@@ -1465,6 +1469,7 @@
                     load_model(hash)
                 end
                 local vehicle = entities.create_vehicle(hash, c, 0)
+                ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
                 platechanger(vehicle)
                 request_control_of_entity(vehicle)
             end)
@@ -1484,8 +1489,10 @@
                 load_model(hash)
             end
             local oppressor = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+            ENTITY.SET_ENTITY_INVINCIBLE(oppressor)
                 upgrade_vehicle(oppressor)
             end
+                ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
                 give_ind_oppressor(pid)
                 util.yield()
             end)
@@ -1511,8 +1518,10 @@
                 load_model(hash)
             end
             local adder = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-            upgrade_vehicle(adder)
+            ENTITY.SET_ENTITY_INVINCIBLE(adder)
+                upgrade_vehicle(adder)
             end
+                ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
                 give_adder(pid)
                 util.yield()
             end)
