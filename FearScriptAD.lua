@@ -921,7 +921,7 @@
                         FearTime(1000)
                     end, nil, nil, COMMANDPERM_FRIENDLY)
 
-            ----=====================================================----
+ 	    ----=====================================================----
             ---                 Vehicle Tweaks
             ---     All of the functions, spawning cars, etc...
             ----=====================================================----
@@ -990,11 +990,10 @@
                         end
                     
                         local adder1 = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-                    
+                        ENTITY.SET_ENTITY_INVINCIBLE(adder1, menu.get_value(FearToggleGod))
                         upgrade_vehicle(adder1)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
-                        ENTITY.SET_ENTITY_INVINCIBLE(adder1, menu.get_value(FearToggleGod))
                         give_adderl(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Adder Party'.")
                         util.yield()
@@ -1019,11 +1018,10 @@
                         end
                     
                         local oppressor = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-                    
+                        ENTITY.SET_ENTITY_INVINCIBLE(oppressor, menu.get_value(FearToggleGod))
                         upgrade_vehicle(oppressor)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
-                        ENTITY.SET_ENTITY_INVINCIBLE(oppressor, menu.get_value(FearToggleGod))
                         give_oppressor(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Oppressor MK2 Party'.")
                         util.yield()
@@ -1048,11 +1046,10 @@
                         end
                     
                         local tank = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-                    
+                        ENTITY.SET_ENTITY_INVINCIBLE(tank, menu.get_value(FearToggleGod))
                         upgrade_vehicle(tank)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
-                        ENTITY.SET_ENTITY_INVINCIBLE(tank, menu.get_value(FearToggleGod))
                         give_tank(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Rhino Tank'.")
                         util.yield()
@@ -1077,10 +1074,10 @@
                         end
                     
                         local lazer = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
+                        ENTITY.SET_ENTITY_INVINCIBLE(lazer, menu.get_value(FearToggleGod))
                         upgrade_vehicle(lazer)
                     end
                     for k,v in pairs(players.list(true, true, true)) do
-                        ENTITY.SET_ENTITY_INVINCIBLE(lazer, menu.get_value(FearToggleGod))
                         give_plane(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'P-996 Lazer'.")
                         util.yield()
