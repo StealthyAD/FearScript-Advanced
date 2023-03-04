@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.26"
+    local FearVersion = "0.26.1"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -941,7 +941,7 @@
                         FearTime(1000)
                     end, nil, nil, COMMANDPERM_FRIENDLY)
 
- 	    ----=====================================================----
+            ----=====================================================----
             ---                 Vehicle Tweaks
             ---     All of the functions, spawning cars, etc...
             ----=====================================================----
@@ -949,6 +949,7 @@
                 FearSessionL:divider("Vehicle Tweaks")
                 local FearPlateName
                 FearToggleGod = FearSessionL:toggle_loop("Toggle Invincible Cars", {'ftoggleinvc'}, "Turn On/Off Invincible Car, exception don't use weaponized weapons, I will not recommend you use.\nNOTE: It will be absurd to enable the features make causing griefing constantly.", function() end)
+                FearToggleCustom = FearSessionL:toggle("Toggle Max Car", {'ftogglemaxc'}, "Toggle On/Off for Maximum Car.", function()end)
                 FearPlateIndex = FearSessionL:slider("Plate Color", {"fplatecolor"}, "Choose Plate Color", 0, 5, 0, 1, function()end)
                 FearSessionL:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.\nWrite 'default' to get revert plate.", function(name)
                     FearPlateName = name:sub(1, 8)
@@ -964,13 +965,20 @@
                         load_model(hash)
                     end
                     local function upgrade_vehicle(vehicle)
-                        for i = 0, 49 do
-                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
-                            if FearPlateName == nil then
-                                VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
-                            else
-                                VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+                        if menu.get_value(FearToggleCustom) == true then
+                            for i = 0,49 do
+                                local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                                VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
                             end
+                        else
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
+                        end
+                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
+                        if FearPlateName == nil then
+                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
+                        else
+                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
                         end
                     end
                     for k,v in pairs(players.list(true, true, true)) do
@@ -988,15 +996,20 @@
 
                 FearSessionL:action("Adder Land", {"fearadder"}, "Spawn everyone Adder", function ()
                     local function upgrade_vehicle(vehicle)
-                        for i = 0, 49 do
-                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
-                            VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
-                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
-                            if FearPlateName == nil then
-                                VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
-                            else
-                                VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
+                        if FearPlateName == nil then
+                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
+                        else
+                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+                        end
+                        if menu.get_value(FearToggleCustom) == true then
+                            for i = 0,49 do
+                                local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                                VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
                             end
+                        else
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
                         end
                     end
                     local function give_adderl(pid)
@@ -1008,7 +1021,6 @@
                         if not STREAMING.HAS_MODEL_LOADED(hash) then
                             load_model(hash)
                         end
-                    
                         local adder1 = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
                         ENTITY.SET_ENTITY_INVINCIBLE(adder1, menu.get_value(FearToggleGod))
                         upgrade_vehicle(adder1)
@@ -1022,9 +1034,14 @@
 
                 FearSessionL:action("Oppresor Land", {"fearoppressorland"}, "Spawn everyone OppressorLand", function ()
                     local function upgrade_vehicle(vehicle)
-                        for i = 0, 49 do
+                        if menu.get_value(FearToggleCustom) == true then
+                            for i = 0,49 do
+                                local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                                VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            end
+                        else
                             local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
-                            VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
                         end
                     end
                     local function give_oppressor(pid)
@@ -1050,9 +1067,14 @@
 
                 FearSessionL:action("Tankman Summon", {"feartankman"}, "Spawn everyone Tank", function ()
                     local function upgrade_vehicle(vehicle)
-                        for i = 0, 49 do
+                        if menu.get_value(FearToggleCustom) == true then
+                            for i = 0,49 do
+                                local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                                VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            end
+                        else
                             local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
-                            VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
                         end
                     end
                     local function give_tank(pid)
@@ -1078,9 +1100,14 @@
 
                 FearSessionL:action("Dogfight Summon", {"feardogplane"}, "Spawn everyone Lazer", function ()
                     local function upgrade_vehicle(vehicle)
-                        for i = 0, 49 do
+                        if menu.get_value(FearToggleCustom) == true then
+                            for i = 0,49 do
+                                local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                                VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            end
+                        else
                             local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
-                            VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
                         end
                     end
                     local function give_plane(pid)
@@ -1100,7 +1127,7 @@
                     for k,v in pairs(players.list(true, true, true)) do
                         give_plane(v)
                         FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'P-996 Lazer'.")
-                        util.yield()
+                        FearTime()
                     end
                 end)
 
@@ -1557,12 +1584,22 @@
             menu.show_command_box_click_based(click_type, "fearspawnv" .. FearPlayerName .. " ")end,
             function(txt)
                 local function platechanger(vehicle)
-                    for i = 0, 49 do
-                        if FearPlateName == nil then
-                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
-                        else
-                            VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+                    VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
+                    if FearPlateName == nil then
+                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
+                    else
+                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+                    end
+                end
+                local function upgradecar(vehicle)
+                    if menu.get_value(FearToggleCustom) == true then
+                        for i = 0,49 do
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
                         end
+                    else
+                        local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                        VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
                     end
                 end
                 local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
@@ -1576,14 +1613,20 @@
                 local vehicle = entities.create_vehicle(hash, c, 0)
                 ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
                 platechanger(vehicle)
+                upgradecar(vehicle)
                 request_control_of_entity(vehicle)
             end)
 
             FearFriendlyList:action("Oppresor Land", {"fearopr"}, "Spawn OppressorLand for "..FearPlayerName, function ()
-            local function upgrade_vehicle(vehicle)
-                for i = 0, 49 do
+            local function upgradecar(vehicle)
+                if menu.get_value(FearToggleCustom) == true then
+                    for i = 0,49 do
+                        local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                        VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                    end
+                else
                     local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
-                    VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                    VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
                 end
             end
             local function give_ind_oppressor(pid)
@@ -1595,7 +1638,7 @@
             end
             local oppressor = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
             ENTITY.SET_ENTITY_INVINCIBLE(oppressor)
-                upgrade_vehicle(oppressor)
+                upgradecar(oppressor)
             end
                 ENTITY.SET_ENTITY_INVINCIBLE(oppressor, menu.get_value(FearToggleGod))
                 give_ind_oppressor(pid)
@@ -1603,16 +1646,23 @@
             end)
 
             FearFriendlyList:action("Adder Race", {"fearadder"}, "Spawn Adder for "..FearPlayerName, function ()
-            local function upgrade_vehicle(vehicle)
-                for i = 0, 49 do
-                    VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
-                    if FearPlateName == nil then
-                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
-                    else
-                        VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+            local function platechanger(vehicle)
+                VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
+                if FearPlateName == nil then
+                    VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearGeneratorPlate())
+                else
+                    VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, FearPlateName)
+                end
+            end
+            local function upgradecar(vehicle)
+                if menu.get_value(FearToggleCustom) == true then
+                    for i = 0,49 do
+                        local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                        VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
                     end
+                else
                     local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
-                    VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                    VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
                 end
             end
             local function give_adder(pid)
@@ -1624,7 +1674,8 @@
             end
             local adder = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
             ENTITY.SET_ENTITY_INVINCIBLE(adder)
-                upgrade_vehicle(adder)
+                upgradecar(adder)
+                platechanger(adder)
             end
                 ENTITY.SET_ENTITY_INVINCIBLE(adder, menu.get_value(FearToggleGod))
                 give_adder(pid)
