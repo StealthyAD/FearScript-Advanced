@@ -814,11 +814,11 @@
                 FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
             end)
             FearVehicles:divider("Vehicle Tweaks")
-            FearVehicles:toggle_loop("Toggle Engine", {'fearturnengine'}, "Cut off/On your Engine", function()
+            FearVehicles:toggle_loop("Toggle Engine", {}, "Cut off/On your Engine", function()
                 FearCommands("turnengineoff")
             end)
 
-            FearVehicles:toggle("Toggle No Traffic", {'ftoggletraffic'}, "Toggle On/Off Traffic if NPC are driving.\nNOTE: It will affects nearby players who drive.\nChanging the session will revert back Normal Traffic NPC.", function(on)
+            FearVehicles:toggle("Toggle No Traffic", {}, "Toggle On/Off Traffic if NPC are driving.\nNOTE: It will affects nearby players who drive.\nChanging the session will revert back Normal Traffic NPC.", function(on)
                 if on then
                     local ped_sphere, traffic_sphere
                     if Fconfig.disable_peds then ped_sphere = 0.0 else ped_sphere = 1.0 end
@@ -849,7 +849,7 @@
                 return math.random(min, max)
             end
 
-                FearSessionL:action("Find Public Session (Max)", {"fearsessmax"}, "Go to Public Session", function()
+                FearSessionL:action("Find Public Session (Max)", {"fearsmax"}, "Go to Public Session", function()
                     FearCommands("go public")
                     local playerCount = RNGCount(16, 30)
                     FearCommands("playermagnet " ..playerCount)
@@ -857,7 +857,7 @@
                     FearTime()
                 end)
 
-                FearSessionL:action("Find Public Session (Less)", {"fearsessless"}, "Go to Public Session", function()
+                FearSessionL:action("Find Public Session (Less)", {"fearsless"}, "Go to Public Session", function()
                     FearCommands("go public")
                     local playerCount = RNGCount(1, 15)
                     FearCommands("playermagnet " ..playerCount)
@@ -865,7 +865,7 @@
                     FearTime()
                 end)
 
-                FearSessionL:action("Find Random Session", {"fearrandsess"}, "Go to Public Session", function()
+                FearSessionL:action("Find Random Session", {"fearsrand"}, "Go to Public Session", function()
                     FearCommands("go public")
                     local playerCount = RNGCount(1, 29)
                     FearCommands("playermagnet " ..playerCount)
@@ -889,7 +889,7 @@
                     FearBountySess:divider("FearBounty Advanced")
                     FearBountyValue = FearBountySess:slider("Bounty Value",{"fearbountys"}, "Chose the amount of the bounty offered automatically.", 0, 10000, 0 , 1, function(value)end)
                     
-                    FearBountySess:toggle("Auto Bounty", {"fearautob"}, "Put everyone automatically Bounty to all players." ,function()
+                    FearBountySess:toggle("Auto Bounty", {}, "Put everyone automatically Bounty to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
                             if FearSession() and players.get_bounty(pid) ~= menu.get_value(FearBountyValue) and players.get_name(pid) ~= "UndiscoveredPlayer" then
                                 FearCommands("bounty"..players.get_name(pid).." "..menu.get_value(FearBountyValue))
@@ -898,7 +898,7 @@
                         util.yield(1000)
                     end)
 
-                    FearBountySess:action("Manual Bounty", {"fearmanualb"}, "Put everyone manually Bounty to all players." ,function()
+                    FearBountySess:action("Manual Bounty", {}, "Put everyone manually Bounty to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
                             if FearSession() and players.get_bounty(pid) ~= menu.get_value(FearBountyValue) and players.get_name(pid) ~= "UndiscoveredPlayer" then
                                 FearCommands("bounty"..players.get_name(pid).." "..menu.get_value(FearBountyValue))
@@ -913,7 +913,7 @@
             ----=====================================================----
 
                     FearWantedSess:divider("FearWanted Advanced")
-                    FearWantedValue = FearWantedSess:slider("Wanted Value", {"fearwanteds"}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function()end)
+                    FearWantedValue = FearWantedSess:slider("Wanted Value", {}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function()end)
                     
                     FearWantedSess:toggle("Auto Wanted", {"fearautowt"}, "Put everyone automatically Cops to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
@@ -924,7 +924,7 @@
                         FearTime(1000)
                     end)
 
-                    FearWantedSess:action("Manual Wanted", {"fearmanualw"}, "Put everyone manually Cops to all players." ,function()
+                    FearWantedSess:action("Manual Wanted", {}, "Put everyone manually Cops to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
                             if FearSession() and players.set_wanted_level(pid, menu.get_value(FearWantedValue)) ~= FearWantedValue and players.get_name(pid) ~= "UndiscoveredPlayer" then
                                 FearCommands("pwanted"..players.get_name(pid).." "..menu.get_value(FearWantedValue))
@@ -933,7 +933,7 @@
                         FearTime(1000)
                     end, nil, nil, COMMANDPERM_RUDE)
 
-                    FearWantedSess:action("Never Wanted", {"fearneverw"}, "Put everyone manually No Cops to all players." ,function()
+                    FearWantedSess:action("Never Wanted", {}, "Put everyone manually No Cops to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
                             if FearSession() and players.set_wanted_level(pid, menu.get_value(FearWantedValue)) ~= FearWantedValue and players.get_name(pid) ~= "UndiscoveredPlayer" then
                                 FearCommands("pwanted"..players.get_name(pid).." 0")
@@ -949,8 +949,8 @@
 
                 FearVehicleSess:divider("FearVehicle Advanced")
                 local FearPlateName
-                FearToggleGod = FearVehicleSess:toggle_loop("Toggle Invincible Cars", {'ftoggleinvc'}, "Turn On/Off Invincible Car, exception don't use weaponized weapons, I will not recommend you use.\nNOTE: It will be absurd to enable the features make causing griefing constantly.\nNOTE: It will applicable for 'Friendly Features'.", function() end)
-                FearToggleCustom = FearVehicleSess:toggle("Toggle Upgrade Cars", {'ftogglemaxc'}, "Toggle On/Off for Maximum Car.\nNOTE: It will applicable for 'Friendly Features'.", function()end)
+                FearToggleGod = FearVehicleSess:toggle_loop("Toggle Invincible Cars", {}, "Turn On/Off Invincible Car, exception don't use weaponized weapons, I will not recommend you use.\nNOTE: It will be absurd to enable the features make causing griefing constantly.\nNOTE: It will applicable for 'Friendly Features'.", function() end)
+                FearToggleCustom = FearVehicleSess:toggle_loop("Toggle Upgrade Cars", {}, "Toggle On/Off for Maximum Car.\nNOTE: It will applicable for 'Friendly Features'.", function()end)
                 FearPlateIndex = FearVehicleSess:slider("Plate Color", {"fplatecolor"}, "Choose Plate Color.\nNOTE: It will applicable for 'Friendly Features'.", 0, 5, 0, 1, function()end)
                 FearVehicleSess:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.\nWrite 'default' to get revert plate.\nNOTE: It will applicable for 'Friendly Features'.", function(name)
                     FearPlateName = name:sub(1, 8)
@@ -995,7 +995,7 @@
                     end
                 end)
 
-                FearVehicleSess:action("Adder Land", {"fearadder"}, "Spawn everyone Adder", function ()
+                FearVehicleSess:action("Adder Land", {}, "Spawn everyone Adder", function ()
                     local function upgrade_vehicle(vehicle)
                         VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
                         if FearPlateName == nil then
@@ -1033,7 +1033,7 @@
                     end
                 end)
 
-                FearVehicleSess:action("Oppresor Land", {"fearoppressorland"}, "Spawn everyone OppressorLand", function ()
+                FearVehicleSess:action("Summon Oppressor MK2", {}, "Spawn everyone Oppressor", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
@@ -1066,7 +1066,7 @@
                     end
                 end)
 
-                FearVehicleSess:action("Tankman Summon", {"feartankman"}, "Spawn everyone Tank", function ()
+                FearVehicleSess:action("Summon Leopard 2A (Rhino)", {}, "Spawn everyone Tank", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
@@ -1099,7 +1099,7 @@
                     end
                 end)
 
-                FearVehicleSess:action("Dogfight Summon", {"feardogplane"}, "Spawn everyone Lazer", function ()
+                FearVehicleSess:action("Summon Dogfight Plane", {}, "Spawn everyone Lazer", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
@@ -1212,7 +1212,7 @@
                     end
                 end)
 
-                FearSessionL:action("Manual Teleport", {"feartpme"}, "Teleport the entire session?\nNOTE: You will be teleported too if you don't enable 'Exclude Self', be careful.\nAlternative to Stand Features but may not karma you.",function()
+                FearSessionL:action("Manual Teleport", {"feartpall"}, "Teleport the entire session?\nNOTE: You will be teleported too if you don't enable 'Exclude Self', be careful.\nAlternative to Stand Features but may not karma you.",function()
                 for _, pid in pairs(players.list(FearToggleSelf)) do
                     if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                         FearCommands("aptme"..players.get_name(pid))
@@ -1398,9 +1398,9 @@
             SET_INT_GLOBAL(262145 + 30188, 4000)
         end)
         
-        FearCruiseMissileRange = FearCruiseMissile:slider("Cruise Missile Range", {"fcruisemissilerange"}, "Make sure you put the limit atleast 99 KM/H (which means 61.5 Miles)\nE.G: you want unlimited range, put the max.", 2, 99, 4, 1, function()end) -- Maximise your chance to hit enemy to high range
+        FearCruiseMissileRange = FearCruiseMissile:slider("Cruise Missile Range", {"fcmr"}, "Make sure you put the limit atleast 99 KM/H (which means 61.5 Miles)\nE.G: you want unlimited range, put the max.", 2, 99, 4, 1, function()end) -- Maximise your chance to hit enemy to high range
 
-        FearCruiseMissile:toggle_loop("Toggle Cooldown Cruise Missile", {'fcruisemissilecooldown'}, EXECUTION_FUNCTION_WORKING(false), function()
+        FearCruiseMissile:toggle_loop("Toggle Cooldown Cruise Missile", {}, EXECUTION_FUNCTION_WORKING(false), function()
             SET_INT_GLOBAL(262145 + 30187, 0)
         end,function()
             SET_INT_GLOBAL(262145 + 30187, 60000)
