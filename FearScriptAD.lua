@@ -1138,7 +1138,7 @@
             ----=====================================================----
 
                 FearSessionL:divider("Game Tweaks")
-                FearSessionL:toggle_loop("Disarm all Weapons Permanently",{'feardisarmall'}, "Disarm weapon entirely in the session?\nNOTE: It may cause crash sometimes, be careful.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
+                FearSessionL:toggle_loop("Disarm all Weapons Permanently",{'feardall'}, "Disarm weapon entirely in the session?\nNOTE: It may cause crash sometimes, be careful.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             FearCommands("disarm"..players.get_name(pid))
@@ -1149,7 +1149,7 @@
                     util.yield(5000)
                 end)
 
-                FearSessionL:toggle_loop("Loop Explode All Session",{'fearexplodeall'}, "Explode the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
+                FearSessionL:toggle_loop("Loop Explode All Session",{'feareall'}, "Explode the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             FearCommands("explode"..players.get_name(pid))
@@ -1160,7 +1160,7 @@
                     util.yield(5000)
                 end)
 
-                FearSessionL:toggle_loop("Ukraine Alarm Loop",{'fearukraineall'}, "Put Ukraine Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
+                FearSessionL:toggle_loop("Ukraine Alarm Loop",{'fearaall'}, "Put Ukraine Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
@@ -1171,7 +1171,7 @@
                     FearTime(100)
                 end)
 
-                FearSessionL:toggle("Riot Mode", {"feartwd"}, "Put Riot Mode to everyone.\nMake sure you don't wanna live this shit world.", function(toggle) MISC.SET_RIOT_MODE_ENABLED(toggle)end)
+                FearSessionL:toggle("Riot Mode", {"fearrt"}, "Put Riot Mode to everyone.\nMake sure you don't wanna live this shit world.", function(toggle) MISC.SET_RIOT_MODE_ENABLED(toggle)end)
 
                 if menu.get_edition() >= 3 then
                     local FearToggleSelf_mugger = false
@@ -1186,7 +1186,7 @@
                     end)
                 end
 
-                FearSessionL:toggle_loop("Pretend God Mode", {"feargodall"}, "This is not the real god mode, you shoot (he's not invincible), but if you fight with fist, it will consider Invincible.\nNOTE: It may detected like 'attacking while invulnerable' if your friend or your foe attack, be careful.",function()
+                FearSessionL:toggle_loop("Pretend God Mode", {"feargall"}, "This is not the real god mode, you shoot (he's not invincible), but if you fight with fist, it will consider Invincible.\nNOTE: It may detected like 'attacking while invulnerable' if your friend or your foe attack, be careful.",function()
                     local FearToggleSelf_God = false
                     for _, pid in pairs(players.list(FearToggleSelf_God)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" and PLAYER.GET_PLAYER_INVINCIBLE(PLAYER.GET_PLAYER_PED(pid)) == false then
@@ -1208,7 +1208,7 @@
                     end
                 end)
 
-                FearSessionL:action("Manual Teleport", {"feartpall"}, "Teleport the entire session?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
+                FearSessionL:action("Manual Teleport", {"feartll"}, "Teleport the entire session?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                 for _, pid in pairs(players.list(FearToggleSelf)) do
                     if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                         FearCommands("aptme"..players.get_name(pid))
