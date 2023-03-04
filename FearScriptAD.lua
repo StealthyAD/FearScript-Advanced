@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.25.9"
+    local FearVersion = "0.26"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -885,26 +885,22 @@
             ---     All of the functions, Bounty Functions
             ----=====================================================----
 
-                    local FearBountySess_value = 0
                     FearBountySess:divider("FearBounty Advanced")
-                    FearBountySess:slider("Bounty Value",{"fearbountys"}, "Chose the amount of the bounty offered automatically.", 0, 10000, 0 , 1, function(value)
-                        FearBountySess_value = value
-                    end)
+                    FearBountyValue = FearBountySess:slider("Bounty Value",{"fearbountys"}, "Chose the amount of the bounty offered automatically.", 0, 10000, 0 , 1, function(value)end)
                     
                     FearBountySess:toggle("Auto Bounty", {"fearautob"}, "Put everyone automatically Bounty to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.get_bounty(pid) ~= FearBountySess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                FearCommands("bounty"..players.get_name(pid).." "..FearBountySess_value)
+                            if FearSession() and players.get_bounty(pid) ~= menu.get_value(FearBountyValue) and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("bounty"..players.get_name(pid).." "..menu.get_value(FearBountyValue))
                             end
                         end
                         util.yield(1000)
                     end)
 
-
                     FearBountySess:action("Manual Bounty", {"fearmanualb"}, "Put everyone manually Bounty to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.get_bounty(pid) ~= FearBountySess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                FearCommands("bounty"..players.get_name(pid).." "..FearBountySess_value)
+                            if FearSession() and players.get_bounty(pid) ~= menu.get_value(FearBountyValue) and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("bounty"..players.get_name(pid).." "..menu.get_value(FearBountyValue))
                             end
                         end
                         util.yield(1000)
@@ -912,19 +908,16 @@
 
             ----=====================================================----
             ---                 Wanted Features
-            ---     All of the functions, Bounty Functions
+            ---     All of the functions, Wanted Functions
             ----=====================================================----
 
-                    local FearWantedSess_value = 0
                     FearWantedSess:divider("FearWanted Advanced")
-                    FearWantedSess:slider("Wanted Value", {"fearwanteds"}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function(value)
-                        FearWantedSess_value = value
-                    end)
+                    FearWantedValue = FearWantedSess:slider("Wanted Value", {"fearwanteds"}, "Chose the amount of the wanted offered automatically/manually to cops.", 0, 5, 0 , 1, function()end)
                     
                     FearWantedSess:toggle("Auto Wanted", {"fearautowt"}, "Put everyone automatically Cops to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.set_wanted_level(pid, FearWantedSess_value) ~= FearWantedSess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                FearCommands("pwanted"..players.get_name(pid).." "..FearWantedSess_value)
+                            if FearSession() and players.set_wanted_level(pid, menu.get_value(FearWantedValue)) ~= FearWantedValue and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("pwanted"..players.get_name(pid).." "..menu.get_value(FearWantedValue))
                             end
                         end
                         FearTime(1000)
@@ -932,8 +925,8 @@
 
                     FearWantedSess:action("Manual Wanted", {"fearmanualw"}, "Put everyone manually Cops to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.set_wanted_level(pid, FearWantedSess_value) ~= FearWantedSess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                FearCommands("pwanted"..players.get_name(pid).." "..FearWantedSess_value)
+                            if FearSession() and players.set_wanted_level(pid, menu.get_value(FearWantedValue)) ~= FearWantedValue and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                                FearCommands("pwanted"..players.get_name(pid).." "..menu.get_value(FearWantedValue))
                             end
                         end
                         FearTime(1000)
@@ -941,7 +934,7 @@
 
                     FearWantedSess:action("Never Wanted", {"fearneverw"}, "Put everyone manually No Cops to all players." ,function()
                         for _,pid in pairs(players.list(FearToggleSelf)) do
-                            if FearSession() and players.set_wanted_level(pid, FearWantedSess_value) ~= FearWantedSess_value and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            if FearSession() and players.set_wanted_level(pid, menu.get_value(FearWantedValue)) ~= FearWantedValue and players.get_name(pid) ~= "UndiscoveredPlayer" then
                                 FearCommands("pwanted"..players.get_name(pid).." 0")
                             end
                         end
