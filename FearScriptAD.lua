@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.24.9"
+    local FearVersion = "0.25"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -616,7 +616,7 @@
 
 
             FearSelf:divider("FearScript Self")
-            FearSelf:action("Fall on the ground", {'fearragdoll'}, "Just fall yourself on the ground.", function()
+            FearSelf:action("Fall on the ground", {}, "Just fall yourself on the ground.", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false) 
                 FearTime(150)
                 FearToast(FearScriptNotif.."\nLol, why are you falling on the ground?")
@@ -637,7 +637,7 @@
             FearVehicles:divider("FearScript Vehicles")
             FearVehicles:divider("Summon Tweaks")
 
-            FearVehicles:action("Commercial Planes", {"fearcomplane"}, "Summon plane and flight peacefully.\nNOTE: Some vehicles are randomly spawned.", function()
+            FearVehicles:action("Commercial Planes", {}, "Summon plane and flight peacefully.\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"Boeing 747", "Antonov AN-225", "Nimbus", "Private Jet", "Golden Jet", "Miljet"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
@@ -677,7 +677,7 @@
                 FearToast(FearScriptNotif.."\nEnjoy your commercial plane at cruise altitude with your "..vehicle.." !")
             end)
 
-            FearVehicles:action("Dogfight Planes", {"feardogfight"}, "Summon plane and Fight.\nNOTE: Some vehicles are randomly spawned.", function()
+            FearVehicles:action("Dogfight Planes", {}, "Summon plane and Fight.\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"P-996 Lazer", "Mammoth Hydra", "B-11 Strikeforce", "LF-22 Starling", "V-65 Molotok", "P-45 Nokota", "Pyro", "Western Rogue", "Seabreeze"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
@@ -727,7 +727,7 @@
                 FearToast(FearScriptNotif.."\nEnjoy your dogfight at cruise altitude with your "..vehicle.." !")
             end)
 
-            FearVehicles:action("Strategic Bomber Planes", {"fearstratbomb"}, "Summon Strategic Bomber Planes and flight harder.\nNOTE: Some vehicles are randomly spawned.", function()
+            FearVehicles:action("Strategic Bomber Planes", {}, "Summon Strategic Bomber Planes and flight harder.\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"B-1B Lancer", "Avro Vulcan", "AC-130"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
@@ -752,7 +752,7 @@
                 FearToast(FearScriptNotif.."\nEnjoy your Strategic Bomber at cruise altitude with your "..vehicle.." !")
             end)
              
-            FearVehicles:action("Tank Spawner", {"feartank"}, "Summon Leopard 2A (Rhino Tank) / PL-01 Concept (TM-02 Khanjali) or BRDM-2 (APC).\nNOTE: Some vehicles are randomly spawned.", function()
+            FearVehicles:action("Tank Spawner", {}, "Summon Leopard 2A (Rhino Tank) / PL-01 Concept (TM-02 Khanjali) or BRDM-2 (APC).\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"Leopard 2A", "PL-01 Concept", "BRDM-2"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
@@ -771,7 +771,7 @@
                 FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
             end)
 
-            FearVehicles:action("Oppressor Party", {"fearopr"}, "Summon Oppressor.\nNOTE: Some vehicles are randomly spawned.", function()
+            FearVehicles:action("Oppressor Party", {}, "Summon Oppressor.\nNOTE: Some vehicles are randomly spawned.", function()
                 local vehicles = {"Oppressor", "Oppressor Mk II"}
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
@@ -818,14 +818,14 @@
             FearSessionL:divider("FearSession Advanced")
             player_count = FearSessionL:divider(get_player_count())
 
-                FearSessionL:action("Find Public Session (Max)", {"fearmaxplayer"}, "Go to Public Session", function()
+                FearSessionL:action("Find Public Session (Max)", {}, "Go to Public Session", function()
                     FearCommands("go public")
                     FearCommands("playermagnet 28")
                     FearToast(FearScriptNotif.."\nEnjoy to find the session fully.")
                     FearTime()
                 end)
 
-                FearSessionL:action("Find Public Session (Less)", {"fearlessplayer"}, "Go to Public Session", function()
+                FearSessionL:action("Find Public Session (Less)", {}, "Go to Public Session", function()
                     FearCommands("go public")
                     FearCommands("playermagnet 5")
                     FearToast(FearScriptNotif.."\nEnjoy to find the session less.")
@@ -919,8 +919,8 @@
                     FearPlateName = name:sub(1, 8)
                 end)
 
-                FearSessionL:action("Spawn Vehicle", {"fearspawnvehall"}, "Spawn everyone a vehicle", function (click_type)
-                    menu.show_command_box_click_based(click_type, "fearspawnvehall ")
+                FearSessionL:action("Spawn Vehicle", {"fearspawn"}, "Spawn everyone a vehicle.\nNOTE: It will applied also some modification like Plate License (name/color)", function (click_type)
+                    menu.show_command_box_click_based(click_type, "fearspawn ")
                 end,
                 function (txt)
                     local hash = util.joaat(txt)
@@ -1091,7 +1091,7 @@
                     end)
                 end
 
-                FearSessionL:action("Earrape Session", {"fearearrapeall"}, "Put Earrape Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.",function()
+                FearSessionL:action("Earrape Session", {}, "Put Earrape Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.",function()
                     for i = 0, 100 do
                         for _, pid in pairs(players.list(FearToggleSelf)) do
                             local player_pos = players.get_position(pid)
@@ -1113,7 +1113,7 @@
                 end
             end)
 
-            FearOnline:toggle_loop("Bruteforce Script Host", {"fscripthost"}, "Brute Force Script Host to unlock some features such as unfreeze clouds, loading screen, etc...", function()
+            FearOnline:toggle_loop("Bruteforce Script Host", {}, "Brute Force Script Host to unlock some features such as unfreeze clouds, loading screen, etc...", function()
                 FearCommands("givesh"..players.get_name(players.user()))
             end)
 
@@ -1238,7 +1238,7 @@
         local FearCruiseMissileNTF = "> FearScript CruiseMissile "..FearCruiseMissile_ver
         FearCruiseMissile:divider("FearScript CruiseMissile "..FearCruiseMissile_ver)
         local FearPresetMissile = FearCruiseMissile:list("Cruise Missile Presets")
-        FearPresetMissile:toggle_loop("Cruise Missile Range (9.32 Miles)", {"fearcruise15km"}, EXECUTION_FUNCTION_WORKING(false), function() -- 9.32 Miles Cruise Missile Range
+        FearPresetMissile:toggle_loop("Cruise Missile Range (9.32 Miles)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- 9.32 Miles Cruise Missile Range
             FearToast(FearCruiseMissileNTF.."\nStatus : Active (9.32 Miles)")
             FearCommands('damagemultiplier 7500')
             SET_INT_GLOBAL(262145 + 30188, 15000)
@@ -1248,7 +1248,7 @@
             SET_INT_GLOBAL(262145 + 30188, 4000)
         end)
 
-        FearPresetMissile:toggle_loop("Cruise Missile Range (18.6 Miles)", {"fearcruise30km"}, EXECUTION_FUNCTION_WORKING(false), function() -- 18.6 miles Cruise Missile Range
+        FearPresetMissile:toggle_loop("Cruise Missile Range (18.6 Miles)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- 18.6 miles Cruise Missile Range
             FearToast(FearCruiseMissileNTF.."\nStatus : Active (18.6 Miles)")
             FearCommands('damagemultiplier 8500')
             SET_INT_GLOBAL(262145 + 30188, 30000)
@@ -1258,7 +1258,7 @@
             SET_INT_GLOBAL(262145 + 30188, 4000)
         end)
 
-        FearPresetMissile:toggle_loop("Cruise Missile Range (37.2 Miles)", {"fearcruise60km"}, EXECUTION_FUNCTION_WORKING(false), function() -- 37.2 Miles Cruise Missile Range
+        FearPresetMissile:toggle_loop("Cruise Missile Range (37.2 Miles)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- 37.2 Miles Cruise Missile Range
             FearToast(FearCruiseMissileNTF.."\nStatus : Active (37.2 Miles)")
             FearCommands('damagemultiplier 10000')
             SET_INT_GLOBAL(262145 + 30188, 60000)
@@ -1268,7 +1268,7 @@
             SET_INT_GLOBAL(262145 + 30188, 4000)
         end)
 
-        FearPresetMissile:toggle_loop("Cruise Missile Range (Bypass)", {"fearcruisebypass"}, EXECUTION_FUNCTION_WORKING(false), function() -- Bypass Cruise Missile Range
+        FearPresetMissile:toggle_loop("Cruise Missile Range (Bypass)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- Bypass Cruise Missile Range
             FearToast(FearCruiseMissileNTF.."\nStatus : Active")
             FearCommands('damagemultiplier 10000')
             SET_INT_GLOBAL(262145 + 30188, 99999)
@@ -1314,7 +1314,7 @@
             end
         end)
     
-        FearCruiseMissile:action("Revert to Default State", {'fcruisedefault'}, "Revert to Default State like Cruise Missile Range and Cooldown.", function() -- Revert Default Settings
+        FearCruiseMissile:action("Revert to Default State", {}, "Revert to Default State like Cruise Missile Range and Cooldown.", function() -- Revert Default Settings
             SET_INT_GLOBAL(262145 + 30188, 4000) -- Remove Bypass
             SET_INT_GLOBAL(262145 + 30187, 60000) -- Cooldown Time
             FearToast(FearCruiseMissileNTF.."\nReverted to Default State")
@@ -1340,6 +1340,28 @@
                 end
 		    end)
 	        FearMiscs:hyperlink("GitHub Source", "https://github.com/StealthyAD/FearScript-Advanced")
+            FearMiscs:divider("FearScript Others")
+            FearMiscs:toggle("Toggle Radar/HUD", {}, "", function(toggle)
+                if toggle then
+                    HUD.DISPLAY_RADAR(false)
+                    HUD.DISPLAY_HUD(false)
+                else
+                    HUD.DISPLAY_RADAR(true)
+                    HUD.DISPLAY_HUD(true)
+                end
+            end)
+
+            FearRemoverCash = FearMiscs:slider("Choose Value Money", {"fearrm"}, "", 0, 2147483647, 0, 1, function()end)
+            FearWF = FearMiscs:action("Money Remover Tool", {}, "", function(type)
+                menu.show_warning(FearWF, type, "Do you really want remove the money?\nNOTE: You will able to remove your own modded money. This action is irreversible.", function()
+                SET_INT_GLOBAL(262145 + 20288, menu.get_value(FearRemoverCash))
+                end)
+            end)
+            
+            FearMiscs:action("Revert Money Tool", {}, "", function()
+                SET_INT_GLOBAL(262145 + 20288, 5000)
+                FearToast(FearScriptNotif.."\nDefault State applied for Remover Tool.")
+            end)
 
     ------===============------
     ---   Player Features
@@ -1390,12 +1412,12 @@
 
             FearFriendlyList:divider("FearFriendly Advanced")
             FearFriendlyList:divider("Main Tweaks")
-            FearFriendlyList:action("Unstuck Loading Screen", {"fearuls"}, "Unstuck "..FearPlayerName.." to the clouds or something else could be affect the session.", function()
+            FearFriendlyList:action("Unstuck Loading Screen", {"fearunlock"}, "Unstuck "..FearPlayerName.." to the clouds or something else could be affect the session.", function()
                 FearCommands("givesh"..FearPlayerName)
                 FearCommands("aptme"..FearPlayerName)
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
-            FearFriendlyList:toggle("Infinite Ammo", {"fearbottomammo"}, "Give Infinite Ammo to "..FearPlayerName.." to help to fire constantly his guns.", function()
+            FearFriendlyList:toggle("Infinite Ammo", {"fearammo"}, "Give Infinite Ammo to "..FearPlayerName.." to help to fire constantly his guns.", function()
                 if FearSession() then
                     if players.get_name(pid) then
                         FearCommands("ammo"..FearPlayerName)
@@ -1413,8 +1435,8 @@
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
             FearFriendlyList:divider("Vehicle Tweaks")
-            FearFriendlyList:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
-            menu.show_command_box_click_based(click_type, "fearspawnv" .. FearPlayerName .. " ")end,
+            FearFriendlyList:action("Spawn vehicle", {"fearspv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
+            menu.show_command_box_click_based(click_type, "fearspv" .. FearPlayerName .. " ")end,
             function(txt)
                 local function platechanger(vehicle)
                     for i = 0, 49 do
@@ -1497,7 +1519,7 @@
             local FearBounty = FearGriefingList:list("Bounty Features",{},"")
 
             FearGriefingList:divider("Player Tweaks")
-            FearGriefingList:toggle_loop("Remove Entire Weapons",{'feardisarm'}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
+            FearGriefingList:toggle_loop("Remove Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
                     if players.get_name(pid) then
                         menu.trigger_commands("disarm"..players.get_name(pid))
@@ -1507,7 +1529,7 @@
                 util.yield(5000)
             end)
 
-            FearGriefingList:toggle_loop("Kill "..FearPlayerName.." Loop", {'fearkillp'}, "Kill "..FearPlayerName.." in Loop?",function()
+            FearGriefingList:toggle_loop("Kill "..FearPlayerName.." Loop", {}, "Kill "..FearPlayerName.." in Loop?",function()
                 local function KillPlayer(pid)
                     local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                     local coords = ENTITY.GET_ENTITY_COORDS(entity, true)
@@ -1522,11 +1544,11 @@
                 FearTime(500)
             end)
 
-            FearGriefingList:toggle_loop("Eliminate Passive Mode Loop", {'fearkpm'}, "Are you sure to kill "..FearPlayerName.." during the Loop?", function()
+            FearGriefingList:toggle_loop("Eliminate Passive Mode Loop", {}, "Are you sure to kill "..FearPlayerName.." during the Loop?", function()
                 FearPassiveShot(pid)
             end)
 
-            FearGriefingList:toggle_loop("Ukraine Alarm Loop",{'fearukraine'}, "You really want put Ukraine Alarm to "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possibkle karma you if he's a modder.",function()
+            FearGriefingList:toggle_loop("Ukraine Alarm Loop",{}, "You really want put Ukraine Alarm to "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possibkle karma you if he's a modder.",function()
                 if FearSession() then
                     if players.get_name(pid) then
                         AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
@@ -1596,7 +1618,7 @@
 
                 local FearWanted_value = 1
                 FearWanted:divider("FearWanted Advanced")
-                FearWanted:slider("Wanted Level",{"fearwanted"}, "Chose the amount of the wanted level offered automatically.", 1, 5, 1 , 1, function(value)
+                FearWanted:slider("Wanted Level",{"fearwp"}, "Chose the amount of the wanted level offered automatically.", 1, 5, 1 , 1, function(value)
                     FearWanted_value = value
                 end)
                 
@@ -1628,11 +1650,11 @@
 
                 local FearBounty_value = 0
                 FearBounty:divider("FearBounty Advanced")
-                FearBounty:slider("Bounty Value",{"fearbounty"}, "Chose the amount of the bounty offered automatically to "..FearPlayerName..".", 0, 10000, 0, 1, function(value)
+                FearBounty:slider("Bounty Value",{"fearbp"}, "Chose the amount of the bounty offered automatically to "..FearPlayerName..".", 0, 10000, 0, 1, function(value)
                     FearBounty_value = value
                 end)
                 
-                FearBounty:toggle("Auto Bounty", {"fearautobounty"}, "Put automatically bounty to "..FearPlayerName.."." ,function()
+                FearBounty:toggle("Auto Bounty", {"fearautoby"}, "Put automatically bounty to "..FearPlayerName.."." ,function()
                     if FearSession() then
                         if players.get_bounty(pid) ~= FearBounty_value then
                             FearCommands("bounty"..FearPlayerName.." "..FearBounty_value)
@@ -1658,7 +1680,7 @@
 
             FearNeutralList:divider("FearNeutral Advanced")
 
-            FearNeutralList:action("Detection Language", {"fdetectl"}, "Notifies you if someone speak another language.", function()
+            FearNeutralList:action("Detection Language", {"flang"}, "Notifies you if someone speak another language.", function()
                 if FearSession() then
                     if players.get_language(pid) == 0 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is English/or non-recognized language.") -- English/non-recognize Detection
@@ -1701,9 +1723,9 @@
                     end
                 end
             end)
-            FearNeutralList:action("Spoof Chat ", {"spoofchat"}, "Spoofs your chat username name", 
+            FearNeutralList:action("Spoof Chat ", {"fspc"}, "Spoofs your chat username name", 
             function (click_type)
-                menu.show_command_box_click_based(click_type, "spoofchat" .. FearPlayerName .. " ")
+                menu.show_command_box_click_based(click_type, "fspc" .. FearPlayerName .. " ")
             end,
             function (txt)
                 local from = pid
@@ -2288,7 +2310,7 @@
         --- Standard Crash & Kick Player
         ----============================----        
 
-        FearAttackList:action("Force Breakup ".. FearPlayerName, {"forcebreakup"}, "Force "..FearPlayerName.." to leave the session.\nNOTE: You can't kick Stand Users if Stand User Identification has been activated.\nIt will be useful if you want kick Players using Host Spoof Token (Aggressive/Spot) but reverse side.", function()
+        FearAttackList:action("Force Breakup ".. FearPlayerName, {"fbreakupmax"}, "Force "..FearPlayerName.." to leave the session.\nNOTE: You can't kick Stand Users if Stand User Identification has been activated.\nIt will be useful if you want kick Players using Host Spoof Token (Aggressive/Spot) but reverse side.", function()
             FearCommands("breakup"..FearPlayerName)
             FearCommands("kick"..FearPlayerName)
             FearCommands("confusionkick"..FearPlayerName)
@@ -2299,7 +2321,7 @@
             FearToast(FearScriptNotif.."\n"..FearPlayerName.." has been forced breakup.")
         end, nil, nil, COMMANDPERM_AGGRESSIVE)
         
-        FearAttackList:action("Hiroshima Button", {"hiroshimabutton"}, "Do you really want crash "..FearPlayerName.." for the action?\nNOTE: You can might be karma if you try to crash modder or someone else.", function()
+        FearAttackList:action("Simple Nuke", {"fnukeb"}, "Do you really want crash "..FearPlayerName.." for the action?\nNOTE: You can might be karma if you try to crash modder or someone else.", function()
             FearToast(FearScriptNotif.."\nNuke Button on " ..FearPlayerName)
             FearBoomCrash(pid, FearPlayerName)
             util.yield(2000)
