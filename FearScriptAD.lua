@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.25.2"
+    local FearVersion = "0.25.2b"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1100,9 +1100,8 @@
                     end
                 end)
 
-                FearSessionL:action("Manual Teleport", {"feartpme"}, "Teleport the entire session?\nNOTE: It may be detected by any modders and may karma you.\nAlternative to Stand Features but may not karma you.",function()
-                local FearToggleSelf_tp = false
-                for _, pid in pairs(players.list(FearToggleSelf_tp)) do
+                FearSessionL:action("Manual Teleport", {"feartpme"}, "Teleport the entire session?\nNOTE: You will be teleported too if you don't enable 'Exclude Self', be careful.\nAlternative to Stand Features but may not karma you.",function()
+                for _, pid in pairs(players.list(FearToggleSelf)) do
                     if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                         FearCommands("aptme"..players.get_name(pid))
                         end
