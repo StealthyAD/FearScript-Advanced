@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.25.7"
+    local FearVersion = "0.25.8"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1391,16 +1391,42 @@
                 end
             end)
 
-            FearRemoverCash = FearMiscs:slider("Choose Value Money", {"fearrm"}, "", 0, 2147483647, 0, 1, function()end)
-            FearWF = FearMiscs:action("Money Remover Tool", {}, "READ THIS: You really need Ballistic Armor to do this action.\nNOTE: Without Ballistic Armor, you will not able to remove your own modded money or legitimate money.", function(type)
+            local FearMoney = FearMiscs:list("Money Features")
+            FearRemoverCash = FearMoney:slider("Choose Value Money", {"fearrm"}, "", 0, 2147483647, 0, 1, function()end)
+            FearWF = FearMoney:action("Money Remover Tool", {}, "", function(type)
                 menu.show_warning(FearWF, type, "Do you really want remove the money?\nNOTE: You will able to remove your own modded money. This action is irreversible.", function()
                 SET_INT_GLOBAL(262145 + 20288, menu.get_value(FearRemoverCash))
                 end)
             end)
-            
-            FearMiscs:action("Revert Money Tool", {}, "", function()
+
+            FearMoney:action("Revert Money Tool", {}, "", function()
                 SET_INT_GLOBAL(262145 + 20288, 5000)
                 FearToast(FearScriptNotif.."\nDefault State applied for Remover Tool.")
+            end)
+            local FearAlert = FearMiscs:list("Fake Alert")
+
+            FearAlert:action("Custom Alert Suspension", {"ffakesusalert"}, "Put the fake alert of your choice. (Write the date like that: 'February 24 2022')", function()
+                FearSus = menu.show_command_box("ffakesusalert ")
+            end, function(on_command)
+                show_custom_rockstar_alert("You have been suspended from Grand Theft Auto Online until "..on_command..".~n~In addition, your Grand Theft Auto Online character(s) will be reset.~n~Return to Grand Theft Auto V.")
+            end)
+
+            FearAlert:action("Ban Message", {"ffakebanp"}, "A Fake Ban Message.", function()
+                show_custom_rockstar_alert("You have been banned from Grand Theft Auto Online permanently.~n~Return to Grand Theft Auto V.")
+            end)
+            
+            FearAlert:action("Services Unavailable", {"ffakesu"}, "A Fake 'Servives Unavailable' Message.", function()
+                show_custom_rockstar_alert("The Rockstar Game Services are Unavailable right now.~n~Please Return to Grand Theft Auto V.")
+            end)
+
+            FearAlert:action("Case Support", {"fcasesupport"}, "A Fake 'Servives Unavailable' Message.", function()
+                show_custom_rockstar_alert("Remember, if you find this, this is not the Support Channel.~n~Return to Grand Theft Auto V.")
+            end)
+            
+            FearAlert:action("Custom Alert", {"ffakecustomalert"}, "Put the fake alert of your choice.", function()
+                menu.show_command_box("ffakecustomalert ")
+            end, function(on_command)
+                show_custom_rockstar_alert(on_command)
             end)
 
     ------===============------
