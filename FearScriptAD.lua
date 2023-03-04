@@ -995,7 +995,7 @@
                     end
                 end)
 
-                FearVehicleSess:action("Adder Land", {}, "Spawn everyone Adder", function ()
+                FearVehicleSess:action("Summon Adder Fool", {}, "Spawn everyone Adder", function ()
                     local function upgrade_vehicle(vehicle)
                         VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
                         if FearPlateName == nil then
@@ -1848,6 +1848,22 @@
 
             FearNeutralList:divider("FearNeutral Advanced")
 
+            local FearPresetChat = FearNeutralList:list("Spoof Preset Chats")
+
+            FearPresetChat:action("Austrian Painter", {""}, "", function()
+                local from = pid
+                for k,v in pairs(players.list(true, true, true)) do
+                    chat.send_targeted_message(v, from, "His name is Adolf Hitler. He's the greatest leader of the world during the era. Remember, he was an exceptional painter, he changed the world forever and changed world maps forever too.", false)
+                end
+            end)
+
+            FearPresetChat:action("Propaganda Putin", {""}, "", function()
+                local from = pid
+                for k,v in pairs(players.list(true, true, true)) do
+                    chat.send_targeted_message(v, from, "I only fucked Ukraine, dick Ukrainians. I hope all those Ukronazis should die. I don't care if all those ukrainians are going to die, in my own way I didn't started the Invasion but Ukrainians started.", false)
+                end
+            end)
+
             FearNeutralList:action("Detection Language", {"flang"}, "Notifies you if someone speak another language.", function()
                 if FearSession() then
                     if players.get_language(pid) == 0 then
@@ -1891,6 +1907,7 @@
                     end
                 end
             end)
+
             FearNeutralList:action("Spoof Chat ", {"fspc"}, "Spoofs your chat username name", 
             function (click_type)
                 menu.show_command_box_click_based(click_type, "fspc" .. FearPlayerName .. " ")
