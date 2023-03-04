@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.26.3b"
+    local FearVersion = "0.26.4"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScript = "FearScript Advanced"
     local FearScriptV1 = "FearScript Advanced "..FearVersion
@@ -1638,10 +1638,9 @@
                 load_model(hash)
             end
             local oppressor = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-            ENTITY.SET_ENTITY_INVINCIBLE(oppressor)
+            ENTITY.SET_ENTITY_INVINCIBLE(adder, menu.get_value(FearToggleGod))
                 upgradecar(oppressor)
             end
-                ENTITY.SET_ENTITY_INVINCIBLE(oppressor, menu.get_value(FearToggleGod))
                 give_ind_oppressor(pid)
                 util.yield()
             end)
@@ -1674,11 +1673,10 @@
                 load_model(hash)
             end
             local adder = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(ped))
-            ENTITY.SET_ENTITY_INVINCIBLE(adder)
+            ENTITY.SET_ENTITY_INVINCIBLE(adder, menu.get_value(FearToggleGod))
                 upgradecar(adder)
                 platechanger(adder)
             end
-                ENTITY.SET_ENTITY_INVINCIBLE(adder, menu.get_value(FearToggleGod))
                 give_adder(pid)
                 util.yield()
             end)
