@@ -650,7 +650,7 @@
             end)
 
             FearSelf:toggle_loop("Ragdoll Loop", {}, "Loop Ragdoll", function()
-                ED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false)
+                PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false)
             end)
 
         ------==================------
