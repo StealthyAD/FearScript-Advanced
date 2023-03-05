@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.26.9"
+    local FearVersion = "0.27"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.4
@@ -642,11 +642,15 @@
 
 
             FearSelf:divider("FearScript Self")
-            FearSelf:action("Fall on the ground", {}, "Just fall yourself on the ground.", function()
+            FearSelf:action("Simple Ragdoll", {}, "Just fall yourself on the ground.", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false) 
                 FearTime(150)
                 FearToast(FearScriptNotif.."\nLol, why are you falling on the ground?")
                 FearTime(100)
+            end)
+
+            FearSelf:toggle_loop("Ragdoll Loop", {}, "Loop Ragdoll", function()
+                ED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false)
             end)
 
         ------==================------
@@ -1346,41 +1350,33 @@
         FearCruiseMissile:divider("FearScript CruiseMissile "..FearCruiseMissile_ver)
         local FearPresetMissile = FearCruiseMissile:list("Cruise Missile Presets")
         FearPresetMissile:toggle_loop("Cruise Missile Range (9.32 Miles)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- 9.32 Miles Cruise Missile Range
-            FearToast(FearCruiseMissileNTF.."\nStatus : Active (9.32 Miles)")
             FearCommands('damagemultiplier 7500')
             SET_INT_GLOBAL(262145 + 30188, 15000)
         end, function()
-            FearToast(FearCruiseMissileNTF.."\nStatus : Inactive (9.32 Miles)")
             FearCommands('damagemultiplier 1')
             SET_INT_GLOBAL(262145 + 30188, 4000)
         end)
 
         FearPresetMissile:toggle_loop("Cruise Missile Range (18.6 Miles)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- 18.6 miles Cruise Missile Range
-            FearToast(FearCruiseMissileNTF.."\nStatus : Active (18.6 Miles)")
             FearCommands('damagemultiplier 8500')
             SET_INT_GLOBAL(262145 + 30188, 30000)
         end, function()
-            FearToast(FearCruiseMissileNTF.."\nStatus : Inactive (18.6 Miles)")
             FearCommands('damagemultiplier 1')
             SET_INT_GLOBAL(262145 + 30188, 4000)
         end)
 
         FearPresetMissile:toggle_loop("Cruise Missile Range (37.2 Miles)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- 37.2 Miles Cruise Missile Range
-            FearToast(FearCruiseMissileNTF.."\nStatus : Active (37.2 Miles)")
             FearCommands('damagemultiplier 10000')
             SET_INT_GLOBAL(262145 + 30188, 60000)
         end, function()
-            FearHelp(FearCruiseMissileNTF.."\nStatus : Inactive (37.2 Miles)")
             FearCommands('damagemultiplier 1')
             SET_INT_GLOBAL(262145 + 30188, 4000)
         end)
 
         FearPresetMissile:toggle_loop("Cruise Missile Range (Bypass)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- Bypass Cruise Missile Range
-            FearToast(FearCruiseMissileNTF.."\nStatus : Active")
             FearCommands('damagemultiplier 10000')
             SET_INT_GLOBAL(262145 + 30188, 99999)
         end, function()
-            FearToast(FearCruiseMissileNTF.."\nStatus : Inactive")
             FearCommands('damagemultiplier 1')
             SET_INT_GLOBAL(262145 + 30188, 4000)
         end)
@@ -1867,9 +1863,6 @@
                     if FearSession() then
                         if players.set_wanted_level(pid, FearWanted_value) ~= FearWanted_value then
                             FearCommands("pwanted"..FearPlayerName.." "..FearWanted_value)
-                            FearToast(FearScriptNotif.."\nYou have automatically sent cops to "..FearPlayerName.." with "..FearWanted_value.." stars.")
-                        elseif players.set_wanted_level(pid, FearWanted_value) == 0 then
-                            FearToast(FearScriptNotif.."\nYou have automatically sent no cops to "..FearPlayerName)
                         end
                     end
                     util.yield(1000)
@@ -1879,7 +1872,6 @@
                     if FearSession() then
                         if players.set_wanted_level(pid, FearWanted_value) ~= FearWanted_value then
                             FearCommands("pwanted"..FearPlayerName.." "..FearWanted_value)
-                            FearToast(FearScriptNotif.."\nYou have manually sent cops to "..FearPlayerName.." with "..FearWanted_value.." stars.")
                         end
                     end
                     util.yield(1000)
@@ -2466,98 +2458,106 @@
         --- Nuke Special Advanced Tools
         ----===========================----        
 
-            FearAttackList:action_slider("Crash Button", {}, "", {"American Button", "Putin Button"}, function(select)
-                if select == 1 then 
-                    menu.trigger_commands("anticrashcamera on")
-                    menu.trigger_commands("potatomode on")
-                    menu.trigger_commands("trafficpotato on")
-                    menu.trigger_commands("fearlag3"..players.get_name(pid))
-                    util.yield(2500)
-                    menu.trigger_commands("fearbigchungus"..players.get_name(pid))
-                    util.yield(2500)                    
-                    menu.trigger_commands("fearcrash1"..players.get_name(pid))
-                    util.yield(620) 
-                    menu.trigger_commands("fearinvalid5"..players.get_name(pid))
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid5"..players.get_name(pid))
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid6"..players.get_name(pid))
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid7"..players.get_name(pid))
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid4"..players.get_name(pid))
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid3"..players.get_name(pid))
-                    util.yield(620)
-                    menu.trigger_commands("fearcrashcar"..players.get_name(pid))
-                    util.yield(400)
-                    menu.trigger_commands("fearsmoke"..players.get_name(pid))
-                    util.yield(400)
-                    menu.trigger_commands("crash"..players.get_name(pid))
-                    util.yield(550)
-                    menu.trigger_commands("ngcrash"..players.get_name(pid))
-                    util.yield(550)
-                    menu.trigger_commands("footlettuce"..players.get_name(pid))
-                    util.yield(1800)
-                    menu.trigger_commands("fearlag3"..players.get_name(pid))
-                    menu.trigger_commands("cleararea")
-                    menu.trigger_commands("potatomode off")
-                    menu.trigger_commands("trafficpotato off")
-                    util.yield(8000)
-                    menu.trigger_commands("anticrashcamera off")
-                    FearToast(FearScriptNotif.."\n"..FearPlayerName.. " has been nuked by american hydrogen bomb Castle Bravo.")
-                else
-                    local objective = pid
-                    menu.trigger_commands("anticrashcamera on")
-                    menu.trigger_commands("potatomode on")
-                    menu.trigger_commands("trafficpotato on")
-                    menu.trigger_commands("fearlag3"..players.get_name(pid))
-                    util.yield(2500)
-                    menu.trigger_commands("fearbigchungus"..players.get_name(pid)) -- Big Chungus Crash
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid8"..players.get_name(pid)) -- Invalid Model V8
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid7"..players.get_name(pid)) -- Invalid Model V7
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid6"..players.get_name(pid)) -- Invalid Model V6
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid5"..players.get_name(pid)) -- Invalid Model V5
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid4"..players.get_name(pid)) -- Invalid Model V4
-                    util.yield(820)
-                    menu.trigger_commands("fearinvalid3"..players.get_name(pid)) -- Invalid Model V3
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid2"..players.get_name(pid)) -- Invalid Model V2
-                    util.yield(620)
-                    menu.trigger_commands("fearinvalid1"..players.get_name(pid)) -- Invalid Model V1
-                    util.yield(620)
-                    menu.trigger_commands("fearcrash1"..players.get_name(pid)) -- Crash Model V1
-                    util.yield(720)
-                    menu.trigger_commands("fearcrashcar"..players.get_name(pid)) -- Cars Crash
-                    util.yield(720)
-                    menu.trigger_commands("fearsmoke"..players.get_name(pid)) -- Weed Crash
-                    util.yield(2800)
-                    menu.trigger_commands("crash"..players.get_name(pid))
-                    util.yield(550)
-                    menu.trigger_commands("ngcrash"..players.get_name(pid))
-                    util.yield(550)
-                    menu.trigger_commands("footlettuce"..players.get_name(pid))
-                    util.yield(550)
-                    menu.trigger_commands("steamroll"..players.get_name(pid))
-                    util.yield(550)
-                    menu.trigger_commands("choke"..players.get_name(pid))
-                    util.yield(550)
-                    menu.trigger_commands("flashcrash"..players.get_name(pid))
-                    util.yield(200)
-                    menu.trigger_commands("fearlag3"..players.get_name(pid))
-                    menu.trigger_commands("cleararea")
-                    menu.trigger_commands("potatomode off")
-                    menu.trigger_commands("trafficpotato off")
-                    util.yield(8000)
-                    menu.trigger_commands("anticrashcamera off")
-                    FearToast(FearScriptNotif.."\n"..FearPlayerName.. " has been nuked by the greatest president Vladimir Putin.\nThe End of the World has begun.")
+        FearAttackList:action_slider("Crash Button", {}, "", {"Simple Nuke","American Button", "Putin Button"}, function(select)
+            if select == 1 then 
+                FearToast(FearScriptNotif.."\nNuke Button on " ..FearPlayerName)
+                FearBoomCrash(pid, FearPlayerName)
+                util.yield(2000)
+                if players.get_name(pid) == FearPlayerName then
+                    menu.trigger_commands("breakup"..FearPlayerName)
+                    FearToast(FearScriptNotif.."\n"..FearPlayerName.." has been nuked.")
                 end
-            end)
+            elseif select == 2 then
+                menu.trigger_commands("anticrashcamera on")
+                menu.trigger_commands("potatomode on")
+                menu.trigger_commands("trafficpotato on")
+                menu.trigger_commands("fearlag3"..players.get_name(pid))
+                util.yield(2500)
+                menu.trigger_commands("fearbigchungus"..players.get_name(pid))
+                util.yield(2500)                    
+                menu.trigger_commands("fearcrash1"..players.get_name(pid))
+                util.yield(620) 
+                menu.trigger_commands("fearinvalid5"..players.get_name(pid))
+                util.yield(620)
+                menu.trigger_commands("fearinvalid5"..players.get_name(pid))
+                util.yield(620)
+                menu.trigger_commands("fearinvalid6"..players.get_name(pid))
+                util.yield(620)
+                menu.trigger_commands("fearinvalid7"..players.get_name(pid))
+                util.yield(620)
+                menu.trigger_commands("fearinvalid4"..players.get_name(pid))
+                util.yield(620)
+                menu.trigger_commands("fearinvalid3"..players.get_name(pid))
+                util.yield(620)
+                menu.trigger_commands("fearcrashcar"..players.get_name(pid))
+                util.yield(400)
+                menu.trigger_commands("fearsmoke"..players.get_name(pid))
+                util.yield(400)
+                menu.trigger_commands("crash"..players.get_name(pid))
+                util.yield(550)
+                menu.trigger_commands("ngcrash"..players.get_name(pid))
+                util.yield(550)
+                menu.trigger_commands("footlettuce"..players.get_name(pid))
+                util.yield(1800)
+                menu.trigger_commands("fearlag3"..players.get_name(pid))
+                menu.trigger_commands("cleararea")
+                menu.trigger_commands("potatomode off")
+                menu.trigger_commands("trafficpotato off")
+                util.yield(8000)
+                menu.trigger_commands("anticrashcamera off")
+                FearToast(FearScriptNotif.."\n"..FearPlayerName.. " has been nuked by american hydrogen bomb Castle Bravo.")
+            else
+                local objective = pid
+                menu.trigger_commands("anticrashcamera on")
+                menu.trigger_commands("potatomode on")
+                menu.trigger_commands("trafficpotato on")
+                menu.trigger_commands("fearlag3"..players.get_name(pid))
+                util.yield(2500)
+                menu.trigger_commands("fearbigchungus"..players.get_name(pid)) -- Big Chungus Crash
+                util.yield(620)
+                menu.trigger_commands("fearinvalid8"..players.get_name(pid)) -- Invalid Model V8
+                util.yield(620)
+                menu.trigger_commands("fearinvalid7"..players.get_name(pid)) -- Invalid Model V7
+                util.yield(620)
+                menu.trigger_commands("fearinvalid6"..players.get_name(pid)) -- Invalid Model V6
+                util.yield(620)
+                menu.trigger_commands("fearinvalid5"..players.get_name(pid)) -- Invalid Model V5
+                util.yield(620)
+                menu.trigger_commands("fearinvalid4"..players.get_name(pid)) -- Invalid Model V4
+                util.yield(820)
+                menu.trigger_commands("fearinvalid3"..players.get_name(pid)) -- Invalid Model V3
+                util.yield(620)
+                menu.trigger_commands("fearinvalid2"..players.get_name(pid)) -- Invalid Model V2
+                util.yield(620)
+                menu.trigger_commands("fearinvalid1"..players.get_name(pid)) -- Invalid Model V1
+                util.yield(620)
+                menu.trigger_commands("fearcrash1"..players.get_name(pid)) -- Crash Model V1
+                util.yield(720)
+                menu.trigger_commands("fearcrashcar"..players.get_name(pid)) -- Cars Crash
+                util.yield(720)
+                menu.trigger_commands("fearsmoke"..players.get_name(pid)) -- Weed Crash
+                util.yield(2800)
+                menu.trigger_commands("crash"..players.get_name(pid))
+                util.yield(550)
+                menu.trigger_commands("ngcrash"..players.get_name(pid))
+                util.yield(550)
+                menu.trigger_commands("footlettuce"..players.get_name(pid))
+                util.yield(550)
+                menu.trigger_commands("steamroll"..players.get_name(pid))
+                util.yield(550)
+                menu.trigger_commands("choke"..players.get_name(pid))
+                util.yield(550)
+                menu.trigger_commands("flashcrash"..players.get_name(pid))
+                util.yield(200)
+                menu.trigger_commands("fearlag3"..players.get_name(pid))
+                menu.trigger_commands("cleararea")
+                menu.trigger_commands("potatomode off")
+                menu.trigger_commands("trafficpotato off")
+                util.yield(8000)
+                menu.trigger_commands("anticrashcamera off")
+                FearToast(FearScriptNotif.."\n"..FearPlayerName.. " has been nuked by the greatest president Vladimir Putin.\nThe End of the World has begun.")
+            end
+        end)
 
         ----============================----
         --- Standard Crash & Kick Player
@@ -2572,16 +2572,6 @@
             FearCommands("nonhostkick"..FearPlayerName)
             FearCommands("pickupkick"..FearPlayerName)
             FearToast(FearScriptNotif.."\n"..FearPlayerName.." has been forced breakup.")
-        end, nil, nil, COMMANDPERM_AGGRESSIVE)
-        
-        FearAttackList:action("Simple Nuke", {"fnukeb"}, "Do you really want crash "..FearPlayerName.." for the action?\nNOTE: You can might be karma if you try to crash modder or someone else.", function()
-            FearToast(FearScriptNotif.."\nNuke Button on " ..FearPlayerName)
-            FearBoomCrash(pid, FearPlayerName)
-            util.yield(2000)
-            if players.get_name(pid) == FearPlayerName then
-                menu.trigger_commands("breakup"..FearPlayerName)
-                FearToast(FearScriptNotif.."\n"..FearPlayerName.." has been nuked.")
-            end
         end, nil, nil, COMMANDPERM_AGGRESSIVE)
     end)
 
