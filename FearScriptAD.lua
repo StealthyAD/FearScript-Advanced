@@ -1049,7 +1049,6 @@
                     end
                     for k,v in pairs(players.list(true, true, true)) do
                         give_adderl(v)
-                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Adder Party'.")
                         util.yield()
                     end
                 end)
@@ -1082,7 +1081,6 @@
                     end
                     for k,v in pairs(players.list(true, true, true)) do
                         give_oppressor(v)
-                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Oppressor MK2 Party'.")
                         util.yield()
                     end
                 end)
@@ -1115,7 +1113,6 @@
                     end
                     for k,v in pairs(players.list(true, true, true)) do
                         give_tank(v)
-                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'Rhino Tank'.")
                         util.yield()
                     end
                 end)
@@ -1148,7 +1145,6 @@
                     end
                     for k,v in pairs(players.list(true, true, true)) do
                         give_plane(v)
-                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone the 'P-996 Lazer'.")
                         FearTime()
                     end
                 end)
