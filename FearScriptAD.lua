@@ -24,7 +24,7 @@
     local FearVersion = "0.27"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
-    local FearSEdition = 100.4
+    local FearSEdition = 100.5
     local FearToast = util.toast
 
     local aalib = require("aalib")
