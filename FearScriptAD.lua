@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.2"
+    local FearVersion = "0.27.3"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -641,6 +641,7 @@
         ------==============------  
 
             FearSelf:divider("FearScript Self")
+            local FearWeapons = FearSelf:list("Weapons")
             FearSelf:action("Simple Ragdoll", {}, "Just fall yourself on the ground.", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false) 
                 FearTime(150)
@@ -664,20 +665,39 @@
                 end
             end)
 
-            local FearNV = menu.ref_by_path('Game>Rendering>Night Vision')
-            FearSelf:toggle_loop("Night Vision Scope" ,{}, "Press E while aiming to activate.\n\nRecommended to use only night time, using daytime can may have complication on your eyes watching the screen.",function()
-                local aiming = PLAYER.IS_PLAYER_FREE_AIMING(players.user())
-                if GRAPHICS.GET_USINGSEETHROUGH() and not aiming then
-                    menu.trigger_command(FearNV,'off')
-                elseif PAD.IS_CONTROL_JUST_PRESSED(38,38) then
-                    if menu.get_value(FearNV) or not aiming then
-                        FearCommand(FearNV,"off")
-                    else
-                        FearCommand(FearNV,"on")
-                    end
-                end
-            end)
+            ------=================------
+            ---   Weapons Functions
+            ------=================------  
 
+                FearWeapons:divider("FearSelf Weapons")
+                local FearNV = menu.ref_by_path('Game>Rendering>Night Vision')
+                FearWeapons:toggle_loop("Night Vision Scope" ,{}, "Press E while aiming to activate.\n\nRecommended to use only night time, using daytime can may have complication on your eyes watching the screen.",function()
+                    local aiming = PLAYER.IS_PLAYER_FREE_AIMING(players.user())
+                    if GRAPHICS.GET_USINGSEETHROUGH() and not aiming then
+                        menu.trigger_command(FearNV,'off')
+                    elseif PAD.IS_CONTROL_JUST_PRESSED(38,38) then
+                        if menu.get_value(FearNV) or not aiming then
+                            FearCommand(FearNV,"off")
+                        else
+                            FearCommand(FearNV,"on")
+                        end
+                    end
+                end)
+
+                local FearNR = menu.ref_by_path('Self>Weapons>No Recoil')
+                FearWeapons:toggle_loop("No Recoil Alt", {}, "Press E while aiming to activate.\n\nRecommended to use standard weapon or RPG.", function()
+                    local aiming = PLAYER.IS_PLAYER_FREE_AIMING(players.user())
+                    if not aiming then
+                        menu.trigger_command(FearNR, 'off')
+                    elseif PAD.IS_CONTROL_JUST_PRESSED(38, 38) then
+                        if not menu.get_value(FearNR) then
+                            FearCommand(FearNR, 'on')
+                        else
+                            FearCommand(FearNR, 'off')
+                        end
+                    end
+                end)
+            
         ------==================------
         ---   Vehicles Functions
         ------==================------  
@@ -870,7 +890,7 @@
             ------================------
 
             local FearSessionL = FearOnline:list("Session")
-            FearSessionL:divider("FearSession Advanced")
+            FearSessionL:divider("FearOnline Session")
             player_count = FearSessionL:divider(get_player_count())
 
             local function RNGCount(min, max)
