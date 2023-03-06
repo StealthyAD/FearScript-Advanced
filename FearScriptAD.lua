@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.1"
+    local FearVersion = "0.27.1a"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -852,20 +852,26 @@
                 return math.random(min, max)
             end
 
-                FearSessionL:action("Find Public Session (Max)", {"fearsmax"}, "Go to Public Session", function()
-                    FearCommands("go public")
-                    local playerCount = RNGCount(16, 30)
-                    FearCommands("playermagnet " ..playerCount)
-                    FearToast(FearScriptNotif.."\nYou will gonna join the session approximately atleast: "..playerCount.." players. (Not Precise, Remember)")
-                    FearTime()
-                end)
+            FearSessionL:action("Find Public Session (Max)", {"fearsmax"}, "Go to Public Session", function()
+                FearCommands("go public")
+                local playerCount = RNGCount(16, 30)
+                FearCommands("playermagnet " ..playerCount)
+                FearToast(FearScriptNotif.."\nYou will gonna join the session approximately atleast: "..playerCount.." players. (Not Precise, Remember)")
+            
+                local loadTime = math.random(20000, 60000) -- 20 seconds / 1 min random time to able to reset player magnet
+                FearTime(loadTime)
+                FearCommands("playermagnet 0") -- Take time to revert the settings.
+            end)
 
                 FearSessionL:action("Find Public Session (Less)", {"fearsless"}, "Go to Public Session", function()
                     FearCommands("go public")
                     local playerCount = RNGCount(1, 15)
                     FearCommands("playermagnet " ..playerCount)
                     FearToast(FearScriptNotif.."\nYou will gonna join the session approximately atleast: "..playerCount.." players. (Not Precise, Remember)")
-                    FearTime()
+
+                    local loadTime = math.random(20000, 60000) -- 20 seconds / 1 min random time to able to reset player magnet
+                    FearTime(loadTime)
+                    FearCommands("playermagnet 0") -- Take time to revert the settings.
                 end)
 
                 FearSessionL:action("Find Random Session", {"fearsrand"}, "Go to Public Session", function()
@@ -873,7 +879,10 @@
                     local playerCount = RNGCount(1, 29)
                     FearCommands("playermagnet " ..playerCount)
                     FearToast(FearScriptNotif.."\nYou will gonna join the session approximately atleast: "..playerCount.." players. (Not Precise, Remember)")
-                    FearTime()
+
+                    local loadTime = math.random(20000, 60000) -- 20 seconds / 1 min random time to able to reset player magnet
+                    FearTime(loadTime)
+                    FearCommands("playermagnet 0") -- Take time to revert the settings.
                 end)
 
                 FearSessionL:divider("Main Tweaks")
