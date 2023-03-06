@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.1a"
+    local FearVersion = "0.27.2"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -640,7 +640,6 @@
         ---   Self Functions
         ------==============------  
 
-
             FearSelf:divider("FearScript Self")
             FearSelf:action("Simple Ragdoll", {}, "Just fall yourself on the ground.", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false) 
@@ -651,6 +650,32 @@
 
             FearSelf:toggle_loop("Ragdoll Loop", {}, "Loop Ragdoll", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false)
+            end)
+
+            FearSelf:toggle("Partial Invisible", {}, "Turn partially invisible mode (Players will not able to see you), but you will see only yourself, includes vehicles.", function(toggle)
+                if toggle then
+                    FearCommands("otr on")
+                    FearCommands("invisibility remote")
+                    FearCommands("vehinvisibility remote")
+                else
+                    FearCommands("otr off")
+                    FearCommands("invisibility off")
+                    FearCommands("vehinvisibility off")
+                end
+            end)
+
+            local FearNV = menu.ref_by_path('Game>Rendering>Night Vision')
+            FearSelf:toggle_loop("Night Vision Scope" ,{}, "Press E while aiming to activate.\n\nRecommended to use only night time, using daytime can may have complication on your eyes watching the screen.",function()
+                local aiming = PLAYER.IS_PLAYER_FREE_AIMING(players.user())
+                if GRAPHICS.GET_USINGSEETHROUGH() and not aiming then
+                    menu.trigger_command(FearNV,'off')
+                elseif PAD.IS_CONTROL_JUST_PRESSED(38,38) then
+                    if menu.get_value(FearNV) or not aiming then
+                        FearCommand(FearNV,"off")
+                    else
+                        FearCommand(FearNV,"on")
+                    end
+                end
             end)
 
         ------==================------
@@ -1499,6 +1524,15 @@
                 menu.show_command_box("ffakecustomalert ")
             end, function(on_command)
                 show_custom_rockstar_alert(on_command)
+            end)
+
+            FWarning = FearMiscs:action("Quick Instant Game", {'faltf4'}, "Leave quickly the game.", function(click)
+                menu.show_warning(FWarning, click, "Are you sure to leave the game?\nNOTE: It's an alternative Stand for YEET but quick instant Alt + F4 feature.", function()
+                    FearCommands("hotkeysskipwarnings on")
+                    FearTime(50)
+                    FearCommands("yeet")
+                    FearTime()
+                end)
             end)
 
     ------===============------
