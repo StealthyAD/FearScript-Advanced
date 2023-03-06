@@ -1099,7 +1099,7 @@
                     end
                     local function give_tank(pid)
                         local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
-                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 7.5, 0.0)
                     
                         local hash = util.joaat("rhino")
                     
@@ -1131,7 +1131,7 @@
                     end
                     local function give_plane(pid)
                         local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
-                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 5.0, 0.0)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 11.0, 0.0)
                     
                         local hash = util.joaat("lazer")
                     
