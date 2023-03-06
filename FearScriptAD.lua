@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27"
+    local FearVersion = "0.27.1"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -1712,6 +1712,17 @@
                 end
                 FearTime(150)
             end)
+
+            FearGriefingList:action("Quick Strike", {"ffstrike"}, "Launch Airstrike to "..FearPlayerName.."\nNOTE: It will randomly spawned how many missiles will drop on the player.", function()
+                local pidPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                local abovePed = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(pidPed, 0, 0, 8)
+                local missileCount = RNGCount(8, 48)
+                for i=1, missileCount do
+                    local missileOffset = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(pidPed, math.random(-5, 5), math.random(-5, 5), math.random(-5, 5))
+                    MISC.SHOOT_SINGLE_BULLET_BETWEEN_COORDS(abovePed.x, abovePed.y, abovePed.z, missileOffset.x, missileOffset.y, missileOffset.z, 100, true, 1752584910, players.user_ped(), true, false, 250)
+                end
+            end)
+
             FearGriefingList:divider("Vehicle Tweaks")
             FearGriefingList:action("Summon Cargo Plane", {"fearcargoplane"}, "Spawn Big Cargo for "..FearPlayerName.."\nSpawning Cargo Plane to "..FearPlayerName.." will create +50 entites Cargo Plane.", function ()
                 local function upgrade_vehicle(vehicle)
@@ -2561,7 +2572,14 @@
 
         ----============================----
         --- Standard Crash & Kick Player
-        ----============================----        
+        ----============================----  
+
+        FearAttackList:action("Fragment Crash", {"ffcrash"}, "Skid from Rebound 'GameCrunch Crash'", function()
+            local object = entities.create_object(util.joaat("prop_fragtest_cnst_04"), ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)))
+            OBJECT.BREAK_OBJECT_FRAGMENT_CHILD(object, 1, false)
+            util.yield(1000)
+            entities.delete_by_handle(object)
+        end)      
 
         FearAttackList:action("Force Breakup ".. FearPlayerName, {"fbreakupmax"}, "Force "..FearPlayerName.." to leave the session.\nNOTE: You can't kick Stand Users if Stand User Identification has been activated.\nIt will be useful if you want kick Players using Host Spoof Token (Aggressive/Spot) but reverse side.", function()
             FearCommands("breakup"..FearPlayerName)
