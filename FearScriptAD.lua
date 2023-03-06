@@ -1149,6 +1149,56 @@
                     end
                 end)
 
+                
+                FearVehicleSess:action("Call Boeing 9/11", {}, "Call Osama to send "..get_player_count().." boeing in the session.\nNOTE: The best boeing plane has better speed atleast 700-800 KM/h, it's very faster.", function ()
+                    local function upgrade_vehicle(vehicle)
+                        if menu.get_value(FearToggleCustom) == true then
+                            for i = 0,49 do
+                                local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                                VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            end
+                        else
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
+                        end
+                    end
+
+                    local function summon_entity_face(entity, targetplayer, inclination)
+                        local pos1 = ENTITY.GET_ENTITY_COORDS(entity, false)
+                        local pos2 = ENTITY.GET_ENTITY_COORDS(targetplayer, false)
+                        local rel = v3.new(pos2)
+                        rel:sub(pos1)
+                        local rot = rel:toRot()
+                        if not inclination then
+                            ENTITY.SET_ENTITY_HEADING(entity, rot.z)
+                        else
+                            ENTITY.SET_ENTITY_ROTATION(entity, rot.x, rot.y, rot.z, 2, false)
+                        end
+                    end
+
+                    local function give_plane(pid)
+                        local targetID = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(targetID, 0.0, 5.0, 200.0)
+                    
+                        local hash = util.joaat("jet")
+                    
+                        if not STREAMING.HAS_MODEL_LOADED(hash) then
+                            load_model(hash)
+                        end
+                    
+                        local boeing = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(targetID))
+                        ENTITY.SET_ENTITY_INVINCIBLE(boeing, menu.get_value(FearToggleGod))
+                        summon_entity_face(boeing, targetID, true)
+                        VEHICLE.SET_VEHICLE_FORWARD_SPEED(boeing, 1000.0)
+                        VEHICLE.CONTROL_LANDING_GEAR(boeing, 3)
+                        upgrade_vehicle(boeing)
+                    end
+                    for k,v in pairs(players.list(true, true, true)) do
+                        give_plane(v)
+                        FearTime()
+                    end
+                end)
+
             ----=====================================================----
             ---                 Game Tweaks
             ---     All of the functions, improving the sessions
@@ -2657,10 +2707,6 @@
     players.on_leave(function()
         update_player_count()
     end)
-
-if not SCRIPT_SILENT_START then
-    FearToast(FearScriptNotif.."\nHello ".. players.get_name(players.user())..", I hope you will appreciate the script, the script is unstable, so soon, it will gonna be better.")
-end
 
 util.on_stop(function()
     local sound_location_1 = join_path(script_store_dir_stop, "stop.wav")
