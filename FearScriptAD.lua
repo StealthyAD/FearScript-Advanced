@@ -8,6 +8,7 @@
     Features:
     - Compatible All Stand Versions.
     - Includes Standify & Cruise Missile Tool (GitHub)
+    - Funny Features/Troll/Grief/Spawn/Etc...
 
 ]]--
 
@@ -1308,7 +1309,7 @@
             local currentPosition = 1
             local lastBoeingSent = 0
             
-            FearWorld:action("Send Boeing to Twin Towers", {}, "Send Boeing to Twin Towers.\nWARNING: It may possible another aircraft can deviate from its path.\n\nNOTE: You have a delay which you can send another Boeing Plane to the Twin Towers. Spamming 'Send Boeing to Twin Towers' will sent 2 planes, be careful if you don't wanna block road.", function()
+            FearWorld:action("Send Boeing to Twin Towers", {}, "Send Boeing to Twin Towers.\nWARNING: It may possible another aircraft can deviate from its path.\n\nNOTE: You have a delay which you can send another Boeing Plane to the Twin Towers.\nSpamming 'Send Boeing to Twin Towers' will sent 2 planes simultaneously, be careful if you don't wanna block road.", function()
                 if lastBoeingSent ~= 1 then
                     lastBoeingSent = 1
                 else
