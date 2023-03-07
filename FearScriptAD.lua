@@ -1184,9 +1184,14 @@
                 FearSoundSess:toggle_loop("Air Siren Loop", {'fearsiren'}, "Put Air Siren to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                            AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
+                            for i = 0, 100 do
+                                AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
+                                util.yield()
+                            end
                         end
+                        FearTime(10)
                     end
+                    FearTime(10)
                 end)
 
                 FWarningSS = FearSoundSess:action("Earrape Session", {'fearsound'}, "Put Earrape Alarm to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
@@ -2909,4 +2914,9 @@ util.on_stop(function()
     local sound_location_1 = join_path(script_store_dir_stop, "stop.wav")
     FearPlaySound(sound_location_1, SND_FILENAME | SND_ASYNC) -- Stop current sound while using Standify
     SET_INT_GLOBAL(262145 + 20288, 5000) -- Reset Ballistic Armor
+
+    for i=0,99 do
+        AUDIO.STOP_SOUND(i)
+        util.yield() 
+     end
 end)
