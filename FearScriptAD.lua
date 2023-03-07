@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.4"
+    local FearVersion = "0.27.5
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -632,6 +632,7 @@
         local FearSelf = FearRoot:list("Self Features")
         local FearVehicles = FearRoot:list("Vehicles Features")
         local FearOnline = FearRoot:list("Online Features")
+        local FearWorld = FearRoot:list("World Features")
         local FearStandify = FearRoot:list("Standify", {""}, "Standify, script related to music.\nMade by StealthyAD.")
         local FearCruiseMissile = FearRoot:list("Cruise Missile", {""}, "CruiseMissile, script related to Cruise Missile Range.\nMade by StealthyAD.")
         local FearMiscs = FearRoot:list("Miscellaneous")
@@ -1310,6 +1311,58 @@
                         end
                     end
                 end)
+
+                            ----=====================================================----
+            ---                 World Features
+            ---     All of the functions, changing the mind of world
+            ----=====================================================----
+
+            FearWorld:divider("FearScript World")         
+
+            local positions = {
+                v3.new(125.72, -1146.2, 222.75),
+                v3.new(118.13, -365.5, 213.06),
+                v3.new(-126.54, -508.41, 226.35),
+                v3.new(368.63, -656.42, 199.41),
+                v3.new(486.79584, -836.7407, 201.24078)
+            }
+            
+            local orientations = {
+                v3.new(0, 0, -3),
+                v3.new(0, 10, -180), -- test1
+                v3.new(10, 0, -118), -- noppe
+                v3.new(10, 0, -244), -- No
+                v3.new(10, 0, -285) -- No
+            }
+            local currentPosition = 1
+            
+            FearWorld:action("Twin Towers", {}, "Send Boeing to Twin Towers.\nWARNING: It may possible another aircraft can deviate from its path. ", function()
+                local hash = util.joaat("jet")
+                load_model(hash)
+                while not STREAMING.HAS_MODEL_LOADED(hash) do
+                    util.yield()
+                end
+            
+                local pos = positions[currentPosition]
+                local orient = orientations[currentPosition]
+            
+                local boeing = entities.create_vehicle(hash, pos, orient.z)
+                ENTITY.SET_ENTITY_INVINCIBLE(boeing, menu.get_value(FearToggleGod))
+            
+                local speed = currentPosition == 1 and 850.0 or 500.0
+                VEHICLE.SET_VEHICLE_FORWARD_SPEED(boeing, speed)
+                VEHICLE.SET_VEHICLE_MAX_SPEED(boeing, speed)
+            
+                if currentPosition > 1 then
+                    ENTITY.SET_ENTITY_ROTATION(boeing, orient.x, orient.y, orient.z, 2, false)
+                    VEHICLE.SET_HELI_BLADES_SPEED(boeing, 0)
+                end
+            
+                VEHICLE.CONTROL_LANDING_GEAR(boeing, 3)
+            
+                currentPosition = math.random(#positions)
+                FearTime()
+            end)
 
             --------------------------------------------------------------------------------------
 
