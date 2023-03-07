@@ -1181,7 +1181,7 @@
                     FearTime(100)
                 end)
 
-                FWarningSounds = FearSoundSess:toggle_loop("Air Siren Loop", {'fearsiren'}, "Put Air Siren to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
+                FearSoundSess:action("Air Siren Loop", {'fearsiren'}, "Put Air Siren to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
                     for _, pid in pairs(players.list(true, true, true)) do
                         for i = 0, 200 do -- Volume Sound
                             local player_pos = players.get_position(pid)
