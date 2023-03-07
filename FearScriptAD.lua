@@ -2914,9 +2914,4 @@ util.on_stop(function()
     local sound_location_1 = join_path(script_store_dir_stop, "stop.wav")
     FearPlaySound(sound_location_1, SND_FILENAME | SND_ASYNC) -- Stop current sound while using Standify
     SET_INT_GLOBAL(262145 + 20288, 5000) -- Reset Ballistic Armor
-
-    for i=0,99 do
-        AUDIO.STOP_SOUND(i)
-        util.yield() 
-     end
 end)
