@@ -1230,7 +1230,7 @@
                     end)
                 end)
 
-                FearSessionL:action("Call Boeing in the airs", {}, "Call Osama to send everyone boeing in the session.\nNOTE: The best boeing plane has better speed atleast 700-800 KM/h, it's very faster.", function ()
+                FearSessionL:action("Call Boeing in the airs", {}, "Call Osama to send everyone boeing in the session.\nNOTE: The best boeing plane has better speed atleast 700-800 KM/h, it's very faster.\n\nToggle 'Exclude Self' to avoid using these functions.", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
