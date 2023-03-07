@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.9"
+    local FearVersion = "0.28"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -1333,6 +1333,44 @@
                 currentPosition = math.random(#positions)
                 FearTime()
             end)
+
+            local posCas = {v3.new(618.32416, 43.211624, 105.66624), v3.new(1171.9432, -95.993965, 105.080505)}
+            local oriTCas = {v3.new(0, 0, -88), v3.new(0, 0, 60)}
+            local lastPosition = 0
+            
+            FearWorld:action("Send Boeing to Casino", {}, "Send Boeing to the Casino.\nWARNING: It may possible another aircraft can deviate from its path if you are spamming. ", function()
+                local hash = util.joaat("jet")
+                load_model(hash)
+                while not STREAMING.HAS_MODEL_LOADED(hash) do
+                    util.yield()
+                end
+            
+                local currentPosition = math.random(#posCas)
+                while currentPosition == lastPosition do
+                    currentPosition = math.random(#posCas)
+                end
+                lastPosition = currentPosition
+            
+                local pos = posCas[currentPosition]
+                local orient = oriTCas[currentPosition]
+            
+                local boeing = entities.create_vehicle(hash, pos, orient.z)
+                ENTITY.SET_ENTITY_INVINCIBLE(boeing, menu.get_value(FearToggleGod))
+            
+                local speed = currentPosition == 1 and 850.0 or 500.0
+                VEHICLE.SET_VEHICLE_FORWARD_SPEED(boeing, speed)
+                VEHICLE.SET_VEHICLE_MAX_SPEED(boeing, speed)
+            
+                if currentPosition > 1 then
+                    ENTITY.SET_ENTITY_ROTATION(boeing, orient.x, orient.y, orient.z, 2, false)
+                    VEHICLE.SET_HELI_BLADES_SPEED(boeing, 0)
+                end
+            
+                VEHICLE.CONTROL_LANDING_GEAR(boeing, 3)
+                FearTime()
+            end)
+              
+             
 
             --------------------------------------------------------------------------------------
 
