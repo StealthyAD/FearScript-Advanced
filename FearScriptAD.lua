@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.7"
+    local FearVersion = "0.27.8"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -1926,6 +1926,162 @@
             end)
 
             FearGriefingList:divider("Vehicle Tweaks")
+
+            FearGriefingList:action_slider("Send Plane", {}, "Call the Plane to send "..FearPlayerName.." to die.\n\nBOEING IS THE FASTEST PLANE EVER THAN SHITTY PLANES.", {"Boeing 747","F-16 Falcon","Antonov AN-225"}, function(select)
+                if select == 1 then
+                    local function upgrade_vehicle(vehicle)
+                        if menu.get_value(FearToggleCustom) == true then
+                            for i = 0,49 do
+                                local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                                VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            end
+                        else
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
+                        end
+                    end
+
+                    local function summon_entity_face(entity, targetplayer, inclination)
+                        local pos1 = ENTITY.GET_ENTITY_COORDS(entity, false)
+                        local pos2 = ENTITY.GET_ENTITY_COORDS(targetplayer, false)
+                        local rel = v3.new(pos2)
+                        rel:sub(pos1)
+                        local rot = rel:toRot()
+                        if not inclination then
+                            ENTITY.SET_ENTITY_HEADING(entity, rot.z)
+                        else
+                            ENTITY.SET_ENTITY_ROTATION(entity, rot.x, rot.y, rot.z, 2, false)
+                        end
+                    end
+
+                    local function GiveSPlane(pid)
+                        local targetID = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(targetID, 0.0, 0, 200.0)
+                    
+                        local hash = util.joaat("jet")
+                    
+                        if not STREAMING.HAS_MODEL_LOADED(hash) then
+                            load_model(hash)
+                        end
+                    
+                        local boeing = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(targetID))
+                        ENTITY.SET_ENTITY_INVINCIBLE(boeing, menu.get_value(FearToggleGod))
+                        summon_entity_face(boeing, targetID, true)
+                        VEHICLE.SET_VEHICLE_FORWARD_SPEED(boeing, 1000.0)
+                        VEHICLE.SET_VEHICLE_MAX_SPEED(boeing, 1000.0)
+                        VEHICLE.CONTROL_LANDING_GEAR(boeing, 3)
+                        upgrade_vehicle(boeing)
+                    end
+                    if FearSession() then
+                        if FearPlayerName then
+                            GiveSPlane(pid)
+                            FearTime()
+                        end
+                    end
+                elseif select == 2 then
+                    local function upgrade_vehicle(vehicle)
+                        if menu.get_value(FearToggleCustom) == true then
+                            for i = 0,49 do
+                                local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                                VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            end
+                        else
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
+                        end
+                    end
+
+                    local function summon_entity_face(entity, targetplayer, inclination)
+                        local pos1 = ENTITY.GET_ENTITY_COORDS(entity, false)
+                        local pos2 = ENTITY.GET_ENTITY_COORDS(targetplayer, false)
+                        local rel = v3.new(pos2)
+                        rel:sub(pos1)
+                        local rot = rel:toRot()
+                        if not inclination then
+                            ENTITY.SET_ENTITY_HEADING(entity, rot.z)
+                        else
+                            ENTITY.SET_ENTITY_ROTATION(entity, rot.x, rot.y, rot.z, 2, false)
+                        end
+                    end
+
+                    local function GiveSPlane(pid)
+                        local targetID = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(targetID, 0.0, 40, 150.0)
+                    
+                        local hash = util.joaat("lazer")
+                    
+                        if not STREAMING.HAS_MODEL_LOADED(hash) then
+                            load_model(hash)
+                        end
+                    
+                        local lazersuicide = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(targetID))
+                        ENTITY.SET_ENTITY_INVINCIBLE(lazersuicide, menu.get_value(FearToggleGod))
+                        summon_entity_face(lazersuicide, targetID, true)
+                        VEHICLE.SET_VEHICLE_FORWARD_SPEED(lazersuicide, 540.0)
+                        VEHICLE.SET_VEHICLE_MAX_SPEED(lazersuicide, 540.0)
+                        VEHICLE.CONTROL_LANDING_GEAR(lazersuicide, 3)
+                        upgrade_vehicle(lazersuicide)
+                    end
+                    if FearSession() then
+                        if FearPlayerName then
+                            GiveSPlane(pid)
+                            FearTime()
+                        end
+                    end
+                else
+                    local function upgrade_vehicle(vehicle)
+                        if menu.get_value(FearToggleCustom) == true then
+                            for i = 0,49 do
+                                local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                                VEHICLE.SET_VEHICLE_MOD(vehicle, i, num - 1, true)
+                            end
+                        else
+                            local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
+                            VEHICLE.SET_VEHICLE_MOD(vehicle, 0, 0 - 1, true)
+                        end
+                    end
+
+                    local function summon_entity_face(entity, targetplayer, inclination)
+                        local pos1 = ENTITY.GET_ENTITY_COORDS(entity, false)
+                        local pos2 = ENTITY.GET_ENTITY_COORDS(targetplayer, false)
+                        local rel = v3.new(pos2)
+                        rel:sub(pos1)
+                        local rot = rel:toRot()
+                        if not inclination then
+                            ENTITY.SET_ENTITY_HEADING(entity, rot.z)
+                        else
+                            ENTITY.SET_ENTITY_ROTATION(entity, rot.x, rot.y, rot.z, 2, false)
+                        end
+                    end
+
+                    local function GiveSPlane(pid)
+                        local targetID = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(targetID, 0.0, 0, 200.0)
+                    
+                        local hash = util.joaat("cargoplane")
+                    
+                        if not STREAMING.HAS_MODEL_LOADED(hash) then
+                            load_model(hash)
+                        end
+                    
+                        local cargoplane = entities.create_vehicle(hash, c, ENTITY.GET_ENTITY_HEADING(targetID))
+                        ENTITY.SET_ENTITY_INVINCIBLE(cargoplane, menu.get_value(FearToggleGod))
+                        summon_entity_face(cargoplane, targetID, true)
+                        VEHICLE.SET_VEHICLE_FORWARD_SPEED(cargoplane, 1000.0)
+                        VEHICLE.SET_VEHICLE_MAX_SPEED(cargoplane, 1000.0)
+                        VEHICLE.CONTROL_LANDING_GEAR(cargoplane, 3)
+                        upgrade_vehicle(cargoplane)
+                    end
+                    if FearSession() then
+                        if FearPlayerName then
+                            GiveSPlane(pid)
+                            FearTime()
+                        end
+                    end
+                end
+            end)
+
+
             FearGriefingList:action("Summon Cargo Plane", {"fearcargoplane"}, "Spawn Big Cargo for "..FearPlayerName.."\nSpawning Cargo Plane to "..FearPlayerName.." will create +50 entites Cargo Plane.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
