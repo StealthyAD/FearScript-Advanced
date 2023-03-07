@@ -1648,8 +1648,8 @@
                 show_custom_rockstar_alert(on_command)
             end)
 
-            FWarning = FearMiscs:action("Quick Instant Game", {'fquitgame'}, "Leave quickly the game.", function(click)
-                menu.show_warning(FWarning, click, "Are you sure to leave the game?\nNOTE: It's an alternative Stand for YEET but quick instant Alt + F4 feature.\nIt allows you to override the warnings given by Stand and makes your job easier.", function()
+            FWarningQ1 = FearMiscs:action("Quick Instant Game", {'fquitgame'}, "Leave quickly the game.", function(click)
+                menu.show_warning(FWarningQ1, click, "Are you sure to leave the game?\n\nNOTE: It's an alternative Stand for YEET but quick instant Alt + F4 feature.\n\nIt allows you to override the warnings given by Stand and makes your job easier and restart GTAV easier.", function()
                     FearCommands("hotkeysskipwarnings on")
                     FearTime(50)
                     FearCommands("yeet")
