@@ -1841,8 +1841,8 @@
             FearGriefingList:divider("Player Tweaks")
             FearGriefingList:toggle_loop("Remove Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
-                    if players.get_name(pid) then
-                        menu.trigger_commands("disarm"..players.get_name(pid))
+                    if FearPlayerName then
+                        menu.trigger_commands("disarm"..FearPlayerName)
                     end
                     util.yield(150)
                 end
@@ -1856,7 +1856,7 @@
                     FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'] + 2, 7, 1000, false, true, 0)
                 end
                 if FearSession() then
-                    if players.get_name(pid) then
+                    if FearPlayerName then
                         KillPlayer(pid)
                     end
                     FearTime(150)
@@ -1868,14 +1868,22 @@
                 FearPassiveShot(pid)
             end)
 
-            FearGriefingList:toggle_loop("Ukraine Alarm Loop",{}, "You really want put Ukraine Alarm to "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possibkle karma you if he's a modder.",function()
+            FearGriefingList:toggle_loop("Ukraine Alarm Loop",{}, "You really want put Ukraine Alarm to "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possible karma you if he's a modder.",function()
                 if FearSession() then
-                    if players.get_name(pid) then
+                    if FearPlayerName then
                         AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
                     end
                     FearTime(30)
                 end
                 FearTime(150)
+            end)
+
+            FearGriefingList:toggle_loop("Camera Moving",{'fearcam'}, "You really want put camera moving "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possible karma you if he's a modder.",function()
+                if FearSession() then
+                    if FearPlayerName then
+                        CameraMoving(pid, 99999)
+                    end
+                end
             end)
 
             FearGriefingList:action("Quick Strike", {"ffstrike"}, "Launch Airstrike to "..FearPlayerName.."\nNOTE: It will randomly spawned how many missiles will drop on the player.", function()
