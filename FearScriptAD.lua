@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.5
+    local FearVersion = "0.27.5"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
