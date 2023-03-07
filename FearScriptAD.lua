@@ -1219,13 +1219,15 @@
                     end
                 end)
 
-                FearSessionL:action("Earrape Session", {}, "Put Earrape Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
-                    for i = 0, 100 do
-                        for _, pid in pairs(players.list(FearToggleSelf)) do
-                            local player_pos = players.get_position(pid)
-                            AUDIO.PLAY_SOUND_FROM_COORD(-1, "BED", player_pos.x, player_pos.y, player_pos.z, "WASTEDSOUNDS", true, 9999, false)
+                FWarning = FearSessionL:action("Earrape Session", {'fearsound'}, "Put Earrape Alarm to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all..",function(warningtype)
+                    menu.show_warning(FWarning, warningtype, "WARNING: Do you really put Earrape Sound all around in the session? Because it was a dangerous idea to put these sounds.\nREAD before clicking: Repeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.\nYou are responsible for your actions if someone is deaf or hard of hearing.", function()
+                        for _, pid in pairs(players.list(true, true, true)) do
+                            for i = 0, 100 do
+                                local player_pos = players.get_position(pid)
+                                AUDIO.PLAY_SOUND_FROM_COORD(-1, "BED", player_pos.x, player_pos.y, player_pos.z, "WASTEDSOUNDS", true, 99999, false)
+                            end
                         end
-                    end
+                    end)
                 end)
 
                 FearSessionL:action("Call Boeing in the airs", {}, "Call Osama to send "..get_player_count().." boeing in the session.\nNOTE: The best boeing plane has better speed atleast 700-800 KM/h, it's very faster.", function ()
@@ -2764,6 +2766,6 @@
 
 util.on_stop(function()
     local sound_location_1 = join_path(script_store_dir_stop, "stop.wav")
-    FearPlaySound(sound_location_1, SND_FILENAME | SND_ASYNC)
-    SET_INT_GLOBAL(262145 + 20288, 5000)
+    FearPlaySound(sound_location_1, SND_FILENAME | SND_ASYNC) -- Stop current sound while using Standify
+    SET_INT_GLOBAL(262145 + 20288, 5000) -- Reset Ballistic Armor
 end)
