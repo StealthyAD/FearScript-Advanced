@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.5"
+    local FearVersion = "0.27.6"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -1273,9 +1273,11 @@
                         VEHICLE.CONTROL_LANDING_GEAR(boeing, 3)
                         upgrade_vehicle(boeing)
                     end
-                    for k,v in pairs(players.list(true, true, true)) do
-                        give_plane(v)
-                        FearTime()
+                    for _, pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            give_plane(pid)
+                            FearTime()
+                        end
                     end
                 end)
 
