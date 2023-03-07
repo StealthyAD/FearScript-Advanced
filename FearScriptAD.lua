@@ -1198,19 +1198,6 @@
 
                 FearSessionL:toggle("Riot Mode", {"fearrt"}, "Put Riot Mode to everyone.\nMake sure you don't wanna live this shit world.", function(toggle) MISC.SET_RIOT_MODE_ENABLED(toggle)end)
 
-                if menu.get_edition() >= 3 then
-                    local FearToggleSelf_mugger = false
-                    FearSessionL:toggle_loop("Mugger Loop", {'fearmglall'}, "Send Mugger Loop to the entire session?\nNOTE: It may be detected by any modders and may karma you.",function()
-                        for _,pid in pairs(players.list(FearToggleSelf_mugger)) do
-                            if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                                FearCommands("mugloop"..players.get_name(pid))
-                            end
-                            FearTime(30)
-                        end
-                        FearTime(100)
-                    end)
-                end
-
                 FearSessionL:toggle_loop("Pretend God Mode", {"feargall"}, "This is not the real god mode, you shoot (he's not invincible), but if you fight with fist, it will consider Invincible.\nNOTE: It may detected like 'attacking while invulnerable' if your friend or your foe attack, be careful.",function()
                     local FearToggleSelf_God = false
                     for _, pid in pairs(players.list(FearToggleSelf_God)) do
