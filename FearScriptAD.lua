@@ -8,7 +8,6 @@
     Features:
     - Compatible All Stand Versions.
     - Includes Standify & Cruise Missile Tool (GitHub)
-    - Funny Features/Troll/Grief/Spawn/Etc...
 
 ]]--
 
@@ -22,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.28"
+    local FearVersion = "0.28.1"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -1616,15 +1615,22 @@
 		    end)
 	        FearMiscs:hyperlink("GitHub Source", "https://github.com/StealthyAD/FearScript-Advanced")
             FearMiscs:divider("FearScript Others")
-            FearMiscs:toggle("Toggle Radar/HUD", {}, "", function(toggle)
-                if toggle then
-                    HUD.DISPLAY_RADAR(false)
-                    HUD.DISPLAY_HUD(false)
-                else
-                    HUD.DISPLAY_RADAR(true)
-                    HUD.DISPLAY_HUD(true)
-                end
-            end)
+
+                local FearMiscsOptions = FearMiscs:list("Miscs Options")
+                FearMiscsOptions:divider("FearMiscs Options")
+                FearMiscsOptions:toggle("Block Phone Calls", {""}, "Blocks incoming phones calls", function(state)
+                    local phone_calls = menu.ref_by_command_name("nophonespam")
+                    phone_calls.value = state
+                end)
+                FearMiscsOptions:toggle("Toggle Radar/HUD", {}, "", function(toggle)
+                    if toggle then
+                        HUD.DISPLAY_RADAR(false)
+                        HUD.DISPLAY_HUD(false)
+                    else
+                        HUD.DISPLAY_RADAR(true)
+                        HUD.DISPLAY_HUD(true)
+                    end
+                end)
 
             local FearMoney = FearMiscs:list("Money Features")
             FearRemoverCash = FearMoney:slider("Choose Value Money", {"fearrm"}, "", 0, 2147483647, 0, 1, function()end)
