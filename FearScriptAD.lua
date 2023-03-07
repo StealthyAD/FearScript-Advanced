@@ -256,6 +256,12 @@
             util.yield()
         end
     end
+
+    local function CameraMoving(pid, force) -- most of script use ShakeCamera
+        local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+        local coords = ENTITY.GET_ENTITY_COORDS(entity, true)
+        FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'], 7, 0, false, true, force)
+    end
     
     ------=============================------
     ---   FearScript Advanced Functions
@@ -1218,6 +1224,14 @@
                     end
                 end)
 
+                FearSessionL:toggle_loop("Camera Moving", {'fearcms'}, "Moving, shake with the hardest force in the session.\nToggle 'Exclude Self' to avoid using these features", function()
+                    for _, pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            CameraMoving(players.get_name(pid), 50000)
+                        end
+                    end
+                end)
+
                 FearSessionL:action("Earrape Session", {}, "Put Earrape Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for i = 0, 100 do
                         for _, pid in pairs(players.list(FearToggleSelf)) do
@@ -1227,7 +1241,7 @@
                     end
                 end)
 
-                FearSessionL:action("Call Boeing 9/11", {}, "Call Osama to send "..get_player_count().." boeing in the session.\nNOTE: The best boeing plane has better speed atleast 700-800 KM/h, it's very faster.", function ()
+                FearSessionL:action("Call Boeing in the airs", {}, "Call Osama to send "..get_player_count().." boeing in the session.\nNOTE: The best boeing plane has better speed atleast 700-800 KM/h, it's very faster.", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
@@ -1312,7 +1326,7 @@
                     end
                 end)
 
-                            ----=====================================================----
+            ----=====================================================----
             ---                 World Features
             ---     All of the functions, changing the mind of world
             ----=====================================================----
