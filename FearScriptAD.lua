@@ -1234,7 +1234,7 @@
 
                 FearSessionL:toggle("Riot Mode", {"fearrt"}, "Put Riot Mode to everyone.\nMake sure you don't wanna live this shit world.", function(toggle) MISC.SET_RIOT_MODE_ENABLED(toggle)end)
 
-                FearSessionL:toggle_loop("Pretend God Mode", {"feargall"}, "This is not the real god mode, you shoot (he's not invincible), but if you fight with fist, it will consider Invincible.\nNOTE: It may detected like 'attacking while invulnerable' if your friend or your foe attack, be careful.",function()
+                FearSessionL:toggle_loop("Pretend God Mode", {"feargall"}, "This is not the real god mode, you shoot (he's not invincible), but if you fight with fist, it will consider Invincible.\n\nNOTE: It may detected like 'attacking while invulnerable' if your friend or your foe attack, be careful.",function()
                     local FearToggleSelf_God = false
                     for _, pid in pairs(players.list(FearToggleSelf_God)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" and PLAYER.GET_PLAYER_INVINCIBLE(PLAYER.GET_PLAYER_PED(pid)) == false then
@@ -1247,7 +1247,7 @@
                     end
                 end)
 
-                FearSessionL:toggle_loop("Camera Moving", {'fearcms'}, "Moving, shake with the hardest force in the session.\nToggle 'Exclude Self' to avoid using these features", function()
+                FearSessionL:toggle_loop("Camera Moving", {'fearcms'}, "Moving, shake with the hardest force in the session.\n\nToggle 'Exclude Self' to avoid using these features", function()
                     for _, pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             CameraMoving(players.get_name(pid), 50000)
