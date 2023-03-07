@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.5"
+    local FearVersion = "0.27.6"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -1230,7 +1230,7 @@
                     end)
                 end)
 
-                FearSessionL:action("Call Boeing in the airs", {}, "Call Osama to send "..get_player_count().." boeing in the session.\nNOTE: The best boeing plane has better speed atleast 700-800 KM/h, it's very faster.", function ()
+                FearSessionL:action("Call Boeing in the airs", {}, "Call Mohamed to send everyone boeing in the session.\nNOTE: The best boeing plane has better speed atleast 1000 KM/h, it's very faster.\n\nToggle 'Exclude Self' to avoid using these functions.", function ()
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
                             for i = 0,49 do
@@ -1260,7 +1260,7 @@
                         local targetID = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                         local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(targetID, 0.0, 5.0, 300.0)
                     
-                        local hash = util.joaat("cargoplane")
+                        local hash = util.joaat("jet")
                     
                         if not STREAMING.HAS_MODEL_LOADED(hash) then
                             load_model(hash)
@@ -1270,12 +1270,15 @@
                         ENTITY.SET_ENTITY_INVINCIBLE(boeing, menu.get_value(FearToggleGod))
                         summon_entity_face(boeing, targetID, true)
                         VEHICLE.SET_VEHICLE_FORWARD_SPEED(boeing, 1000.0)
+                        VEHICLE.SET_VEHICLE_MAX_SPEED(boeing, 1000.0)
                         VEHICLE.CONTROL_LANDING_GEAR(boeing, 3)
                         upgrade_vehicle(boeing)
                     end
-                    for k,v in pairs(players.list(true, true, true)) do
-                        give_plane(v)
-                        FearTime()
+                    for _, pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            give_plane(pid)
+                            FearTime()
+                        end
                     end
                 end)
 
