@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.6"
+    local FearVersion = "0.27.7"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -943,13 +943,14 @@
                 end)
                 local FearBountySess = FearSessionL:list("Bounty Features")
                 local FearVehicleSess = FearSessionL:list("Vehicles Features")
+                local FearSoundSess = FearSessionL:list("Sound Features", {}, "WARNING: Don't use anything if you don't wanna break your ear.\n\nREAD before clicking: Repeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.\n\nYou are responsible for your actions if someone is deaf or hard of hearing")
 
             ----=====================================================----
             ---                 Bounty Features
             ---     All of the functions, Bounty Functions
             ----=====================================================----
 
-                    FearBountySess:divider("FearBounty Advanced")
+                    FearBountySess:divider("FearSession Bounty")
                     FearBountyValue = FearBountySess:slider("Bounty Value",{"fearbountys"}, "Chose the amount of the bounty offered automatically.", 0, 10000, 0 , 1, function(value)end)
                     
                     FearBountySess:toggle("Auto Bounty", {}, "Put everyone automatically Bounty to all players." ,function()
@@ -975,7 +976,7 @@
             ---     All of the functions, spawning cars, etc...
             ----=====================================================----
 
-                FearVehicleSess:divider("FearVehicle Advanced")
+                FearVehicleSess:divider("FearSession Vehicle")
                 local FearPlateName
                 FearToggleGod = FearVehicleSess:toggle_loop("Toggle Invincible Cars", {}, "Turn On/Off Invincible Car, exception don't use weaponized weapons, I will not recommend you use.\nNOTE: It will be absurd to enable the features make causing griefing constantly.\nNOTE: It will applicable for 'Friendly Features'.", function() end)
                 FearToggleCustom = FearVehicleSess:toggle_loop("Toggle Upgrade Cars", {}, "Toggle On/Off for Maximum Car.\nNOTE: It will applicable for 'Friendly Features'.", function()end)
@@ -1156,6 +1157,44 @@
                     end
                 end)
 
+            ----=====================================================----
+            ---                 Sound Session 
+            ---     All of the functions, improving the sessions
+            ----=====================================================----
+
+                FearSoundSess:divider("FearSession Sounds")
+                FearSoundSess:toggle_loop("Ukraine Alarm Loop",{'fearaall'}, "Put Ukraine Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
+                    for _,pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
+                            players.send_sms(pid, players.user(), "WARNING: Ukraine has been invaded by Russia. Fuck Russia.")
+                        end
+                        FearTime(30)
+                    end
+                    FearTime(100)
+                end)
+
+                FWarningSounds = FearSoundSess:action("Ukraine Alarm", {'fearsoundu'}, "Put Ukraine Alarm to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
+                    menu.show_warning(FWarningSounds, warningtype, "WARNING: Do you really put Earrape Sound all around in the session? Because it was a dangerous idea to put these sounds.\n\nREAD before clicking: Repeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.\n\nYou are responsible for your actions if someone is deaf or hard of hearing.", function()
+                        for _, pid in pairs(players.list(true, true, true)) do
+                            for i = 0, 200 do -- Volume Sound
+                                local player_pos = players.get_position(pid)
+                                AUDIO.PLAY_SOUND_FROM_COORD(-1, "Air_Defences_Activated", player_pos.x, player_pos.y, player_pos.z, "DLC_sum20_Business_Battle_AC_Sounds", true, 9999, false)
+                            end
+                        end
+                    end)
+                end)
+
+                FWarningSS = FearSoundSess:action("Earrape Session", {'fearsound'}, "Put Earrape Alarm to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
+                    menu.show_warning(FWarningSS, warningtype, "WARNING: Do you really put Earrape Sound all around in the session? Because it was a dangerous idea to put these sounds.\n\nREAD before clicking: Repeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.\n\nYou are responsible for your actions if someone is deaf or hard of hearing.", function()
+                        for _, pid in pairs(players.list(true, true, true)) do
+                            for i = 0, 200 do -- Volume Sound
+                                local player_pos = players.get_position(pid)
+                                AUDIO.PLAY_SOUND_FROM_COORD(-1, "BED", player_pos.x, player_pos.y, player_pos.z, "WASTEDSOUNDS", true, 9999, false)
+                            end
+                        end
+                    end)
+                end)
 
             ----=====================================================----
             ---                 Game Tweaks
@@ -1185,17 +1224,6 @@
                     util.yield(5000)
                 end)
 
-                FearSessionL:toggle_loop("Ukraine Alarm Loop",{'fearaall'}, "Put Ukraine Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
-                    for _,pid in pairs(players.list(FearToggleSelf)) do
-                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                            AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
-                            players.send_sms(pid, players.user(), "WARNING: Ukraine has been invaded by Russia. Fuck Russia.")
-                        end
-                        FearTime(30)
-                    end
-                    FearTime(100)
-                end)
-
                 FearSessionL:toggle("Riot Mode", {"fearrt"}, "Put Riot Mode to everyone.\nMake sure you don't wanna live this shit world.", function(toggle) MISC.SET_RIOT_MODE_ENABLED(toggle)end)
 
                 FearSessionL:toggle_loop("Pretend God Mode", {"feargall"}, "This is not the real god mode, you shoot (he's not invincible), but if you fight with fist, it will consider Invincible.\nNOTE: It may detected like 'attacking while invulnerable' if your friend or your foe attack, be careful.",function()
@@ -1217,17 +1245,6 @@
                             CameraMoving(players.get_name(pid), 50000)
                         end
                     end
-                end)
-
-                FWarningSS = FearSessionL:action("Earrape Session", {'fearsound'}, "Put Earrape Alarm to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
-                    menu.show_warning(FWarningSS, warningtype, "WARNING: Do you really put Earrape Sound all around in the session? Because it was a dangerous idea to put these sounds.\n\nREAD before clicking: Repeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.\n\nYou are responsible for your actions if someone is deaf or hard of hearing.", function()
-                        for _, pid in pairs(players.list(true, true, true)) do
-                            for i = 0, 100 do
-                                local player_pos = players.get_position(pid)
-                                AUDIO.PLAY_SOUND_FROM_COORD(-1, "BED", player_pos.x, player_pos.y, player_pos.z, "WASTEDSOUNDS", true, 99999, false)
-                            end
-                        end
-                    end)
                 end)
 
                 FearSessionL:action("Call Boeing in the airs", {}, "Call Osama to send everyone boeing in the session.\nNOTE: The best boeing plane has better speed atleast 700-800 KM/h, it's very faster.\n\nToggle 'Exclude Self' to avoid using these functions.", function ()
