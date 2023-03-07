@@ -1163,6 +1163,13 @@
             ----=====================================================----
 
                 FearSoundSess:divider("FearSession Sounds")
+                FearSoundSess:action("Stop Completely Sounds", {}, "Able to stop the earrape/sounds can might breakup the session.\n\nTIP: spamming the feature will speed up stop sounds.", function()
+                    for i=0,99 do
+                        AUDIO.STOP_SOUND(i)
+                        util.yield() 
+                     end
+                end)
+
                 FearSoundSess:toggle_loop("Ukraine Alarm Loop",{'fearaall'}, "Put Ukraine Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
@@ -1174,15 +1181,13 @@
                     FearTime(100)
                 end)
 
-                FWarningSounds = FearSoundSess:action("Ukraine Alarm", {'fearsoundu'}, "Put Ukraine Alarm to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
-                    menu.show_warning(FWarningSounds, warningtype, "WARNING: Do you really put Earrape Sound all around in the session? Because it was a dangerous idea to put these sounds.\n\nREAD before clicking: Repeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.\n\nYou are responsible for your actions if someone is deaf or hard of hearing.", function()
-                        for _, pid in pairs(players.list(true, true, true)) do
-                            for i = 0, 200 do -- Volume Sound
-                                local player_pos = players.get_position(pid)
-                                AUDIO.PLAY_SOUND_FROM_COORD(-1, "Air_Defences_Activated", player_pos.x, player_pos.y, player_pos.z, "DLC_sum20_Business_Battle_AC_Sounds", true, 9999, false)
-                            end
+                FWarningSounds = FearSoundSess:toggle_loop("Air Siren Loop", {'fearsiren'}, "Put Air Siren to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
+                    for _, pid in pairs(players.list(true, true, true)) do
+                        for i = 0, 200 do -- Volume Sound
+                            local player_pos = players.get_position(pid)
+                            AUDIO.PLAY_SOUND_FROM_COORD(-1, "Air_Defences_Activated", player_pos.x, player_pos.y, player_pos.z, "DLC_sum20_Business_Battle_AC_Sounds", true, 9999, false)
                         end
-                    end)
+                    end
                 end)
 
                 FWarningSS = FearSoundSess:action("Earrape Session", {'fearsound'}, "Put Earrape Alarm to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
@@ -1202,13 +1207,16 @@
             ----=====================================================----
 
                 FearSessionL:divider("Game Tweaks")
-                FearSessionL:toggle_loop("Disarm all Weapons Permanently",{'feardall'}, "Disarm weapon entirely in the session?\nNOTE: It may cause crash sometimes, be careful.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
+                FearSessionL:toggle("Disarm all Weapons Permanently",{'feardall'}, "Disarm weapon entirely in the session?\nAlternative to Stand, better because it will toggle everyone and not players having weapon.\n\nToggle 'Exclude Self' to avoid using these functions.",function(toggle)
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                            FearCommands("disarm"..players.get_name(pid))
+                            if toggle then
+                                FearCommands("disarm"..players.get_name(pid))
+                            else
+                                FearCommands("disarm"..players.get_name(pid))
+                            end
                         end
                         util.yield(150)
-                        update_player_count()
                     end
                     util.yield(5000)
                 end)
@@ -1733,9 +1741,7 @@
             FearFriendlyList:toggle("Infinite Ammo", {"fearbottomammo"}, "Give Infinite Ammo to "..FearPlayerName.." to help to fire constantly his guns.", function()
                 if FearSession() then
                     if players.get_name(pid) then
-                        FearCommands("ammo"..FearPlayerName)
-                    else
-                        FearCommands("bottomless off") -- If you are using yourself the feature.
+                        WEAPON.SET_PED_INFINITE_AMMO_CLIP(GET_PLAYER_PED_SCRIPT_INDEX(pid))
                     end
                 end
             end, nil, nil, COMMANDPERM_FRIENDLY)
@@ -1858,10 +1864,14 @@
             local FearBounty = FearGriefingList:list("Bounty Features",{},"")
 
             FearGriefingList:divider("Player Tweaks")
-            FearGriefingList:toggle_loop("Remove Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
+            FearGriefingList:toggle("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function(toggle)
                 if FearSession() then
                     if FearPlayerName then
-                        menu.trigger_commands("disarm"..FearPlayerName)
+                        if toggle then
+                            FearCommands("disarm"..FearPlayerName)
+                        else
+                            FearCommands("disarm"..FearPlayerName)
+                        end
                     end
                     util.yield(150)
                 end
