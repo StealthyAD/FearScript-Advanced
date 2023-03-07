@@ -1304,9 +1304,18 @@
                 v3.new(10, 0, -244), -- No
                 v3.new(10, 0, -285) -- No
             }
-            local currentPosition = 1
             
-            FearWorld:action("Twin Towers", {}, "Send Boeing to Twin Towers.\nWARNING: It may possible another aircraft can deviate from its path. ", function()
+            local currentPosition = 1
+            local lastBoeingSent = 0
+            
+            FearWorld:action("Send Boeing to Twin Towers", {}, "Send Boeing to Twin Towers.\nWARNING: It may possible another aircraft can deviate from its path.\n\nNOTE: You have a delay which you can send another Boeing Plane to the Twin Towers. Spamming 'Send Boeing to Twin Towers' will sent 2 planes, be careful if you don't wanna block road.", function()
+                if lastBoeingSent ~= 1 then
+                    lastBoeingSent = 1
+                else
+                    lastBoeingSent = 0
+                    return
+                end
+                
                 local hash = util.joaat("jet")
                 load_model(hash)
                 while not STREAMING.HAS_MODEL_LOADED(hash) do
@@ -1333,6 +1342,7 @@
                 currentPosition = math.random(#positions)
                 FearTime()
             end)
+            
 
             local posCas = {v3.new(618.32416, 43.211624, 105.66624), v3.new(1171.9432, -95.993965, 105.080505)}
             local oriTCas = {v3.new(0, 0, -88), v3.new(0, 0, 60)}
