@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.27.8"
+    local FearVersion = "0.27.9"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -1181,11 +1181,10 @@
                     FearTime(100)
                 end)
 
-                FearSoundSess:action("Air Siren Loop", {'fearsiren'}, "Put Air Siren to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
-                    for _, pid in pairs(players.list(true, true, true)) do
-                        for i = 0, 100 do -- Volume Sound
-                            local player_pos = players.get_position(pid)
-                            AUDIO.PLAY_SOUND_FROM_COORD(-1, "Air_Defences_Activated", player_pos.x, player_pos.y, player_pos.z, "DLC_sum20_Business_Battle_AC_Sounds", true, 9999, false)
+                FearSoundSess:toggle_loop("Air Siren Loop", {'fearsiren'}, "Put Air Siren to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
+                    for _,pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
                         end
                     end
                 end)
@@ -1193,7 +1192,7 @@
                 FWarningSS = FearSoundSess:action("Earrape Session", {'fearsound'}, "Put Earrape Alarm to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
                     menu.show_warning(FWarningSS, warningtype, "WARNING: Do you really put Earrape Sound all around in the session? Because it was a dangerous idea to put these sounds.\n\nREAD before clicking: Repeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.\n\nYou are responsible for your actions if someone is deaf or hard of hearing.", function()
                         for _, pid in pairs(players.list(true, true, true)) do
-                            for i = 0, 100 do -- Volume Sound
+                            for i = 0, 200 do -- Volume Sound
                                 local player_pos = players.get_position(pid)
                                 AUDIO.PLAY_SOUND_FROM_COORD(-1, "BED", player_pos.x, player_pos.y, player_pos.z, "WASTEDSOUNDS", true, 9999, false)
                             end
