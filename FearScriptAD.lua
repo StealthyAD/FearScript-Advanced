@@ -1181,19 +1181,6 @@
                     FearTime(100)
                 end)
 
-                FearSoundSess:toggle_loop("Air Siren Loop", {'fearsiren'}, "Put Air Siren to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
-                    for _,pid in pairs(players.list(FearToggleSelf)) do
-                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                            for i = 0, 100 do
-                                AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
-                                util.yield()
-                            end
-                        end
-                        FearTime(10)
-                    end
-                    FearTime(10)
-                end)
-
                 FWarningSS = FearSoundSess:action("Earrape Session", {'fearsound'}, "Put Earrape Alarm to the entire session?\nYou will be impacted for using the sound (WARNING)\n\nRepeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.",function(warningtype)
                     menu.show_warning(FWarningSS, warningtype, "WARNING: Do you really put Earrape Sound all around in the session? Because it was a dangerous idea to put these sounds.\n\nREAD before clicking: Repeated use of this feature can make you deaf like assault rifles, airplane engines, rocket motors, etc... creates tinnitus, or whistling. It is a prevention above all.\n\nYou are responsible for your actions if someone is deaf or hard of hearing.", function()
                         for _, pid in pairs(players.list(true, true, true)) do
