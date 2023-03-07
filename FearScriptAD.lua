@@ -1260,7 +1260,7 @@
                         local targetID = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                         local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(targetID, 0.0, 5.0, 300.0)
                     
-                        local hash = util.joaat("cargoplane")
+                        local hash = util.joaat("jet")
                     
                         if not STREAMING.HAS_MODEL_LOADED(hash) then
                             load_model(hash)
