@@ -1,4 +1,5 @@
 --[[
+
     FearScript Advanced for Stand by StealthyAD.
     The All-In-One Script combines every each script.
 
@@ -1831,7 +1832,7 @@
                         FearTime(FearDeathPoint.time_delay)
                     end)
                     
-                    FearDestroyWorld:divider("Settings")
+                    FearDestroyWorld:divider("Panic Mode Settings")
                     local groundpoint_slider = FearDestroyWorld:slider("Panic Mode Range", {'ffpanicrange'}, "Range centered of you, will able to choose range distance which it will attract.", 0, 1000, 100, 10, function(value)
                         FearDeathPoint.groundpoint = value
                     end)
