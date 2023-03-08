@@ -1,5 +1,4 @@
 --[[
-
     FearScript Advanced for Stand by StealthyAD.
     The All-In-One Script combines every each script.
 
@@ -24,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.28.7"
+    local FearVersion = "0.29"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -468,6 +467,21 @@
             end
         end
         return objects
+    end
+
+    local function RequestControl(entity, tick)
+        if tick == nil then tick = 20 end
+        if not NETWORK.NETWORK_HAS_CONTROL_OF_ENTITY(entity) and util.is_session_started() then
+            entities.set_can_migrate(entities.handle_to_pointer(entity), true)
+    
+            local i = 0
+            while not NETWORK.NETWORK_HAS_CONTROL_OF_ENTITY(entity) and i <= tick do
+                NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(entity)
+                i = i + 1
+                util.yield()
+            end
+        end
+        return NETWORK.NETWORK_HAS_CONTROL_OF_ENTITY(entity)
     end
 
     ------=============================------
@@ -1986,6 +2000,24 @@
             
                 VEHICLE.CONTROL_LANDING_GEAR(boeing, 3)
                 FearTime()
+            end)
+
+            FearWorld:divider("Vehicle Tweaks")
+            FearWorld:action("Blow up your vehicle", {}, "Destroy your own car while using, previous car or current car.\n\nNOTE: Without Godmode, you will instantly die with explosion or burnt-out vehicle.", function()
+                local vehicle = entities.get_user_vehicle_as_handle()
+                if vehicle ~= 0 then
+                    RequestControl(vehicle)
+                    VEHICLE.EXPLODE_VEHICLE_IN_CUTSCENE(vehicle)
+                end
+            end)
+
+            FearWorld:action("Blow up nearby vehicles", {}, "It will guaranteed burning all vehicles except Personal Vehicles.\n\nNOTE: It will affect players while driving and can burn, die easily.", function()
+                for _, vehicle in pairs(entities.get_all_vehicles_as_handles()) do
+                    if vehicle ~= entities.get_user_personal_vehicle_as_handle() then
+                        RequestControl(vehicle)
+                        VEHICLE.EXPLODE_VEHICLE_IN_CUTSCENE(vehicle)
+                    end
+                end
             end)
 
             --------------------------------------------------------------------------------------
