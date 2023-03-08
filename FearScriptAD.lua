@@ -1833,7 +1833,7 @@
                     end)
                     
                     FearDestroyWorld:divider("Settings")
-                    local groundpoint_slider = FearDestroyWorld:slider("Force Panic Mode", {'ffpanicrange'}, "Range centered of you, will able to choose range distance which it will attract.", 0, 1000, 100, 10, function(value)
+                    local groundpoint_slider = FearDestroyWorld:slider("Panic Mode Range", {'ffpanicrange'}, "Range centered of you, will able to choose range distance which it will attract.", 0, 1000, 100, 10, function(value)
                         FearDeathPoint.groundpoint = value
                     end)
 
