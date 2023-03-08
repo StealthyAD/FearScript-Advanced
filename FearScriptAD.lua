@@ -1,5 +1,4 @@
 --[[
-
     FearScript Advanced for Stand by StealthyAD.
     The All-In-One Script combines every each script.
 
@@ -1849,7 +1848,7 @@
                         FearDeathPoint.object_toggle = toggle
                     end)
 
-                    FearDestroyWorld:slider("Speed Cars", {}, "", 0, 1000, 30, 10,
+                    FearDestroyWorld:slider("Speed Cars", {'ffpspeedcar'}, "", 0, 1000, 30, 10,
                         function(value)
                             FearDeathPoint.forward_speed = value
                         end)
@@ -1863,7 +1862,7 @@
                         FearDeathPoint.has_gravity = toggle
                     end, true)
 
-                    FearDestroyWorld:slider("Delay Time (ms)", {}, "", 0, 3000, 100, 10, function(value)
+                    FearDestroyWorld:slider("Delay Time (ms)", {'ffdelaytime'}, "", 0, 3000, 100, 10, function(value)
                         FearDeathPoint.time_delay = value
                     end)
 
