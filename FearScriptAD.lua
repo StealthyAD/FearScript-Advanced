@@ -1762,7 +1762,7 @@
             ----=====================================================----
 
             FearWorld:divider("FearScript World")    
-            local FearDestroyWorld = FearWorld:list("Griefing Tools")
+            local FearDestroyWorld = FearWorld:list("Panic Tools", {}, "Alternative to Menyoo called 'Massacre Mode', but slightly better with improvements.")
 
                 ----=====================================================----
                 ---                 Griefing Tools
