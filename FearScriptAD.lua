@@ -3,12 +3,15 @@
     FearScript Advanced for Stand by StealthyAD.
     The All-In-One Script combines every each script.
 
-    INTRODUCION: 
-
     Features:
     - Compatible All Stand Versions.
     - Includes Standify & Cruise Missile Tool (GitHub)
 
+    Help with Lua?
+    - GTAV Natives: https://nativedb.dotindustries.dev/natives/
+    - FiveM Docs Natives: https://docs.fivem.net/natives/
+    - Stand Lua Documentation: https://stand.gg/help/lua-api-documentation
+    - Lua Documentation: https://www.lua.org/docs.html
 ]]--
 
     ----======================================----
@@ -380,6 +383,93 @@
         end
     end
     
+    local function IS_PED_PLAYER(Ped)
+        if PED.GET_PED_TYPE(Ped) >= 4 then
+            return false
+        else
+            return true
+        end
+    end
+    
+    local function IS_PLAYER_VEHICLE(Vehicle)
+        if Vehicle == entities.get_user_vehicle_as_handle() or Vehicle == entities.get_user_personal_vehicle_as_handle() then
+            return true
+        elseif not VEHICLE.IS_VEHICLE_SEAT_FREE(Vehicle, -1, false) then
+            local ped = VEHICLE.GET_PED_IN_VEHICLE_SEAT(Vehicle, -1)
+            if ped then
+                if IS_PED_PLAYER(ped) then
+                    return true
+                end
+            end
+        end
+        return false
+    end
+    
+    local function REQUEST_CONTROL_ENTITY(ent, tick)
+        if not NETWORK.NETWORK_HAS_CONTROL_OF_ENTITY(ent) then
+            local netid = NETWORK.NETWORK_GET_NETWORK_ID_FROM_ENTITY(ent)
+            NETWORK.SET_NETWORK_ID_CAN_MIGRATE(netid, true)
+            for i = 1, tick do
+                NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(ent)
+                if NETWORK.NETWORK_HAS_CONTROL_OF_ENTITY(ent) then
+                    return true
+                end
+            end
+        end
+        return NETWORK.NETWORK_HAS_CONTROL_OF_ENTITY(ent)
+    end
+    
+    local function GET_NEARBY_VEHICLES(p, radius)
+        local vehicles = {}
+        local pos = ENTITY.GET_ENTITY_COORDS(p)
+        for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+            if radius == 0 then
+                table.insert(vehicles, veh)
+            else
+                local veh_pos = ENTITY.GET_ENTITY_COORDS(veh)
+                local distance = v3.distance(v3(pos), v3(veh_pos))
+                if distance <= radius then
+                    table.insert(vehicles, veh)
+                end
+            end
+        end
+        return vehicles
+    end
+    
+    local function GET_NEARBY_PEDS(p, radius)
+        local peds = {}
+        local pos = ENTITY.GET_ENTITY_COORDS(p)
+        for k, ped in pairs(entities.get_all_peds_as_handles()) do
+            if radius == 0 then
+                table.insert(peds, ped)
+            else
+                local ped_pos = ENTITY.GET_ENTITY_COORDS(ped)
+                local distance = v3.distance(v3(pos), v3(ped_pos))
+                if distance <= radius then
+                    table.insert(peds, ped)
+                end
+            end
+        end
+        return peds
+    end
+    
+    local function GET_NEARBY_OBJECTS(p, radius)
+        local objects = {}
+        local pos = ENTITY.GET_ENTITY_COORDS(p)
+        for k, obj in pairs(entities.get_all_objects_as_handles()) do
+            if radius == 0 then
+                table.insert(objects, obj)
+            else
+                local obj_pos = ENTITY.GET_ENTITY_COORDS(obj)
+                local distance = v3.distance(v3(pos), v3(obj_pos))
+                if distance <= radius then
+                    table.insert(objects, obj)
+                end
+            end
+        end
+        return objects
+    end
+
     ------=============================------
     ---   FearScript Advanced Functions
     ------=============================------
@@ -767,6 +857,7 @@
             FearSelf:divider("FearScript Self")
             local FearWeapons = FearSelf:list("Weapons")
             local FearAnimations = FearSelf:list("Animations")
+            local FearWantedSelf = FearSelf:list("Wanted Settings")
             FearSelf:action("Simple Ragdoll", {}, "Just fall yourself on the ground.", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false) 
                 FearTime(150)
@@ -788,6 +879,25 @@
                     FearCommands("invisibility off")
                     FearCommands("vehinvisibility off")
                 end
+            end)
+
+            ------=====================------
+            ---   Wanted SELF Functions
+             ------====================------  
+
+            local SWLevel = {
+                WantedMUT = 0,
+            }
+
+            FearWantedSelf:slider_float("Wanted Level Multiplier", {}, "If you set the wanted multiplier to a low value 0.01 and a cop see you shoot a ped in face you wil still get a wanted level. \n1.0 is the default value and it will automatically be reset when Finished Mission has been set. \nMore than 2 will be able to get more cops while put more wanted multiplier." , 0, 1000, 0, 10, function(value)
+                SWLevel.WantedMUT = value * 0.01
+            end)
+            FearWantedSelf:toggle_loop("Set Wanted Level Multiplier", {}, "", function()
+                PLAYER.SET_WANTED_LEVEL_MULTIPLIER(SWLevel.WantedMUT)
+            end)
+
+            FearWantedSelf:action("Force Start Hidden Evasion", {}, "Can be used at any point that police \"know\" where the player is to force hidden evasion to start (i.e. flashing stars, cops use vision cones)", function()
+                PLAYER.FORCE_START_HIDDEN_EVASION(PLAYER.PLAYER_ID())
             end)
 
             ------===================------
@@ -931,7 +1041,6 @@
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
                 table.remove(vehicles, index)
-                FearCommands("spawntune full")
                 if vehicle == "Boeing 747" then
                    FearCommands("tphigh")
                    FearTime(500)
@@ -971,46 +1080,61 @@
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
                 table.remove(vehicles, index)
-                FearCommands("spawntune full")
                 if vehicle == "P-996 Lazer" then -- Spawning Lazer
                    FearCommands("tphigh")
                    FearTime(500)
                    FearCommands("lazer")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
                 elseif vehicle == "Mammoth Hydra" then -- Spawning Hydra
                    FearCommands("tphigh")
                    FearTime(500)
                    FearCommands("hydra")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
                 elseif vehicle == "B-11 Strikeforce" then -- Spawning B-11 Strikeforce Fully
                    FearCommands("tphigh")
                    FearTime(500)
                    FearCommands("strikeforce")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
-                elseif vehicle == "LF-21 Starling" then -- Spawning LF-22 Starling Fully
+                elseif vehicle == "LF-22 Starling" then -- Spawning LF-22 Starling Fully
                    FearCommands("tphigh")
                    FearTime(500)
                    FearCommands("starling")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
                 elseif vehicle == "V-65 Molotok" then -- Spawning V-65 Molotok Fully
                     FearCommands("tphigh")
                     FearTime(500)
                     FearCommands("molotok")
+                    FearTime(300)
+                    FearCommands("upgrade")
                     FearTime(250)
                 elseif vehicle == "P-45 Nokota" then -- Spawning P-45 Nokota Fully
                     FearCommands("tphigh")
                     FearTime(500)
                     FearCommands("nokota")
+                    FearTime(300)
+                    FearCommands("upgrade")
                     FearTime(250)
                 elseif vehicle == "Western Rogue" then -- Spawning Western Rogue Fully
                     FearCommands("tphigh")
                     FearTime(500)
                     FearCommands("rogue")
+                    FearTime(300)
+                    FearCommands("upgrade")
                     FearTime(250)
                 elseif vehicle == "Seabreeze" then -- Spawning Seabreeze Fully
                     FearCommands("tphigh")
                     FearTime(500)
                     FearCommands("seabreeze") 
+                    FearTime(300)
+                    FearCommands("upgrade")
                     FearTime(250)
                 end
                 FearToast(FearScriptNotif.."\nEnjoy your dogfight at cruise altitude with your "..vehicle.." !")
@@ -1021,21 +1145,26 @@
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
                 table.remove(vehicles, index)
-                FearCommands("spawntune full")
                 if vehicle == "B-1B Lancer" then
                    FearCommands("tphigh")
                    FearTime(500)
                    FearCommands("alkonost")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
                 elseif vehicle == "Avro Vulcan" then
                    FearCommands("tphigh")
                    FearTime(500)
                    FearCommands("volatol")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
                 elseif vehicle == "AC-130" then
                     FearCommands("tphigh")
                     FearTime(500)
                     FearCommands("bombushka")
+                    FearTime(300)
+                    FearCommands("upgrade")
                     FearTime(250)
                 end
                 FearToast(FearScriptNotif.."\nEnjoy your Strategic Bomber at cruise altitude with your "..vehicle.." !")
@@ -1046,15 +1175,20 @@
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
                 table.remove(vehicles, index)
-                FearCommands("spawntune full")
                 if vehicle == "Leopard 2A" then
                    FearCommands("rhino")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
                 elseif vehicle == "PL-01 Concept" then
                    FearCommands("khanjali")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
                 elseif vehicle == "BRDM-2" then
                     FearCommands("apc")
+                    FearTime(300)
+                    FearCommands("upgrade")
                     FearTime(250)
                 end
                 FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
@@ -1065,17 +1199,21 @@
                 local index = math.random(#vehicles)
                 local vehicle = vehicles[index]
                 table.remove(vehicles, index)
-                FearCommands("spawntune full")
                 if vehicle == "Oppressor" then
                    FearCommands("oppressor")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
                 elseif vehicle == "Oppressor Mk II" then
                    FearCommands("oppressor2")
+                   FearTime(300)
+                   FearCommands("upgrade")
                    FearTime(250)
                 end
                 FearToast(FearScriptNotif.."\nEnjoy your "..vehicle.." !")
             end)
             FearVehicles:divider("Vehicle Tweaks")
+            local FearVehicleSettings = FearVehicles:list("Vehicle Settings")
             FearVehicles:toggle_loop("Toggle Engine", {}, "Cut off/On your Engine", function()
                 FearCommands("turnengineoff")
             end)
@@ -1106,6 +1244,106 @@
                     end
                 end
             end)
+
+            FearVehicles:toggle_loop("Toggle Car Horn", {}, "Toggle Enable/Disable Car Horn.", function()
+                local vehicle = entities.get_user_vehicle_as_handle()
+                if vehicle ~= 0 then
+                    AUDIO.SET_HORN_ENABLED(vehicle, false)
+                end
+            end, function()
+                local vehicle = entities.get_user_vehicle_as_handle()
+                if vehicle ~= 0 then
+                    AUDIO.SET_HORN_ENABLED(vehicle, true)
+                end
+            end)
+
+            FearVehicles:toggle_loop("Quick Start Engine", {}, "Reduce time for start engine car and drive quick in 1 seconds.", function()
+                if PED.IS_PED_GETTING_INTO_A_VEHICLE(PLAYER.PLAYER_PED_ID()) then
+                    local veh = PED.GET_VEHICLE_PED_IS_ENTERING(PLAYER.PLAYER_PED_ID())
+                    if veh ~= 0 then
+                        VEHICLE.SET_VEHICLE_ENGINE_HEALTH(veh, 1000)
+                        VEHICLE.SET_VEHICLE_ENGINE_ON(veh, true, true, true)
+                    end
+                end
+            end)
+
+            ------================------
+            ---   Vehicle Settings
+            ------================------
+
+                local FearVehicleWCompart = {
+                    { "All" },
+                    { "Left front window" }, -- 0
+                    { "Right front window" }, -- 1
+                    { "Left rear window" }, -- 2
+                    { "Right rear window " }, -- 3
+                    { "Front windshield window" }, -- 4
+                    { "Rear windshield window" } -- 5
+                }
+                local FearVehicleWindowParts = 1 
+                FearVehicleSettings:divider("FearVehicles Settings")
+                FearVehicleSettings:list_select("Select Part Windows", {}, "", FearVehicleWCompart, 1, function(value)
+                    FearVehicleWindowParts = value
+                end)
+
+                FearVehicleSettings:toggle_loop("Toggle Windows (Open/Close)", {}, "", function()
+                    local vehicle = entities.get_user_vehicle_as_handle()
+                    if vehicle ~= 0 then
+                        if FearVehicleWindowParts == 1 then
+                            for i = 0, 7 do
+                                VEHICLE.ROLL_DOWN_WINDOW(vehicle, i)
+                            end
+                        elseif FearVehicleWindowParts > 1 then
+                            VEHICLE.ROLL_DOWN_WINDOW(vehicle, FearVehicleWindowParts - 2)
+                        end
+                    end
+                end, function()
+                    local vehicle = entities.get_user_vehicle_as_handle()
+                    if vehicle ~= 0 then
+                        if FearVehicleWindowParts == 1 then
+                            for i = 0, 7 do
+                                VEHICLE.ROLL_UP_WINDOW(vehicle, i)
+                            end
+                        elseif FearVehicleWindowParts > 1 then
+                            VEHICLE.ROLL_UP_WINDOW(vehicle, FearVehicleWindowParts - 2)
+                        end
+                    end
+                end)
+
+                FearVehicleSettings:action("Repair Windows", {}, "", function()
+                    local vehicle = entities.get_user_vehicle_as_handle()
+                    if vehicle ~= 0 then
+                        if FearVehicleWindowParts == 1 then
+                            for i = 0, 7 do
+                                VEHICLE.FIX_VEHICLE_WINDOW(vehicle, i)
+                            end
+                        elseif FearVehicleWindowParts > 1 then
+                            VEHICLE.FIX_VEHICLE_WINDOW(vehicle, FearVehicleWindowParts - 2)
+                        end
+                    end
+                end)
+
+                FearVehicleSettings:action("Break Windows", {}, "", function()
+                    local vehicle = entities.get_user_vehicle_as_handle()
+                    if vehicle ~= 0 then
+                        if FearVehicleWindowParts == 1 then
+                            for i = 0, 7 do
+                                VEHICLE.SMASH_VEHICLE_WINDOW(vehicle, i)
+                            end
+                        elseif FearVehicleWindowParts > 1 then
+                            VEHICLE.SMASH_VEHICLE_WINDOW(vehicle, FearVehicleWindowParts - 2)
+                        end
+                    end
+                end)
+
+                local FearDustCar = 0.0
+                FearVehicleSettings:click_slider("Dust Car Vehicle", {}, "Applies Dust Car Vehicle.", 0.0, 15.0, 0.0, 1.0, function(value)
+                    FearDustCar = value
+                    local vehicle = entities.get_user_vehicle_as_handle()
+                    if vehicle ~= 0 then
+                        VEHICLE.SET_VEHICLE_DIRT_LEVEL(vehicle, FearDustCar)
+                    end
+                end)
 
         ------================------
         ---   Online Functions
@@ -1509,7 +1747,155 @@
             ---     All of the functions, changing the mind of world
             ----=====================================================----
 
-            FearWorld:divider("FearScript World")         
+            FearWorld:divider("FearScript World")    
+            local FearDestroyWorld = FearWorld:list("Griefing Tools")
+
+                ----=====================================================----
+                ---                 Griefing Tools
+                ---  All of the functions of world which change the mind
+                ----=====================================================----
+                    FearDestroyWorld:divider("FearWorld Griefing")  
+                    
+                    local FearDeathPoint = {
+                        groundpoint = 100,
+                        vehicle_toggle = true,
+                        ped_toggle = true,
+                        object_toggle = false,
+                        forward_speed = 30,
+                        forward_degree = 30,
+                        has_gravity = true,
+                        time_delay = 100,
+                        exclude_mission = false,
+                        exclude_dead = false
+                    }
+                    
+                    FearDestroyWorld:toggle_loop("Toggle Panic Mode", {}, "", function()
+                        -- Vehicle
+                        if FearDeathPoint.vehicle_toggle then
+                            for _, ent in pairs(GET_NEARBY_VEHICLES(players.user_ped(), FearDeathPoint.groundpoint)) do
+                                if not IS_PLAYER_VEHICLE(ent) then
+                                    if FearDeathPoint.exclude_mission and ENTITY.IS_ENTITY_A_MISSION_ENTITY(ent) then
+                                    elseif FearDeathPoint.exclude_dead and ENTITY.IS_ENTITY_DEAD(ent) then
+                                    else
+                                        REQUEST_CONTROL_ENTITY(ent, 10)
+                                        VEHICLE.SET_VEHICLE_MAX_SPEED(ent, 99999.0)
+                                        ENTITY.FREEZE_ENTITY_POSITION(ent, false)
+                                        VEHICLE.SET_VEHICLE_FORWARD_SPEED(ent, FearDeathPoint.forward_speed)
+                                        VEHICLE.SET_VEHICLE_OUT_OF_CONTROL(ent, false, false)
+                                        VEHICLE.SET_VEHICLE_GRAVITY(ent, FearDeathPoint.has_gravity)
+                                    end
+                                end
+                            end
+                        end
+                        if FearDeathPoint.ped_toggle then
+                            for _, ent in pairs(GET_NEARBY_PEDS(players.user_ped(), FearDeathPoint.groundpoint)) do
+                                if not IS_PED_PLAYER(ent) then
+                                    if FearDeathPoint.exclude_mission and ENTITY.IS_ENTITY_A_MISSION_ENTITY(ent) then
+                                    elseif FearDeathPoint.exclude_dead and ENTITY.IS_ENTITY_DEAD(ent) then
+                                    else
+                                        REQUEST_CONTROL_ENTITY(ent, 10)
+                                        ENTITY.SET_ENTITY_MAX_SPEED(ent, 99999.0)
+                                        ENTITY.FREEZE_ENTITY_POSITION(ent, false)
+                                        local vector = ENTITY.GET_ENTITY_FORWARD_VECTOR(ent)
+                                        local force = {}
+                                        force.x = vector.x * math.random(-1, 1) * FearDeathPoint.forward_degree
+                                        force.y = vector.y * math.random(-1, 1) * FearDeathPoint.forward_degree
+                                        force.z = vector.z * math.random(-1, 1) * FearDeathPoint.forward_degree
+                    
+                                        ENTITY.APPLY_FORCE_TO_ENTITY(ent, 1, force.x, force.y, force.z, 0.0, 0.0, 0.0, 1, false, true, true,
+                                            true, true)
+                                        ENTITY.SET_ENTITY_HAS_GRAVITY(ent, FearDeathPoint.has_gravity)
+                                    end
+                                end
+                            end
+                        end
+                        if FearDeathPoint.object_toggle then
+                            for _, ent in pairs(GET_NEARBY_OBJECTS(players.user_ped(), FearDeathPoint.groundpoint)) do
+                                if FearDeathPoint.exclude_mission and ENTITY.IS_ENTITY_A_MISSION_ENTITY(ent) then
+                                elseif FearDeathPoint.exclude_dead and ENTITY.IS_ENTITY_DEAD(ent) then
+                                else
+                                    REQUEST_CONTROL_ENTITY(ent, 10)
+                                    ENTITY.SET_ENTITY_MAX_SPEED(ent, 99999.0)
+                                    ENTITY.FREEZE_ENTITY_POSITION(ent, false)
+                                    local vector = ENTITY.GET_ENTITY_FORWARD_VECTOR(ent)
+                                    local force = {}
+                                    force.x = vector.x * math.random(-1, 1) * FearDeathPoint.forward_degree
+                                    force.y = vector.y * math.random(-1, 1) * FearDeathPoint.forward_degree
+                                    force.z = vector.z * math.random(-1, 1) * FearDeathPoint.forward_degree
+                    
+                                    ENTITY.APPLY_FORCE_TO_ENTITY(ent, 1, force.x, force.y, force.z, 0.0, 0.0, 0.0, 1, false, true, true,
+                                        true, true)
+                                    ENTITY.SET_ENTITY_HAS_GRAVITY(ent, FearDeathPoint.has_gravity)
+                                end
+                            end
+                        end
+                        FearTime(FearDeathPoint.time_delay)
+                    end)
+                    
+                    FearDestroyWorld:divider("Settings")
+                    local groundpoint_slider = FearDestroyWorld:slider("Force Panic Mode", {'ffpanicrange'}, "Range centered of you, will able to choose range distance which it will attract.", 0, 1000, 100, 10, function(value)
+                        FearDeathPoint.groundpoint = value
+                    end)
+
+                    FearDestroyWorld:toggle("Toggle Car", {}, "", function(toggle)
+                        FearDeathPoint.vehicle_toggle = toggle
+                    end, true)
+
+                    FearDestroyWorld:toggle("Toggle NPC", {}, "", function(toggle)
+                        FearDeathPoint.ped_toggle = toggle
+                    end, true)
+
+                    FearDestroyWorld:toggle("Toggle Object", {}, "", function(toggle)
+                        FearDeathPoint.object_toggle = toggle
+                    end)
+
+                    FearDestroyWorld:slider("Speed Cars", {}, "", 0, 1000, 30, 10,
+                        function(value)
+                            FearDeathPoint.forward_speed = value
+                        end)
+
+                    FearDestroyWorld:slider("Speed Propulsion of NPCs", {'ffpanspeednpc'}, "", 0, 1000, 30, 10,
+                    function(value)
+                        FearDeathPoint.forward_degree = value
+                    end)
+
+                    FearDestroyWorld:toggle("Gravity Entities", {}, "", function(toggle)
+                        FearDeathPoint.has_gravity = toggle
+                    end, true)
+
+                    FearDestroyWorld:slider("Delay Time (ms)", {}, "", 0, 3000, 100, 10, function(value)
+                        FearDeathPoint.time_delay = value
+                    end)
+
+                    FearDestroyWorld:toggle("Exclude Mission", {}, "", function(toggle)
+                        FearDeathPoint.exclude_mission = toggle
+                    end)
+
+                    FearDestroyWorld:toggle("Exclude Deaths", {}, "", function(toggle)
+                        FearDeathPoint.exclude_dead = toggle
+                    end)
+                    
+                    local is_groundpoint_slider_onFocus
+                    menu.on_focus(groundpoint_slider, function()
+                        is_groundpoint_slider_onFocus = true
+                        util.create_tick_handler(function()
+                            if not is_groundpoint_slider_onFocus then
+                                return false
+                            end
+                    
+                            local coords = ENTITY.GET_ENTITY_COORDS(PLAYER.PLAYER_PED_ID())
+                            GRAPHICS.DRAW_MARKER_SPHERE(coords.x, coords.y, coords.z, FearDeathPoint.groundpoint, 200, 50, 200, 0.5)
+                        end)
+                    end)
+                    
+                    menu.on_blur(groundpoint_slider, function()
+                        is_groundpoint_slider_onFocus = false
+                    end)
+
+            ----=====================================================----
+            ---                 World Features - Main
+            ---     All of the functions, changing the mind of world
+            ----=====================================================----
 
             local positions = {
                 v3.new(125.72, -1146.2, 222.75),
