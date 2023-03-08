@@ -21,7 +21,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.28.1"
+    local FearVersion = "0.28.4"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.5
@@ -261,6 +261,123 @@
         local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
         local coords = ENTITY.GET_ENTITY_COORDS(entity, true)
         FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'], 7, 0, false, true, force)
+    end
+
+    local function FRModel(Hash)
+        if STREAMING.IS_MODEL_VALID(Hash) then
+            STREAMING.REQUEST_MODEL(Hash)
+            while not STREAMING.HAS_MODEL_LOADED(Hash) do
+                STREAMING.REQUEST_MODEL(Hash)
+                util.yield()
+            end
+        end
+    end
+    local function Create_Network_Object(modelHash, x, y, z)
+        FRModel(modelHash)
+        local obj = OBJECT.CREATE_OBJECT_NO_OFFSET(modelHash, x, y, z, true, true, false)
+        ENTITY.SET_ENTITY_LOAD_COLLISION_FLAG(obj, true)
+        ENTITY.SET_ENTITY_AS_MISSION_ENTITY(obj, true, false)
+        ENTITY.SET_ENTITY_SHOULD_FREEZE_WAITING_ON_COLLISION(obj, true)
+    
+        NETWORK.NETWORK_REGISTER_ENTITY_AS_NETWORKED(obj)
+        local net_id = NETWORK.OBJ_TO_NET(obj)
+        NETWORK.SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(net_id, true)
+        NETWORK.SET_NETWORK_ID_CAN_MIGRATE(net_id, true)
+        for _, player in pairs(players.list(true, true, true)) do
+            NETWORK.SET_NETWORK_ID_ALWAYS_EXISTS_FOR_PLAYER(net_id, player, true)
+        end
+        STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(modelHash)
+        return obj
+    end
+
+    local function Create_Network_Ped(pedType, modelHash, x, y, z, heading)
+        FRModel(modelHash)
+        local ped = PED.CREATE_PED(pedType, modelHash, x, y, z, heading, true, true)
+    
+        ENTITY.SET_ENTITY_LOAD_COLLISION_FLAG(ped, true)
+        ENTITY.SET_ENTITY_AS_MISSION_ENTITY(ped, true, false)
+        ENTITY.SET_ENTITY_SHOULD_FREEZE_WAITING_ON_COLLISION(ped, true)
+    
+        NETWORK.NETWORK_REGISTER_ENTITY_AS_NETWORKED(ped)
+        local net_id = NETWORK.PED_TO_NET(ped)
+        NETWORK.SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(net_id, true)
+        NETWORK.SET_NETWORK_ID_CAN_MIGRATE(net_id, true)
+        for _, player in pairs(players.list(true, true, true)) do
+            NETWORK.SET_NETWORK_ID_ALWAYS_EXISTS_FOR_PLAYER(net_id, player, true)
+        end
+    
+        STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(modelHash)
+        return ped
+    end
+
+    local function Increase_Ped_Combat_Ability(ped, isGodmode, canRagdoll)
+        if isGodmode == nil then isGodmode = false end
+        if canRagdoll == nil then canRagdoll = true end
+    
+        if ENTITY.DOES_ENTITY_EXIST(ped) and ENTITY.IS_ENTITY_A_PED(ped) then
+            ENTITY.SET_ENTITY_INVINCIBLE(ped, isGodmode)
+            ENTITY.SET_ENTITY_PROOFS(ped, isGodmode, isGodmode, isGodmode, isGodmode, isGodmode, isGodmode, isGodmode,
+                isGodmode)
+            PED.SET_PED_CAN_RAGDOLL(ped, canRagdoll)
+            --PERCEPTIVE
+            PED.SET_PED_HIGHLY_PERCEPTIVE(ped, true)
+            PED.SET_PED_VISUAL_FIELD_PERIPHERAL_RANGE(ped, 500.0)
+            PED.SET_PED_SEEING_RANGE(ped, 500.0)
+            PED.SET_PED_HEARING_RANGE(ped, 500.0)
+            PED.SET_PED_ID_RANGE(ped, 500.0)
+            PED.SET_PED_VISUAL_FIELD_MIN_ANGLE(ped, 90.0)
+            PED.SET_PED_VISUAL_FIELD_MAX_ANGLE(ped, 90.0)
+            PED.SET_PED_VISUAL_FIELD_MIN_ELEVATION_ANGLE(ped, 90.0)
+            PED.SET_PED_VISUAL_FIELD_MAX_ELEVATION_ANGLE(ped, 90.0)
+            PED.SET_PED_VISUAL_FIELD_CENTER_ANGLE(ped, 90.0)
+            --WEAPON
+            PED.SET_PED_CAN_SWITCH_WEAPON(ped, true)
+            WEAPON.SET_PED_INFINITE_AMMO_CLIP(ped, true)
+            PED.SET_PED_SHOOT_RATE(ped, 1000)
+            PED.SET_PED_ACCURACY(ped, 100)
+            --COMBAT
+            PED.SET_PED_COMBAT_ABILITY(ped, 2) --Professional
+            PED.SET_PED_COMBAT_RANGE(ped, 2) --Far
+            PED.SET_PED_TARGET_LOSS_RESPONSE(ped, 1) --NeverLoseTarget
+            PED.SET_PED_FLEE_ATTRIBUTES(ped, 512, true) -- NEVER_FLEE
+            --TASK
+            TASK.SET_PED_PATH_CAN_USE_CLIMBOVERS(ped, true)
+            TASK.SET_PED_PATH_CAN_USE_LADDERS(ped, true)
+            TASK.SET_PED_PATH_CAN_DROP_FROM_HEIGHT(ped, true)
+            TASK.SET_PED_PATH_AVOID_FIRE(ped, false)
+            TASK.SET_PED_PATH_MAY_ENTER_WATER(ped, true)
+        end
+    end
+    
+    local function Increase_Ped_Combat_Attributes(ped)
+        if ENTITY.DOES_ENTITY_EXIST(ped) and ENTITY.IS_ENTITY_A_PED(ped) then
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 4, true) --Can Use Dynamic Strafe Decisions
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 5, true) --Always Fight
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 6, false) --Flee Whilst In Vehicle
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 13, true) --Aggressive
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 14, true) --Can Investigate
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 17, false) --Always Flee
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 20, true) --Can Taunt In Vehicle
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 21, true) --Can Chase Target On Foot
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 22, true) --Will Drag Injured Peds to Safety
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 24, true) --Use Proximity Firing Rate
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 27, true) --Perfect Accuracy
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 28, true) --Can Use Frustrated Advance
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 29, true) --Move To Location Before Cover Search
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 38, true) --Disable Bullet Reactions
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 39, true) --Can Bust
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 41, true) --Can Commandeer Vehicles
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 42, true) --Can Flank
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 46, true) --Can Fight Armed Peds When Not Armed
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 49, false) --Use Enemy Accuracy Scaling
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 52, true) --Use Vehicle Attack
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 53, true) --Use Vehicle Attack If Vehicle Has Mounted Guns
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 54, true) --Always Equip Best Weapon
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 55, true) --Can See Underwater Peds
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 58, true) --Disable Flee From Combat
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 60, true) --Can Throw Smoke Grenade
+            PED.SET_PED_COMBAT_ATTRIBUTES(ped, 78, true) --Disable All Randoms Flee
+        end
     end
     
     ------=============================------
@@ -649,6 +766,7 @@
 
             FearSelf:divider("FearScript Self")
             local FearWeapons = FearSelf:list("Weapons")
+            local FearAnimations = FearSelf:list("Animations")
             FearSelf:action("Simple Ragdoll", {}, "Just fall yourself on the ground.", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false) 
                 FearTime(150)
@@ -671,6 +789,70 @@
                     FearCommands("vehinvisibility off")
                 end
             end)
+
+            ------===================------
+            ---   Animation Functions
+            ------===================------  
+
+            local FearAnime1 = {
+                ToggleFeature = {},
+                ToggleMenu = {},
+            }
+            FearAnime1.task_list = {
+                { 1,   "Climb Ladder" },
+                { 2,   "Exit Vehicle" },
+                { 3,   "Combat Roll" },
+                { 16,  "Get Up" },
+                { 17,  "Get Up And Stand Still" },
+                { 50,  "Vault" },
+                { 54,  "Open Door" },
+                { 121, "Steal Vehicle" },
+                { 128, "Melee" },
+                { 135, "Synchronized Scene" },
+                { 150, "In Vehicle Basic" },
+                { 152, "Leave Any Car" },
+                { 160, "Enter Vehicle" },
+                { 162, "Open Vehicle Door From Outside" },
+                { 163, "Enter Vehicle Seat" },
+                { 164, "Close Vehicle Door From Inside" },
+                { 165, "In Vehicle Seat Shuffle" },
+                { 167, "Exit Vehicle Seat" },
+                { 168, "Close Vehicle Door From Outside" },
+                { 177, "Try To Grab Vehicle Door" },
+                { 286, "Throw Projectile" },
+                { 300, "Enter Cover" },
+                { 301, "Exit Cover" },
+            }
+
+            FearAnimations:divider("FearSelf Animations")
+            FearAnimations:toggle_loop("Toggle Feature", {}, "Turning On/Off for Fast Animation", function()
+                for id, toggle in pairs(FearAnime1.ToggleFeature) do
+                    if toggle and TASK.GET_IS_TASK_ACTIVE(players.user_ped(), id) then
+                        PED.FORCE_PED_AI_AND_ANIMATION_UPDATE(players.user_ped())
+                    end
+                end
+            end)
+
+            FearAnimations:divider("Options")
+            FearAnimations:toggle("Enable/Disable Feature", {}, "", function(toggle)
+                for _, v in pairs(FearAnime1.ToggleMenu) do
+                    if menu.is_ref_valid(v) then
+                        menu.set_value(v, toggle)
+                    end
+                end
+            end)
+
+            for _, v in pairs(FearAnime1.task_list) do
+                local id = v[1]
+                local name = v[2]
+
+                FearAnime1.ToggleFeature[id] = false
+
+                local menu_toggle = menu.toggle(FearAnimations, name, {}, "", function(toggle)
+                    FearAnime1.ToggleFeature[id] = toggle
+                end)
+                FearAnime1.ToggleMenu[id] = menu_toggle
+            end
 
             ------=================------
             ---   Weapons Functions
@@ -704,7 +886,32 @@
                         end
                     end
                 end)
-            
+
+                FearWeapons:toggle_loop("Infinite Ammo", {"ffclip"}, "Lock your ammo to get not reloading fire.", function()
+                    WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.PLAYER_PED_ID(), true)
+                end, function()
+                    WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.PLAYER_PED_ID(), false)
+                end)
+
+                FearWeapons:toggle_loop("Quick Reload", {}, "Reload faster than normal weapon.\n\nRecommended for big magazine which it's very slow to reload", function()
+                    if PED.IS_PED_RELOADING(PLAYER.PLAYER_PED_ID()) then
+                        PED.FORCE_PED_AI_AND_ANIMATION_UPDATE(PLAYER.PLAYER_PED_ID())
+                    end
+                end)
+                FearWeapons:toggle_loop("Quick Weapon Change", {}, "Speed up the action while changing weapon\n\nExample: Changing AP Pistol to RPG/Sniper/Carbine/Shotgun...", function()
+                    if PED.IS_PED_SWITCHING_WEAPON(PLAYER.PLAYER_PED_ID()) then
+                        PED.FORCE_PED_AI_AND_ANIMATION_UPDATE(PLAYER.PLAYER_PED_ID())
+                    end
+                end)
+
+                FearWeapons:toggle_loop("Quick Reload while Rolling", {}, "Reload automatically while rolling\n\nRecommended for PvP or something else.", function()
+                if TASK.GET_IS_TASK_ACTIVE(PLAYER.PLAYER_PED_ID(), 4) and PAD.IS_CONTROL_PRESSED(2, 22) and
+                    not PED.IS_PED_SHOOTING(PLAYER.PLAYER_PED_ID()) then
+                    FearTime(900)
+                    WEAPON.REFILL_AMMO_INSTANTLY(PLAYER.PLAYER_PED_ID())
+                    end
+                end)
+                            
         ------==================------
         ---   Vehicles Functions
         ------==================------  
@@ -882,6 +1089,21 @@
                     MISC.CLEAR_AREA(1.1, 1.1, 1.1, 19999.9, true, false, false, true)
                 else
                     MISC.REMOVE_POP_MULTIPLIER_SPHERE(pop_multiplier_id, false);
+                end
+            end)
+
+            FearVehicles:toggle("Infinite Ammo", {"fvehinf"}, "Able to spam every each weapon which have limited ammo.\n\nCompatible with Deluxo, Oppressor/MK2, B-11 Strikeforce, etc...", function()
+                local user_ped = players.user_ped()
+                local vehicle = entities.get_user_vehicle_as_handle()
+                if vehicle ~= 0 then
+                    if VEHICLE.DOES_VEHICLE_HAVE_WEAPONS(vehicle) then
+                        for i = 0, 3 do
+                            local ammo = VEHICLE.GET_VEHICLE_WEAPON_RESTRICTED_AMMO(vehicle, i)
+                            if ammo ~= -1 then
+                                VEHICLE.SET_VEHICLE_WEAPON_RESTRICTED_AMMO(vehicle, i, -1)
+                            end
+                        end
+                    end
                 end
             end)
 
@@ -1379,8 +1601,6 @@
                 VEHICLE.CONTROL_LANDING_GEAR(boeing, 3)
                 FearTime()
             end)
-              
-             
 
             --------------------------------------------------------------------------------------
 
@@ -1908,6 +2128,37 @@
                         CameraMoving(pid, 99999)
                     end
                 end
+            end)
+
+            FearGriefingList:action("Cage "..FearPlayerName, {}, "", function()
+                local player_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                if not PED.IS_PED_IN_ANY_VEHICLE(player_ped) then
+                    local modelHash = util.joaat("prop_gold_cont_01")
+                    local pos = ENTITY.GET_ENTITY_COORDS(player_ped)
+                    local obj = Create_Network_Object(modelHash, pos.x, pos.y, pos.z)
+                    ENTITY.FREEZE_ENTITY_POSITION(obj, true)
+                end
+            end)
+
+            FearGriefingList:action("Send Dog Attack", {}, "", function()
+                local player_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                local modelHash = util.joaat("A_C_Chop")
+                local coords = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(player_ped, 0.0, -1.0, 0.0)
+                local heading = ENTITY.GET_ENTITY_HEADING(player_ped)
+        
+                local ChopPed = Create_Network_Ped(28, modelHash, coords.x, coords.y, coords.z, heading)
+        
+                PED.SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(ChopPed, true)
+                TASK.TASK_SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(ChopPed, true)
+                TASK.TASK_COMBAT_PED(ChopPed, player_ped, 0, 16)
+                PED.SET_PED_KEEP_TASK(ChopPed, true)
+        
+                PED.SET_PED_MONEY(ChopPed, 2000)
+                ENTITY.SET_ENTITY_MAX_HEALTH(ChopPed, 30000)
+                ENTITY.SET_ENTITY_HEALTH(ChopPed, 30000)
+        
+                Increase_Ped_Combat_Ability(ChopPed, false, false)
+                Increase_Ped_Combat_Attributes(ChopPed)
             end)
 
             FearGriefingList:action("Quick Strike", {"ffstrike"}, "Launch Airstrike to "..FearPlayerName.."\nNOTE: It will randomly spawned how many missiles will drop on the player.", function()
