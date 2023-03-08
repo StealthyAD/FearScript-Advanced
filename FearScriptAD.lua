@@ -1630,7 +1630,7 @@
                      end
                 end)
 
-                FearSoundSess:toggle_loop("Ukraine Alarm Loop",{'fearaall'}, "Put Ukraine Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
+                FearSoundSess:toggle_loop("Alarm Loop",{'fearaall'}, "Put Alarm to the entire session?\nNOTE: It may be detected by any modders and may karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function()
                     for _,pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
@@ -2498,7 +2498,7 @@
                 FearPassiveShot(pid)
             end)
 
-            FearGriefingList:toggle_loop("Ukraine Alarm Loop",{}, "You really want put Ukraine Alarm to "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possible karma you if he's a modder.",function()
+            FearGriefingList:toggle_loop("Alarm Loop",{}, "You really want put Alarm to "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possible karma you if he's a modder.",function()
                 if FearSession() then
                     if FearPlayerName then
                         AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
