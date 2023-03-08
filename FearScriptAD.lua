@@ -1768,7 +1768,7 @@
                 ---                 Griefing Tools
                 ---  All of the functions of world which change the mind
                 ----=====================================================----
-                    FearDestroyWorld:divider("FearWorld Griefing")  
+                    FearDestroyWorld:divider("FearWorld Panic Mode")  
                     
                     local FearDeathPoint = {
                         groundpoint = 100,
