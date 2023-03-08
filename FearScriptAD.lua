@@ -903,14 +903,16 @@
                 WantedMUT = 0,
             }
 
-            FearWantedSelf:slider_float("Wanted Level Multiplier", {}, "If you set the wanted multiplier to a low value 0.01 and a cop see you shoot a ped in face you wil still get a wanted level. \n1.0 is the default value and it will automatically be reset when Finished Mission has been set. \nMore than 2 will be able to get more cops while put more wanted multiplier." , 0, 1000, 0, 10, function(value)
+            FearWantedSelf:slider("Wanted Level", {'fwantedlev'}, "Put yourself wanted level.\nAlternative to Stand, simlar settings.", 0, 5, 0, 1, function(value) util.set_local_player_wanted_level(value)end)
+
+            FearWantedSelf:slider_float("Wanted Level Multiplier", {'fwlmut'}, "If you set the wanted multiplier to a low value 0.01 and a cop see you shoot a ped in face you wil still get a wanted level. \n\n1.0 is the default value and it will automatically be reset when Finished Mission has been set. \n\nMore than 2 will be able to get more cops while put more wanted multiplier." , 0, 1000, 0, 10, function(value)
                 SWLevel.WantedMUT = value * 0.01
             end)
             FearWantedSelf:toggle_loop("Set Wanted Level Multiplier", {}, "", function()
                 PLAYER.SET_WANTED_LEVEL_MULTIPLIER(SWLevel.WantedMUT)
             end)
 
-            FearWantedSelf:action("Force Start Hidden Evasion", {}, "Can be used at any point that police \"know\" where the player is to force hidden evasion to start (i.e. flashing stars, cops use vision cones)", function()
+            FearWantedSelf:action("Force Start Hidden Evasion", {}, "Can be used at any point that police \"know\" where the player is to force hidden evasion to start (e.g. : flashing stars, cops use vision cones)", function()
                 PLAYER.FORCE_START_HIDDEN_EVASION(PLAYER.PLAYER_ID())
             end)
 
