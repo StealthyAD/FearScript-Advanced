@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29.1"
+    local FearVersion = "0.29.2"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.6
@@ -903,6 +903,11 @@
                 end
             end)
 
+            FearSelf:toggle_loop("Force Clean Ped & Wetness", {}, "Force Cleanup Ped & Wetness against blood or damage.", function() 
+                PED.CLEAR_PED_BLOOD_DAMAGE(PLAYER.PLAYER_PED_ID()) 
+                PED.CLEAR_PED_WETNESS(PLAYER.PLAYER_PED_ID())
+            end)
+
             ------=====================------
             ---   Wanted SELF Functions
              ------====================------  
@@ -999,6 +1004,10 @@
                     PED.SET_CAN_ATTACK_FRIENDLY(PLAYER.PLAYER_PED_ID(), toggle, false)
                 end)
 
+                FearWeapons:toggle_loop("Refill Instant Ammo", {"ffammo"}, "Refill Instantly your ammo without reloading while losing ammo.\n\nAlternative to Stand, have the same feature but it will make easier to not reloading.", function() 
+                    WEAPON.REFILL_AMMO_INSTANTLY(PLAYER.PLAYER_PED_ID()) 
+                end)
+
                 FearWeapons:toggle_loop("Night Vision Scope" ,{}, "Press E while aiming to activate.\n\nRecommended to use only night time, using daytime can may have complication on your eyes watching the screen.",function()
                     local aiming = PLAYER.IS_PLAYER_FREE_AIMING(players.user())
                     local FearNV = menu.ref_by_path('Game>Rendering>Night Vision')
@@ -1027,7 +1036,7 @@
                     end
                 end)
 
-                FearWeapons:toggle_loop("Infinite Ammo", {"ffclip"}, "Lock your ammo to get not reloading fire.", function()
+                FearWeapons:toggle_loop("Infinite Ammo", {"ffclip"}, "Lock your ammo to get not reloading fire.\n\nAlternative to Stand, has reloading fire. Better alternative to avoid reloading and made reloading and lose time.", function()
                     WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.PLAYER_PED_ID(), true)
                 end, function()
                     WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.PLAYER_PED_ID(), false)
@@ -2272,10 +2281,14 @@
 
                 local FearMiscsOptions = FearMiscs:list("Miscs Options")
                 FearMiscsOptions:divider("FearMiscs Options")
+                FearMiscsOptions:slider("Clock Time", {'fclocktime'}, "Change quickly time", 0, 24, 0, 1, function(value) CLOCK.SET_CLOCK_TIME(value, 0, 0) end)
+                FearMiscsOptions:slider("Radar Zoom Size", {'fradarzoom'}, "You will able to zoom the radar what are you doing right now.\n\nNOTE: Pressing Z or W, depending on your keyboard type, resets the zoom to zero by default.", 0, 1400, 0, 1, function(value) HUD.SET_RADAR_ZOOM(value) end)
+                FearMiscsOptions:toggle_loop("Toggle Skip Cutscene", {}, "Skip automatically cutscene", function() CUTSCENE.STOP_CUTSCENE_IMMEDIATELY() end)
                 FearMiscsOptions:toggle("Block Phone Calls", {""}, "Blocks incoming phones calls", function(state)
                     local phone_calls = menu.ref_by_command_name("nophonespam")
                     phone_calls.value = state
                 end)
+
                 FearMiscsOptions:toggle("Toggle Radar/HUD", {}, "", function(toggle)
                     if toggle then
                         HUD.DISPLAY_RADAR(false)
@@ -2385,14 +2398,12 @@
             FearFriendlyList:action("Unstuck Loading Screen", {"fearuls"}, "Unstuck "..FearPlayerName.." to the clouds or something else could be affect the session.", function()
                 FearCommands("givesh"..FearPlayerName)
                 FearCommands("aptme"..FearPlayerName)
-            end, nil, nil, COMMANDPERM_FRIENDLY)
+            end)
 
-            FearFriendlyList:toggle("Infinite Ammo", {"fearbottomammo"}, "Give Infinite Ammo to "..FearPlayerName.." to help to fire constantly his guns.", function()
-                if FearSession() then
-                    if players.get_name(pid) then
-                        WEAPON.SET_PED_INFINITE_AMMO_CLIP(GET_PLAYER_PED_SCRIPT_INDEX(pid))
-                    end
-                end
+            FearFriendlyList:toggle_loop("Clean Ped", {'fragd'}, "Make dry of your blood, clean up your player.", function()
+                local targetIDP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                PED.CLEAR_PED_BLOOD_DAMAGE(targetIDP)
+                PED.CLEAR_PED_WETNESS(targetIDP)
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
             FearFriendlyList:toggle_loop("Never Wanted", {"fearnw"}, "Never Wanted Cops to "..FearPlayerName..".\nAlternative to Stand but easily lose cops." ,function()
@@ -2513,6 +2524,7 @@
             local FearBounty = FearGriefingList:list("Bounty Features",{},"")
 
             FearGriefingList:divider("Player Tweaks")
+            FearGriefingList:action("Put Fire to "..FearPlayerName, {'fburn'}, "Burning "..FearPlayerName.." to the death. Nothing can't stop the fire.\n\nNOTE: You can't burn Modder or Glitched Godmode.", function() FIRE.START_ENTITY_FIRE(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)) end)
             FearGriefingList:toggle("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function(toggle)
                 if FearSession() then
                     if FearPlayerName then
@@ -2902,16 +2914,13 @@
             --- Wanted   Features
             ----=================----        
 
-                local FearWanted_value = 1
                 FearWanted:divider("FearWanted Advanced")
-                FearWanted:slider("Wanted Level",{"fearwp"}, "Chose the amount of the wanted level offered automatically.", 1, 5, 1 , 1, function(value)
-                    FearWanted_value = value
-                end)
+                FearWantedStar = FearWanted:slider("Wanted Level",{"fearwp"}, "Chose the amount of the wanted level offered automatically.", 0, 5, 0 , 1, function(value)end)
                 
                 FearWanted:toggle("Auto Wanted Level", {"fearautow"}, "Put the guy cops and make sure cops come to his home." ,function()
                     if FearSession() then
-                        if players.set_wanted_level(pid, FearWanted_value) ~= FearWanted_value then
-                            FearCommands("pwanted"..FearPlayerName.." "..FearWanted_value)
+                        if players.set_wanted_level(pid, menu.get_value(FearWantedStar)) ~= menu.get_value(FearWantedStar) then
+                            PLAYER.SET_PLAYER_WANTED_LEVEL(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), menu.get_value(FearWantedStar), false)
                         end
                     end
                     util.yield(1000)
@@ -2919,8 +2928,8 @@
 
                 FearWanted:action("Manual Wanted Level", {"fearmanualw"}, "Put the guy cops and make sure cops come to his home." ,function()
                     if FearSession() then
-                        if players.set_wanted_level(pid, FearWanted_value) ~= FearWanted_value then
-                            FearCommands("pwanted"..FearPlayerName.." "..FearWanted_value)
+                        if players.set_wanted_level(pid, menu.get_value(FearWantedStar)) ~= menu.get_value(FearWantedStar) then
+                            PLAYER.SET_PLAYER_WANTED_LEVEL(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), menu.get_value(FearWantedStar), false)
                         end
                     end
                     util.yield(1000)
