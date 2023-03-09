@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29.6"
+    local FearVersion = "0.29.7"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.6
@@ -1012,8 +1012,6 @@
             ------=================------  
 
                 FearWeapons:divider("FearSelf Weapons")
-                
-
                 FearWeapons:toggle("Authorize Fire Friendly", {}, "Allow shoot your teammates if he's in the CEO/MC.", function(toggle)
                     PED.SET_CAN_ATTACK_FRIENDLY(PLAYER.PLAYER_PED_ID(), toggle, false)
                 end)
@@ -1061,6 +1059,7 @@
                         PED.FORCE_PED_AI_AND_ANIMATION_UPDATE(PLAYER.PLAYER_PED_ID())
                     end
                 end)
+                
                 FearWeapons:toggle_loop("Quick Weapon Change", {}, "Speed up the action while changing weapon\n\nExample: Changing AP Pistol to RPG/Sniper/Carbine/Shotgun...", function()
                     if PED.IS_PED_SWITCHING_WEAPON(PLAYER.PLAYER_PED_ID()) then
                         PED.FORCE_PED_AI_AND_ANIMATION_UPDATE(PLAYER.PLAYER_PED_ID())
@@ -1767,6 +1766,14 @@
                     for _, pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             CameraMoving(players.get_name(pid), 50000)
+                        end
+                    end
+                end)
+
+                FearSessionL:toggle_loop("I don't like Silencers", {''}, "Remove all weapons to all players while trying to use silencer weapons.\n\nToggle 'Exclude Self' to avoid using these features", function()
+                    for _, pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and WEAPON.IS_PED_CURRENT_WEAPON_SILENCED(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)) == true and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
                         end
                     end
                 end)
@@ -2569,7 +2576,14 @@
             FearGriefingList:divider("Player Tweaks")
 
             FearGriefingList:action("Put Fire to "..FearPlayerName, {'fburn'}, "Burning "..FearPlayerName.." to the death. Nothing can't stop the fire.\n\nNOTE: You can't burn Modder/Glitched Godmode or Godmode User.", function() 
-                FIRE.START_ENTITY_FIRE(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)) 
+                if FearSession() then
+                    local targetIDP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                    if FearPlayerName and PLAYER.GET_PLAYER_INVINCIBLE(targetIDP) == false then
+                        FIRE.START_ENTITY_FIRE(targetIDP) 
+                    end
+                    FearTime(150)
+                end
+                FearTime(5000)
             end)
             
             FearGriefingList:toggle_loop("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
