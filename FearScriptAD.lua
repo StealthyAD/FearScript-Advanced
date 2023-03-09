@@ -780,6 +780,7 @@
                 end
             end
         end
+        
     
         -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
         local status, auto_updater = pcall(require, "auto-updater")
@@ -810,6 +811,8 @@
             script_relpath=SCRIPT_RELPATH,
             verify_file_begins_with="--"
         })
+
+        auto_updater.run_auto_update(auto_update_config)
 
     ------===============------
     ---   Quick Variables
