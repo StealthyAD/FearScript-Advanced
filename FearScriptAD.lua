@@ -2085,7 +2085,6 @@
 
                 local FearMiscsOptions = FearMiscs:list("Miscs Options")
                 FearMiscsOptions:divider("FearMiscs Options")
-                FearMiscsOptions:slider("Clock Time", {'fclocktime'}, "Change quickly time", 0, 24, 0, 1, function(value) CLOCK.SET_CLOCK_TIME(value, 0, 0) end)
                 FearMiscsOptions:slider("Radar Zoom Size", {'fradarzoom'}, "You will able to zoom the radar what are you doing right now.\n\nNOTE: Pressing Z or W, depending on your keyboard type, resets the zoom to zero by default.", 0, 1400, 0, 1, function(value) HUD.SET_RADAR_ZOOM(value) end)
                 FearMiscsOptions:toggle("Display Money", {}, "", function(toggle)
                     if toggle then
