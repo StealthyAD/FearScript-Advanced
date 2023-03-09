@@ -26,12 +26,12 @@ local FearChangelog = FearRoot:list("Changelog Update")
 
     FearChangelog:divider("Active Changelog")
 
-    FearChangelog:action("Patch 0.29.9 (Stand 100.6)", {}, "", function() -- 0.29.9
+    FearChangelog:action("Patch 0.29.9", {}, "", function() -- 0.29.9
         FearHelp(FearHelpNotification.."\nWhat's new?\n\n - Improvements about Update.")
     end)
 
     FearChangelog:divider("Inactive Changelog")
 
-    FearChangelog:action("Patch 0.29.8 (Stand 100.6)", {}, "", function() -- 0.29.8
+    FearChangelog:action("Patch 0.29.8", {}, "", function() -- 0.29.8
         FearHelp(FearHelpNotification.."\nWhat's new?\n\n - Adding Changelog Update which you can track what's updated.")
     end)
