@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29.2"
+    local FearVersion = "0.29.3"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.6
@@ -2400,17 +2400,18 @@
                 FearCommands("aptme"..FearPlayerName)
             end)
 
-            FearFriendlyList:toggle_loop("Clean Ped", {'fragd'}, "Make dry of your blood, clean up your player.", function()
+            FearFriendlyList:toggle("Toggle Infinite Ammo", {}, "Put Infinite ammo to "..FearPlayerName..", able to shoot x times.\n\nNOTE: Don't use the feature if it's against players.", function(toggle)
+                if toggle then
+                    WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
+                else
+                    WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), false)
+                end
+            end)
+
+            FearFriendlyList:toggle_loop("Toggle Clean Ped", {'fragd'}, "Make dry of your blood, clean up your player.", function()
                 local targetIDP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                 PED.CLEAR_PED_BLOOD_DAMAGE(targetIDP)
                 PED.CLEAR_PED_WETNESS(targetIDP)
-            end, nil, nil, COMMANDPERM_FRIENDLY)
-
-            FearFriendlyList:toggle_loop("Never Wanted", {"fearnw"}, "Never Wanted Cops to "..FearPlayerName..".\nAlternative to Stand but easily lose cops." ,function()
-                if FearSession() then
-                    FearCommands("pwanted"..FearPlayerName.." 0")
-                end
-                util.yield(1000)
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
             FearFriendlyList:divider("Vehicle Tweaks")
