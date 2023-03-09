@@ -825,14 +825,6 @@
             check_interval=86400,
             silent_updates=true,
         }
-
-        local auto_lib_updater = auto_updater.require_with_auto_update({
-            name="Changelog",
-            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
-            script_relpath="lib/FearScriptAD/Changelog.lua",
-            verify_file_begins_with="--",
-            silent_updates=true,
-        })
     
         -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
         local status, auto_updater = pcall(require, "auto-updater")
@@ -862,6 +854,14 @@
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/FearScriptAD.lua",
             script_relpath=SCRIPT_RELPATH,
             verify_file_begins_with="--"
+        })
+
+        local auto_lib_updater = auto_updater.require_with_auto_update({
+            name="Changelog",
+            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
+            script_relpath="lib/FearScriptAD/Changelog.lua",
+            verify_file_begins_with="--",
+            silent_updates=true,
         })
 
     ------===============------
