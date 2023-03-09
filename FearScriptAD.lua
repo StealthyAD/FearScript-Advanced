@@ -805,7 +805,7 @@
         if auto_updater == true then error("Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again") end
         
         -- Run Auto Update
-        auto_updater.require_with_auto_update({
+        auto_updater.run_auto_update({
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/FearScriptAD.lua",
             script_relpath=SCRIPT_RELPATH,
             verify_file_begins_with="--"
