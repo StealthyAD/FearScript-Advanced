@@ -36,6 +36,19 @@
     local SND_ASYNC<const> = 0x0001
     local SND_FILENAME<const> = 0x00020000
 
+    local ScriptDir <const> = filesystem.scripts_dir()
+    local required_files <const> = {
+        "lib\\FearScriptAD\\Changelog.lua",
+    }
+
+    for _, file in pairs(required_files) do
+        local file_path = ScriptDir .. file
+        if not filesystem.exists(file_path) then
+            util.toast(FearScriptNotif.."\nSorry, you missed these documents:" .. file_path, TOAST_ALL)
+            util.toast("The script has stopped running")
+        end
+    end
+
     ----=======================================----
     --- File Directory 'Standify Ported'
     --- Locate songs.wav and stop music easily.
@@ -811,6 +824,13 @@
             verify_file_begins_with="--",
             check_interval=86400,
             silent_updates=true,
+            dependencies={
+                name="Changelog",
+                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
+                script_relpath="lib/FearScriptAD/Changelog.lua",
+                verify_file_begins_with="--",
+                is_required=true,
+            },
         }
     
         -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
@@ -870,6 +890,7 @@
         local FearWorld = FearRoot:list("World Features")
         local FearStandify = FearRoot:list("Standify", {""}, "Standify, script related to music.\nMade by StealthyAD.")
         local FearCruiseMissile = FearRoot:list("Cruise Missile", {""}, "CruiseMissile, script related to Cruise Missile Range.\nMade by StealthyAD.")
+        require "FearScriptAD.Changelog" -- Import Changelog Update 
         local FearMiscs = FearRoot:list("Miscellaneous")
 
         ------==============------
@@ -2313,6 +2334,7 @@
             FearMiscs:hyperlink("StealthyAD", "https://github.com/StealthyAD")
 	        FearMiscs:hyperlink("GitHub Source", "https://github.com/StealthyAD/FearScript-Advanced")
             FearMiscs:divider("FearScript Others")
+
 
                 local FearMiscsOptions = FearMiscs:list("Miscs Options")
                 FearMiscsOptions:divider("FearMiscs Options")
