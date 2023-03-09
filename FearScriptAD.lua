@@ -830,7 +830,6 @@
             name="Changelog",
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
             script_relpath="lib/FearScriptAD/Changelog.lua",
-            switch_to_branch=selected_branch,
             verify_file_begins_with="--",
             silent_updates=true,
         }
@@ -2325,15 +2324,12 @@
             FearMiscs:divider("FearScript Miscs")
             FearMiscs:readonly("FearScript Version: "..FearVersion)
             FearMiscs:readonly("Stand Version: "..FearSEdition)
-            local FearUpdates = FearMiscs:list("Check Update Scripts")
-            FearUpdates:action("Update Script", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
+            FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
                 auto_update_config.check_interval = 0
                 if auto_updater.run_auto_update(auto_update_config) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
-		    end)
 
-            FearUpdates:action("Update Libraries", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
                 auto_lib_updater.check_interval = 0
                 if auto_updater.run_auto_update(auto_lib_updater) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
