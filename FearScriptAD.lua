@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29.3"
+    local FearVersion = "0.29.4"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.6
@@ -2411,7 +2411,7 @@
                 FearCommands("aptme"..FearPlayerName)
             end)
 
-            FearFriendlyList:toggle("Toggle Infinite Ammo", {}, "Put Infinite ammo to "..FearPlayerName..", able to shoot x times.\n\nNOTE: Don't use the feature if it's against players.", function(toggle)
+            FearFriendlyList:toggle("Toggle Infinite Ammo", {}, "Put Infinite ammo to "..FearPlayerName..", able to shoot x times without reloading.\n\nNOTE: Don't use the feature if it's against players.", function(toggle)
                 if toggle then
                     WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
                 else
