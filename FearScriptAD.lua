@@ -1036,7 +1036,7 @@
                     end
                 end)
 
-                FearWeapons:toggle_loop("Infinite Ammo", {"ffclip"}, "Lock your ammo to get not reloading fire.\n\nAlternative to Stand, has reloading fire. Better alternative to avoid reloading and made reloading and lose time.", function()
+                FearWeapons:toggle_loop("Infinite Ammo", {"ffclip"}, "Lock your ammo to get not reloading fire.\n\nAlternative to Stand, has reloading fire. Better alternative to avoid reloading and made reloading easier without losing time.", function()
                     WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.PLAYER_PED_ID(), true)
                 end, function()
                     WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.PLAYER_PED_ID(), false)
@@ -2268,14 +2268,15 @@
             FearMiscs:divider("FearScript Miscs")
             FearMiscs:readonly("FearScript Version: "..FearVersion)
             FearMiscs:readonly("Stand Version: "..FearSEdition)
-            FearMiscs:divider("FearScript Credits")
-            FearMiscs:readonly("StealthyAD (Putin fanboy)")
-	        FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
+            FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
                 auto_update_config.check_interval = 0
                 if auto_updater.run_auto_update(auto_update_config) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
 		    end)
+
+            FearMiscs:divider("FearScript Credits")
+            FearMiscs:hyperlink("StealthyAD", "https://github.com/StealthyAD")
 	        FearMiscs:hyperlink("GitHub Source", "https://github.com/StealthyAD/FearScript-Advanced")
             FearMiscs:divider("FearScript Others")
 
@@ -2283,6 +2284,16 @@
                 FearMiscsOptions:divider("FearMiscs Options")
                 FearMiscsOptions:slider("Clock Time", {'fclocktime'}, "Change quickly time", 0, 24, 0, 1, function(value) CLOCK.SET_CLOCK_TIME(value, 0, 0) end)
                 FearMiscsOptions:slider("Radar Zoom Size", {'fradarzoom'}, "You will able to zoom the radar what are you doing right now.\n\nNOTE: Pressing Z or W, depending on your keyboard type, resets the zoom to zero by default.", 0, 1400, 0, 1, function(value) HUD.SET_RADAR_ZOOM(value) end)
+                FearMiscsOptions:toggle("Display Money", {}, "", function(toggle)
+                    if toggle then
+                        HUD.SET_MULTIPLAYER_WALLET_CASH()
+                        HUD.SET_MULTIPLAYER_BANK_CASH()
+                    else
+                        HUD.REMOVE_MULTIPLAYER_WALLET_CASH()
+                        HUD.REMOVE_MULTIPLAYER_BANK_CASH()
+                    end
+                end)
+
                 FearMiscsOptions:toggle_loop("Toggle Skip Cutscene", {}, "Skip automatically cutscene", function() CUTSCENE.STOP_CUTSCENE_IMMEDIATELY() end)
                 FearMiscsOptions:toggle("Block Phone Calls", {""}, "Blocks incoming phones calls", function(state)
                     local phone_calls = menu.ref_by_command_name("nophonespam")
