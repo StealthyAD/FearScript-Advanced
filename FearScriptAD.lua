@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29.5"
+    local FearVersion = "0.29.6"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.6
@@ -891,6 +891,10 @@
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false)
             end)
 
+            FearSelf:toggle_loop("Burn Proof Mode", {}, "Make able to avoid burn in fire while put fire", function()
+                FIRE.STOP_ENTITY_FIRE(PLAYER.PLAYER_PED_ID())
+            end)
+
             FearSelf:toggle("Partial Invisible", {}, "Turn partially invisible mode (Players will not able to see you), but you will see only yourself, includes vehicles.", function(toggle)
                 if toggle then
                     FearCommands("otr on")
@@ -908,9 +912,19 @@
                 PED.CLEAR_PED_WETNESS(PLAYER.PLAYER_PED_ID())
             end)
 
+            FearSelf:toggle("Ghost Rider", {}, "Become Ghost Rider.", function(toggle)
+                if toggle then
+                    FIRE.START_ENTITY_FIRE(PLAYER.PLAYER_PED_ID())
+                    PLAYER.SET_PLAYER_INVINCIBLE(PLAYER.PLAYER_PED_ID(), true)
+                else
+                    FIRE.STOP_ENTITY_FIRE(PLAYER.PLAYER_PED_ID())
+                    PLAYER.SET_PLAYER_INVINCIBLE(PLAYER.PLAYER_PED_ID(), false)
+                end
+            end)
+
             ------=====================------
             ---   Wanted SELF Functions
-             ------====================------  
+            ------=====================------  
 
             local SWLevel = {
                 WantedMUT = 0,
@@ -1734,7 +1748,7 @@
                     util.yield(5000)
                 end)
 
-                FearSessionL:toggle("Riot Mode", {"fearrt"}, "Put Riot Mode to everyone.\nMake sure you don't wanna live this shit world.", function(toggle) MISC.SET_RIOT_MODE_ENABLED(toggle)end)
+                FearSessionL:toggle("Riot Mode", {"fearrt"}, "Put Riot Mode in the session.\nMake sure you don't wanna live this shit world.", function(toggle) MISC.SET_RIOT_MODE_ENABLED(toggle)end)
 
                 FearSessionL:toggle_loop("Pretend God Mode", {"feargall"}, "This is not the real god mode, you shoot (he's not invincible), but if you fight with fist, it will consider Invincible.\n\nNOTE: It may detected like 'attacking while invulnerable' if your friend or your foe attack, be careful.",function()
                     local FearToggleSelf_God = false
@@ -1792,7 +1806,7 @@
                         end
                     end
                 end)
-
+                  
             ----=====================================================----
             ---                 World Features
             ---     All of the functions, changing the mind of world
