@@ -749,7 +749,6 @@
                     script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
                     verify_file_begins_with="--",
                     check_interval=default_check_interval,
-                    is_required=true,
                 },
                 {
                     name="Standify",
@@ -757,7 +756,6 @@
                     script_relpath="lib/FearScriptAD/Functions/Standify.lua",
                     verify_file_begins_with="--",
                     check_interval=default_check_interval,
-                    is_required=true,
                 },
                 {
                     name="Changelog",
@@ -765,7 +763,6 @@
                     script_relpath="lib/FearScriptAD/Changelog.lua",
                     verify_file_begins_with="--",
                     check_interval=default_check_interval,
-                    is_required=true,
                 },
             }
         }
