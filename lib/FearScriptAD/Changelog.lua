@@ -1,7 +1,7 @@
 --[[
     FearScript Advanced for Stand by StealthyAD.
     The All-In-One Script combines every each script.
-
+    
     -- Changelog Script
 
     Features:
@@ -15,16 +15,23 @@
     - Lua Documentation: https://www.lua.org/docs.html
 ]]--
 
-    local FearToast = util.toast
-    local FearRoot = menu.my_root()
-    local FearHelp = util.show_corner_help
-    local FearVersion = "0.29.8"
-    local FearHelpNotification = "FearScript Advanced "..FearVersion
+local FearRoot = menu.my_root()
+local FearHelp = util.show_corner_help
+local FearVersion = "0.29.8"
+local FearHelpNotification = "FearScript Advanced "..FearVersion
 
-    local FearChangelog = FearRoot:list("Changelog Update")
+local FearChangelog = FearRoot:list("Changelog Update")
 
-        FearChangelog:divider("FearScript Changelog")
+    FearChangelog:divider("FearScript Changelog")
 
-        FearChangelog:action("Patch 0.29.8 (Stand 100.6)", {}, "", function() -- 0.29.8
-            FearHelp(FearHelpNotification.."\nWhat's new?\n\n - Adding Changelog Update which you can track what's updated.")
-        end)
+    FearChangelog:divider("Active Changelog")
+
+    FearChangelog:action("Patch 0.29.9 (Stand 100.6)", {}, "", function() -- 0.29.9
+        FearHelp(FearHelpNotification.."\nWhat's new?\n\n - Improvements about Update.")
+    end)
+
+    FearChangelog:divider("Inactive Changelog")
+
+    FearChangelog:action("Patch 0.29.8 (Stand 100.6)", {}, "", function() -- 0.29.8
+        FearHelp(FearHelpNotification.."\nWhat's new?\n\n - Adding Changelog Update which you can track what's updated.")
+    end)
