@@ -2087,6 +2087,7 @@
             FearOnline:toggle_loop("Bruteforce Script Host", {}, "Brute Force Script Host to unlock some features such as unfreeze clouds, loading screen, etc...", function()
                 FearCommands("givesh"..players.get_name(players.user()))
             end)
+            
 
         ----=====================================================----
         ---               Standify Features
@@ -2336,11 +2337,24 @@
                     end
                 end)
 
+                FearMiscsOptions:divider("Game Miscs")
+                FWarningRG = FearMiscsOptions:action("Restart Game", {}, "Leave the game and restart the game.\n\nNOTE: After Restarting the Game, make sure you will inject Stand.", function(click)
+                    menu.show_warning(FWarningRG, click, "Are you sure to leave the game?\n\nNOTE: It's an alternative Stand for YEET but it will override restrictions.\n\nIt allows you to override the warnings given by Stand and makes your job easier and restart GTAV easier.", function()
+                        MISC.RESTART_GAME()
+                    end)
+                end)
+    
+                FWarningLG = FearMiscsOptions:action("Leave Game", {}, "Leave the game.", function(click)
+                    menu.show_warning(FWarningLG, click, "Are you sure to leave the game?\n\nNOTE: It's an alternative Stand for YEET but it will override restrictions.", function()
+                        MISC.QUIT_GAME()
+                    end)
+                end)
+
             local FearMoney = FearMiscs:list("Money Features")
             FearRemoverCash = FearMoney:slider("Choose Value Money", {"fearrm"}, "", 0, 2147483647, 0, 1, function()end)
             FearWF = FearMoney:action("Money Remover Tool", {}, "", function(type)
                 menu.show_warning(FearWF, type, "Do you really want remove the money?\nNOTE: You will able to remove your own modded money. This action is irreversible.", function()
-                SET_INT_GLOBAL(262145 + 20288, menu.get_value(FearRemoverCash))
+                    SET_INT_GLOBAL(262145 + 20288, menu.get_value(FearRemoverCash))
                 end)
             end)
 
@@ -2372,15 +2386,6 @@
                 menu.show_command_box("ffakecustomalert ")
             end, function(on_command)
                 show_custom_rockstar_alert(on_command)
-            end)
-
-            FWarningQ1 = FearMiscs:action("Quick Instant Game", {'fquitgame'}, "Leave quickly the game.", function(click)
-                menu.show_warning(FWarningQ1, click, "Are you sure to leave the game?\n\nNOTE: It's an alternative Stand for YEET but quick instant Alt + F4 feature.\n\nIt allows you to override the warnings given by Stand and makes your job easier and restart GTAV easier.", function()
-                    FearCommands("hotkeysskipwarnings on")
-                    FearTime(50)
-                    FearCommands("yeet")
-                    FearTime()
-                end)
             end)
 
     ------===============------
@@ -3672,7 +3677,7 @@
         ----============================----  
 
         FearAttackList:action("Fragment Crash", {"ffcrash"}, "Skid from Rebound 'GameCrunch Crash'", function()
-            local object = entities.create_object(util.joaat("prop_fragtest_cnst_04"), ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)))
+            local object = entities.create_object(util.joaat("prop_fragtest_cnst_04"), ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)))
             OBJECT.BREAK_OBJECT_FRAGMENT_CHILD(object, 1, false)
             util.yield(1000)
             entities.delete_by_handle(object)
