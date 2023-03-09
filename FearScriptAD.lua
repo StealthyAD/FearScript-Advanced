@@ -23,22 +23,17 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29.9"
+    local FearVersion = "0.29.10"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.6
     local FearToast = util.toast
 
-    local aalib = require("aalib")
-    local FearStandify_ver = "0.20.5"
-    local FearScriptStandify = "> FearScript Standify "..FearStandify_ver
-    local FearPlaySound = aalib.play_sound
-    local SND_ASYNC<const> = 0x0001
-    local SND_FILENAME<const> = 0x00020000
-
     local ScriptDir <const> = filesystem.scripts_dir()
     local required_files <const> = {
         "lib\\FearScriptAD\\Changelog.lua",
+        "lib\\FearScriptAD\\Functions\\Standify.lua",
+        "lib\\FearScriptAD\\Functions\\CruiseMissile.lua",
     }
 
     for _, file in pairs(required_files) do
@@ -48,21 +43,6 @@
             util.toast("The script has stopped running")
         end
     end
-
-    ----=======================================----
-    --- File Directory 'Standify Ported'
-    --- Locate songs.wav and stop music easily.
-    ----=======================================----
-    
-        local script_store_dir = filesystem.store_dir() .. SCRIPT_NAME .. '\\songs' -- Redirects to %appdata%\Stand\Lua Scripts\store\FearScriptAD\songs
-        if not filesystem.is_dir(script_store_dir) then
-            filesystem.mkdirs(script_store_dir)
-        end
-    
-        local script_store_dir_stop = filesystem.store_dir() .. SCRIPT_NAME .. '/stop_sounds' -- Redirects to %appdata%\Stand\Lua Scripts\store\FearScriptAD\stop_sounds
-        if not filesystem.is_dir(script_store_dir_stop) then
-            filesystem.mkdirs(script_store_dir_stop)
-        end
 
     ------=============================------
     ---   FearScript Basic Functions
@@ -84,68 +64,6 @@
 
     local function update_player_count()
         menu.set_menu_name(player_count, get_player_count() .. " player in the session.")
-    end
-
-    local function ends_with(str, ending)
-        return ending == "" or str:sub(-#ending) == ending
-    end
-
-    local FearStandifyFiles = {}
-        function UpdateAutoMusics()
-            Music_TempFiles = {}
-            for i, path in ipairs(filesystem.list_files(script_store_dir)) do
-                local file_str = path:gsub(script_store_dir, ''):gsub("\\","")
-                if ends_with(file_str, '.wav') then
-                    Music_TempFiles[#Music_TempFiles+1] = file_str
-                end
-            end
-            FearStandifyFiles = Music_TempFiles
-        end
-        UpdateAutoMusics()
-
-    local function join_path(parent, child)
-        local sub = parent:sub(-1)
-        if sub == "/" or sub == "\\" then
-            return parent .. child
-        else
-            return parent .. "/" .. child
-        end
-    end
-
-    local current_sound_handle = nil
-    local random_enabled = false
-
-    local function AutoPlay(sound_location)
-        if current_sound_handle then
-            aalib.stop_sound(current_sound_handle)
-            current_sound_handle = nil
-        end
-    
-        current_sound_handle = aalib.play_sound(sound_location, SND_FILENAME | SND_ASYNC, function()
-            if random_enabled then
-                AutoPlay(sound_location)
-            end
-        end)
-    end
-
-    local function FearStandifyLoading(directory)
-        local FearStandifyLoadedSongs = {}
-        for _, filepath in ipairs(filesystem.list_files(directory)) do
-            local _, filename, ext = string.match(filepath, "(.-)([^\\/]-%.?([^%.\\/]*))$")
-            if not filesystem.is_dir(filepath) and ext == "wav" then
-                local name = string.gsub(filename, "%.wav$", "")
-                local sound_location = join_path(directory, filename)
-                FearStandifyLoadedSongs[#FearStandifyLoadedSongs + 1] = {file=name, sound=sound_location}
-            end
-        end
-        return FearStandifyLoadedSongs
-    end
-
-    function GetFileNameFromPath(path) -- Redirect to the filename
-        if path and path ~= "" then -- check if path is not nil or empty
-            return path:match("^.+/(.+)$")
-        end
-        return nil
     end
 
     function SET_INT_GLOBAL(Global, Value)
@@ -824,15 +742,44 @@
             verify_file_begins_with="--",
             check_interval=86400,
             silent_updates=true,
+            dependencies={
+                {
+                    name="CruiseMissile",
+                    source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/CruiseMissile.lua",
+                    script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
+                    verify_file_begins_with="--",
+                    check_interval=default_check_interval,
+                    is_required=true,
+                },
+                {
+                    name="Standify",
+                    source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
+                    script_relpath="lib/FearScriptAD/Functions/Standify.lua",
+                    verify_file_begins_with="--",
+                    check_interval=default_check_interval,
+                    is_required=true,
+                },
+                {
+                    name="Changelog",
+                    source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
+                    script_relpath="lib/FearScriptAD/Changelog.lua",
+                    verify_file_begins_with="--",
+                    check_interval=default_check_interval,
+                    is_required=true,
+                },
+            }
         }
 
-        local auto_lib_updater = {
-            name="Changelog",
-            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
-            script_relpath="lib/FearScriptAD/Changelog.lua",
-            verify_file_begins_with="--",
-            silent_updates=true,
-        }
+        for _, dependency in pairs(auto_update_config.dependencies) do
+            if dependency.is_required then
+                if dependency.loaded_lib == nil then
+                    util.toast("Error loading lib "..dependency.name, TOAST_ALL)
+                else
+                    local var_name = dependency.name
+                    _G[var_name] = dependency.loaded_lib
+                end
+            end
+        end
     
         -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
         local status, auto_updater = pcall(require, "auto-updater")
@@ -889,8 +836,8 @@
         local FearVehicles = FearRoot:list("Vehicles Features")
         local FearOnline = FearRoot:list("Online Features")
         local FearWorld = FearRoot:list("World Features")
-        local FearStandify = FearRoot:list("Standify", {""}, "Standify, script related to music.\nMade by StealthyAD.")
-        local FearCruiseMissile = FearRoot:list("Cruise Missile", {""}, "CruiseMissile, script related to Cruise Missile Range.\nMade by StealthyAD.")
+        require "FearScriptAD.Functions.Standify"
+        require "FearScriptAD.Functions.CruiseMissile"
         require "FearScriptAD.Changelog" -- Import Changelog Update 
         local FearMiscs = FearRoot:list("Miscellaneous")
 
@@ -2116,206 +2063,6 @@
             FearOnline:toggle_loop("Bruteforce Script Host", {}, "Brute Force Script Host to unlock some features such as unfreeze clouds, loading screen, etc...", function()
                 FearCommands("givesh"..players.get_name(players.user()))
             end)
-            
-
-        ----=====================================================----
-        ---               Standify Features
-        ---     All of the functions, actions, list are available
-        ----=====================================================----
-
-        local sound_handle = nil
-        FearStandify:divider("FearScript Standify "..FearStandify_ver)
-        FearStandify:hyperlink("Open Music Folders", "file://"..script_store_dir, "Edit your music and enjoy.\nNOTE: You need to put .wav file.\nMP3 or another files contains invalid file are not accepted.") -- Open Music Folder contains your own Musics
-
-            ----=====================================================----
-            ---               Hyperlinks
-            ---     Only for download converter or sometimes
-            ----=====================================================----
-            
-            local FearStandifyConVerter = FearStandify:list("WAV Compress & Converter") -- Website Converter & Compress WAV. MP3 are not available
-            FearStandifyConVerter:divider("Compressor")
-            FearStandifyConVerter:hyperlink("WAV Compressor", "https://www.freeconvert.com/wav-compressor")
-            FearStandifyConVerter:hyperlink("xconvert", "https://www.xconvert.com/compress-wav")
-            FearStandifyConVerter:hyperlink("youcompress", "https://www.youcompress.com/wav/")
-            FearStandifyConVerter:divider("Converter")
-            FearStandifyConVerter:hyperlink("YouTube WAV Converter", "https://www.ukc.com.np/p/youtube-wav.html")
-            FearStandifyConVerter:hyperlink("WAV Converter", "https://www.freeconvert.com/wav-converter")
-            FearStandifyConVerter:hyperlink("cloudconvert", "https://cloudconvert.com/wav-converter")
-            FearStandifyConVerter:hyperlink("online-convert", "https://audio.online-convert.com/convert-to-wav")
-            FearStandifyConVerter:hyperlink("online-audio-coverter", "https://online-audio-converter.com/")
-
-            FearStandify:divider("Main Menu") -- Main Menu Divider
-
-            ----============================================================================----
-            ---                         Saved Playlists
-            --- All of your musics stored on %appdata%\Stand\Lua Scripts\FearScript Advanced\songs\
-            ----============================================================================----
-
-            local songs_direct = join_path(script_store_dir, "")
-            local FearStandifyLoadedSongs = FearStandifyLoading(songs_direct)
-            local FearStandifyFiles = {}
-            for _, song in ipairs(FearStandifyLoadedSongs) do
-                FearStandifyFiles[#FearStandifyFiles + 1] = song.file
-            end
-            
-            local function FearStandifyPlay(sound_location)
-                if current_sound_handle then
-                    current_sound_handle = nil
-                end
-                current_sound_handle = FearPlaySound(sound_location, SND_FILENAME | SND_ASYNC)
-            end
-            
-            FearStandify:list_action("Saved Playlists", {}, "WARNING: Heavy folder, so check if you have big storage, atleast average .wav file: 25-100 MB.", FearStandifyFiles, function(selected_index)
-                local selected_file = FearStandifyFiles[selected_index]
-                for _, song in ipairs(FearStandifyLoadedSongs) do
-                    if song.file == selected_file then
-                        local sound_location = song.sound
-                        if not filesystem.exists(sound_location) then
-                            FearToast(FearScriptStandify.. "\nSound file does not exist: " .. sound_location)
-                        else
-                            local display_text = string.gsub(selected_file, "%.wav$", "")
-                            FearStandifyPlay(sound_location)
-                            FearToast(FearScriptStandify.. "\nSelected Music: " .. display_text)
-                        end
-                        break
-                    end
-                end
-            end)
-
-            ----=====================================================----
-            ---               Random Music Manual
-            ---     Just click one time to choose your random music
-            ----=====================================================----
-
-            local played_songs = {} 
-            local function FearStandifyAuto()
-                random_enabled = not random_enabled
-                if random_enabled and current_sound_handle == nil then
-                    local song_files = filesystem.list_files(script_store_dir)
-                    if #song_files > 0 then
-                        local song_path
-                        repeat 
-                            song_path = song_files[math.random(#song_files)]
-                        until not played_songs[song_path]
-                        played_songs[song_path] = true 
-                        AutoPlay(song_path)
-                        local song_title = string.match(song_path, ".+\\([^%.]+)%.%w+$")
-                        FearToast(FearScriptStandify.. "\nRandom music selected: " .. song_title)
-                    else
-                        FearToast(FearScriptStandify.. "\nThere is no music in the storage folder.")
-                    end
-                elseif not random_enabled and current_sound_handle then
-                    current_sound_handle = nil
-                end
-            end
-
-            FearStandify:action("Play Random Music", {'fstandrand'}, "Play a random music.\nNOTE: You have each interval to click the action to select random music.", function(selected_index)
-                FearStandifyAuto()
-            end)
-
-            ----================================================----
-            ---               Stop Sounds
-            ---     Automatically end the musics while playing.
-            ----================================================----
-
-            FearStandify:action("Stop Music", {'fstandstop'}, "It will stop your music instantly.\nNOTE: Don't delete the folder called Stop Sounds, music won't stop and looped. Don't rename file.", function(selected_index) -- Force automatically stop your musics
-                local sound_location_1 = join_path(script_store_dir_stop, "stop.wav")
-                if not filesystem.exists(sound_location_1) then
-                    FearToast(FearScriptStandify.."\nMusic file does not exist: " .. sound_location_1.. "\n\nNOTE: You need to get the file, otherwise you can't stop the sound.")
-                else
-                    sound_handle = FearPlaySound(sound_location_1, SND_FILENAME | SND_ASYNC)
-                end
-            end)
-
-        FearStandify:divider("Miscs")
-        FearStandify:readonly("FearScript (Standify)", FearStandify_ver)
-        FearStandify:hyperlink("Standify: GitHub Source", "https://github.com/StealthyAD/Standify")
-
-        ------==============------
-        ---   Cruise Missile
-        ------==============------
-
-        local FearCruiseMissile_ver = "0.34.4"
-        local FearCruiseMissileNTF = "> FearScript CruiseMissile "..FearCruiseMissile_ver
-        FearCruiseMissile:divider("FearScript CruiseMissile "..FearCruiseMissile_ver)
-        local FearPresetMissile = FearCruiseMissile:list("Cruise Missile Presets")
-        FearPresetMissile:toggle_loop("Cruise Missile Range (9.32 Miles)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- 9.32 Miles Cruise Missile Range
-            FearCommands('damagemultiplier 7500')
-            SET_INT_GLOBAL(262145 + 30188, 15000)
-        end, function()
-            FearCommands('damagemultiplier 1')
-            SET_INT_GLOBAL(262145 + 30188, 4000)
-        end)
-
-        FearPresetMissile:toggle_loop("Cruise Missile Range (18.6 Miles)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- 18.6 miles Cruise Missile Range
-            FearCommands('damagemultiplier 8500')
-            SET_INT_GLOBAL(262145 + 30188, 30000)
-        end, function()
-            FearCommands('damagemultiplier 1')
-            SET_INT_GLOBAL(262145 + 30188, 4000)
-        end)
-
-        FearPresetMissile:toggle_loop("Cruise Missile Range (37.2 Miles)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- 37.2 Miles Cruise Missile Range
-            FearCommands('damagemultiplier 10000')
-            SET_INT_GLOBAL(262145 + 30188, 60000)
-        end, function()
-            FearCommands('damagemultiplier 1')
-            SET_INT_GLOBAL(262145 + 30188, 4000)
-        end)
-
-        FearPresetMissile:toggle_loop("Cruise Missile Range (Bypass)", {}, EXECUTION_FUNCTION_WORKING(false), function() -- Bypass Cruise Missile Range
-            FearCommands('damagemultiplier 10000')
-            SET_INT_GLOBAL(262145 + 30188, 99999)
-        end, function()
-            FearCommands('damagemultiplier 1')
-            SET_INT_GLOBAL(262145 + 30188, 4000)
-        end)
-        
-        FearCruiseMissileRange = FearCruiseMissile:slider("Cruise Missile Range", {"fcmr"}, "Make sure you put the limit atleast 99 KM/H (which means 61.5 Miles)\nE.G: you want unlimited range, put the max.", 2, 99, 4, 1, function()end) -- Maximise your chance to hit enemy to high range
-
-        FearCruiseMissile:toggle_loop("Toggle Cooldown Cruise Missile", {}, EXECUTION_FUNCTION_WORKING(false), function()
-            SET_INT_GLOBAL(262145 + 30187, 0)
-        end,function()
-            SET_INT_GLOBAL(262145 + 30187, 60000)
-        end)
-    
-        FearCruiseMissile:action("Execute Cruise Missile", {}, "NOTE: For indication detection, it tells you according to the range of the missile.\n\n- 2 to 4 Km - Short Missile\n- 4 to 6 Km - Standard Missile\n- 6 to 10 Km - Medium Missile\n- 10 to 19 Km - Long Range Missile\n- Superior than 20 Km - Extra Long Range Missile\n\nWARNING: Changing the session will put your Cruise Missile to Default State.", function()
-            SET_INT_GLOBAL(262145 + 30188, menu.get_value(FearCruiseMissileRange) * 1000)
-    
-            if menu.get_value(FearCruiseMissileRange) >= 20 then -- Extra Long Range Range Missile
-                FearToast(FearCruiseMissileNTF.."\nStatus : Extra Long Range Missile")
-                FearCommands('damagemultiplier 10000')
-            end
-    
-            if menu.get_value(FearCruiseMissileRange) >= 10 and menu.get_value(FearCruiseMissileRange) <= 19 then -- Long Range Missile
-                FearToast(FearCruiseMissileNTF.."\nStatus : Long Range Missile")
-                FearCommands('damagemultiplier 7500')
-            end
-    
-            if menu.get_value(FearCruiseMissileRange) >=6 and menu.get_value(FearCruiseMissileRange) <= 9 then -- Medium Range Missile
-                FearToast(FearCruiseMissileNTF.."\nStatus : Medium Range Missile")
-                FearCommands('damagemultiplier 10000')
-            end
-    
-            if menu.get_value(FearCruiseMissileRange) >= 4 and menu.get_value(FearCruiseMissileRange) <= 5 then -- Standard Missile
-                FearToast(FearCruiseMissileNTF.."\nStatus : Standard Missile")
-                FearCommands('damagemultiplier 1')
-            end
-            if menu.get_value(FearCruiseMissileRange) >= 2 and menu.get_value(FearCruiseMissileRange) <= 3 then -- Short Range Missile
-                FearToast(FearCruiseMissileNTF.."\nStatus : Short Range Missile")
-                FearCommands('damagemultiplier 1')
-            end
-        end)
-    
-        FearCruiseMissile:action("Revert to Default State", {}, "Revert to Default State like Cruise Missile Range and Cooldown.", function() -- Revert Default Settings
-            SET_INT_GLOBAL(262145 + 30188, 4000) -- Remove Bypass
-            SET_INT_GLOBAL(262145 + 30187, 60000) -- Cooldown Time
-            FearToast(FearCruiseMissileNTF.."\nReverted to Default State")
-        end)
-
-        FearCruiseMissile:divider("Miscs")
-        FearCruiseMissile:readonly("FearScript (CruiseMissile)", FearCruiseMissile_ver)
-        FearCruiseMissile:hyperlink("CruiseMissile: GitHub Source", "https://github.com/StealthyAD/Cruise-Missile")
 
         ------===============------
         ---   Miscs Functions
@@ -2327,11 +2074,6 @@
             FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
                 auto_update_config.check_interval = 0
                 if auto_updater.run_auto_update(auto_update_config) then
-                    FearToast(FearScriptNotif.."\nNo updates found.")
-                end
-
-                auto_lib_updater.check_interval = 0
-                if auto_updater.run_auto_update(auto_lib_updater) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
 		    end)
@@ -3744,7 +3486,5 @@
     end)
 
 util.on_stop(function()
-    local sound_location_1 = join_path(script_store_dir_stop, "stop.wav")
-    FearPlaySound(sound_location_1, SND_FILENAME | SND_ASYNC) -- Stop current sound while using Standify
     SET_INT_GLOBAL(262145 + 20288, 5000) -- Reset Ballistic Armor
 end)
