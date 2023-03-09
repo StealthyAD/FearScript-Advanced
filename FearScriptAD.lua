@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29"
+    local FearVersion = "0.29.1"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.6
@@ -482,6 +482,14 @@
             end
         end
         return NETWORK.NETWORK_HAS_CONTROL_OF_ENTITY(entity)
+    end
+
+    local function on_user_change_vehicle(vehicle)
+        if vehicle ~= 0 then
+            if initial_d_mode then 
+                set_vehicle_into_drift_mode(vehicle)
+            end
+        end
     end
 
     ------=============================------
@@ -985,9 +993,15 @@
             ------=================------  
 
                 FearWeapons:divider("FearSelf Weapons")
-                local FearNV = menu.ref_by_path('Game>Rendering>Night Vision')
+                
+
+                FearWeapons:toggle("Authorize Fire Friendly", {}, "Allow shoot your teammates if he's in the CEO/MC.", function(toggle)
+                    PED.SET_CAN_ATTACK_FRIENDLY(PLAYER.PLAYER_PED_ID(), toggle, false)
+                end)
+
                 FearWeapons:toggle_loop("Night Vision Scope" ,{}, "Press E while aiming to activate.\n\nRecommended to use only night time, using daytime can may have complication on your eyes watching the screen.",function()
                     local aiming = PLAYER.IS_PLAYER_FREE_AIMING(players.user())
+                    local FearNV = menu.ref_by_path('Game>Rendering>Night Vision')
                     if GRAPHICS.GET_USINGSEETHROUGH() and not aiming then
                         menu.trigger_command(FearNV,'off')
                     elseif PAD.IS_CONTROL_JUST_PRESSED(38,38) then
