@@ -1808,7 +1808,7 @@
                         exclude_dead = false
                     }
                     
-                    FearDestroyWorld:toggle_loop("Toggle Panic Mode", {}, "", function()
+                    FearDestroyWorld:toggle_loop("Toggle Panic Mode", {}, "Attract all entites around of you.\n\nNOTE: You will also too attract yourself and can make strange movements.", function()
                         -- Vehicle
                         if FearDeathPoint.vehicle_toggle then
                             for _, ent in pairs(GET_NEARBY_VEHICLES(players.user_ped(), FearDeathPoint.groundpoint)) do
