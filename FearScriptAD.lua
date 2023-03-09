@@ -832,7 +832,6 @@
                     switch_to_branch=selected_branch,
                     verify_file_begins_with="--",
                     check_interval=default_check_interval,
-                    is_required=true,
                 },
             }
         }
