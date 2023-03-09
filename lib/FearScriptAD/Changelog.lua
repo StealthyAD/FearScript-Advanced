@@ -20,11 +20,16 @@
 
     local FearHelp = util.show_corner_help
     local FearRoot = menu.my_root()
-    local FearHelpNot = "FearScript Advanced"
+    local FearVersion = "0.29.11"
+    local FearHelpNot = "FearScript Advanced"..FearVersion
     local FearChangelog = FearRoot:list("Changelog Update")
 
     FearChangelog:divider("FearScript Changelog")
 
         FearChangelog:action("Patch 0.29.11", {}, "", function()
-            FearHelp(FearHelpNot.."\nWhat's New?\n\n- Updated about auto_updater")
+            FearHelp(FearHelpNot.."\nWhat's New?\n\n- Updated about auto_updater which creates a lot of bug.")
+        end)
+
+        FearChangelog:action("Patch 0.29.10", {}, "", function()
+            FearHelp(FearHelpNot.."\nWhat's New?\n\n- Update improvements.")
         end)
