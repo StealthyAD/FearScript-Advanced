@@ -26,7 +26,7 @@ local FearChangelog = FearRoot:list("Changelog Update")
 
     FearChangelog:divider("Active Changelog")
     FearChangelog:action("Patch 0.29.10", {}, "", function() -- 0.29.9
-        FearHelp(FearHelpNotification.."\nWhat's new for 0.29.10?\n\n\n- Removed Clock Time\n - Minor improvements")
+        FearHelp(FearHelpNotification.."\nWhat's new for 0.29.10?\n\n- Removed Clock Time\n - Minor improvements")
     end)
 
     FearChangelog:divider("Inactive Changelog")
