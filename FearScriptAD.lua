@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29.4"
+    local FearVersion = "0.29.5"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.6
@@ -1306,6 +1306,18 @@
                 end
             end)
 
+            FearVehicles:toggle_loop("Stealth Godmode Vehicle", {}, "Toggle Stealth Godmode vehicle.\n\nNOTE: Most Menus will not able to detect as vehicle god mode, exception biggest menus can detect such as Stand, 2Take1.", function()
+                ENTITY.SET_ENTITY_PROOFS(entities.get_user_vehicle_as_handle(), true, true, true, true, true, 0, 0, true)
+                ENTITY.SET_ENTITY_PROOFS(PED.GET_VEHICLE_PED_IS_IN(players.user(), false), false, false, false, false, false, 0, 0, false)
+            end)
+
+            FearVehicles:toggle_loop("Infinite Countermeasures", {}, "Only works in plane if user has countermeasures.\nIt will able to counter some weaponized planes with homing missiles.", function()
+                local current_car = entities.get_user_vehicle_as_handle()
+                if VEHICLE.GET_VEHICLE_COUNTERMEASURE_AMMO(current_car) < 100 then
+                    VEHICLE.SET_VEHICLE_COUNTERMEASURE_AMMO(current_car, 400)
+                end
+            end)
+
             ------================------
             ---   Vehicle Settings
             ------================------
@@ -2536,19 +2548,31 @@
             local FearBounty = FearGriefingList:list("Bounty Features",{},"")
 
             FearGriefingList:divider("Player Tweaks")
-            FearGriefingList:action("Put Fire to "..FearPlayerName, {'fburn'}, "Burning "..FearPlayerName.." to the death. Nothing can't stop the fire.\n\nNOTE: You can't burn Modder or Glitched Godmode.", function() FIRE.START_ENTITY_FIRE(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)) end)
-            FearGriefingList:toggle("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function(toggle)
+
+            FearGriefingList:action("Put Fire to "..FearPlayerName, {'fburn'}, "Burning "..FearPlayerName.." to the death. Nothing can't stop the fire.\n\nNOTE: You can't burn Modder/Glitched Godmode or Godmode User.", function() 
+                FIRE.START_ENTITY_FIRE(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)) 
+            end)
+            
+            FearGriefingList:toggle_loop("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
                     if FearPlayerName then
-                        if toggle then
-                            FearCommands("disarm"..FearPlayerName)
-                        else
-                            FearCommands("disarm"..FearPlayerName)
-                        end
+                        WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
+                    else
+                        WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), false)
                     end
                     util.yield(150)
                 end
                 util.yield(5000)
+            end)
+
+            FearGriefingList:toggle_loop("Toggle Bulletproof Helmet", {}, "Enable the Bulletproof Helmet will remove helmet, especially for PvP/Combat, but activate the feature may freeze the player quickly.\n\nNOTE: Recommended for PvPs if your opponent are using Thermal Helmet/Riot Helmet/Bulletproof Helmet...", function() 
+                if FearSession() then
+                    if PED.IS_PED_WEARING_HELMET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)) == true then
+                        PED.REMOVE_PED_HELMET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
+                    else
+                        PED.REMOVE_PED_HELMET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), false)
+                    end
+                end
             end)
 
             FearGriefingList:toggle_loop("Kill "..FearPlayerName.." Loop", {}, "Kill "..FearPlayerName.." in Loop?",function()
