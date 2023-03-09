@@ -825,12 +825,13 @@
             check_interval=86400,
             silent_updates=true,
             dependencies={
-                name="Changelog",
-                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
-                script_relpath="lib/FearScriptAD/Changelog.lua",
-                verify_file_begins_with="--",
-                is_required=true,
-            },
+                {
+                    name="Changelog",
+                    source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
+                    script_relpath="lib/FearScriptAD/Changelog.lua",
+                    is_required=true,
+                },
+            }
         }
     
         -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
