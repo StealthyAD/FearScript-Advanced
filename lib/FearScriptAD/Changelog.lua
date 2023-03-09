@@ -17,7 +17,7 @@
 
 local FearRoot = menu.my_root()
 local FearHelp = util.show_corner_help
-local FearVersion = "0.29.8"
+local FearVersion = "0.29.9"
 local FearHelpNotification = "FearScript Advanced "..FearVersion
 
 local FearChangelog = FearRoot:list("Changelog Update")
