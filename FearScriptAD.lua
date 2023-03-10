@@ -26,7 +26,7 @@
     local FearVersion = "0.29.11"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
-    local FearSEdition = 100.6
+    local FearSEdition = 100.7
     local FearToast = util.toast
 
     local ScriptDir <const> = filesystem.scripts_dir()
