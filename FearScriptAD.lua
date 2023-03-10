@@ -31,7 +31,6 @@
 
     local ScriptDir <const> = filesystem.scripts_dir()
     local required_files <const> = {
-        "lib\\FearScriptAD\\Changelog.lua",
         "lib\\FearScriptAD\\Functions\\Standify.lua",
         "lib\\FearScriptAD\\Functions\\CruiseMissile.lua",
     }
@@ -753,15 +752,6 @@
             silent_updates=true,
         }
 
-        local changeloglib = {
-            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
-            script_relpath="lib/FearScriptAD/Changelog.lua",
-            switch_to_branch=selected_branch,
-            verify_file_begins_with="--",
-            check_interval=86400,
-            silent_updates=true,
-        }
-
         local standifylib = {
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
             script_relpath="lib/FearScriptAD/Functions/Standify.lua",
@@ -830,7 +820,6 @@
         local FearWorld = FearRoot:list("World Features")
         require "FearScriptAD.Functions.Standify"
         require "FearScriptAD.Functions.CruiseMissile"
-        require "FearScriptAD.Changelog"
         local FearMiscs = FearRoot:list("Miscellaneous")
 
         ------==============------
@@ -2074,11 +2063,6 @@
             FearUpdates:action("Update Library", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
                 standifylib.check_interval = 0
                 if auto_updater.run_auto_update(standifylib) then
-                    FearToast(FearScriptNotif.."\nNo updates found.")
-                end
-
-                changeloglib.check_interval = 0
-                if auto_updater.run_auto_update(changeloglib) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
 
