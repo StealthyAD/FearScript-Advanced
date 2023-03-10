@@ -26,7 +26,7 @@
     local FearVersion = "0.29.11"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
-    local FearSEdition = 100.7
+    local FearSEdition = 100.6
     local FearToast = util.toast
 
     local ScriptDir <const> = filesystem.scripts_dir()
@@ -764,7 +764,9 @@
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
             script_relpath="lib/FearScriptAD/Changelog.lua",
             verify_file_begins_with="--",
-            check_interval=default_check_interval,
+            switch_to_branch=selected_branch,
+            verify_file_begins_with="--",
+            check_interval=86400,
             silent_updates=true,
         }
 
