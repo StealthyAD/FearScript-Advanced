@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.30"
+    local FearVersion = "0.30.1"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.7
@@ -819,11 +819,6 @@
 
         FearRoot:divider(FearScriptV1)
         FearRoot:divider("Main Menu Features")
-
-        FearRoot:action("Players Options", {}, "", function()
-            local PlayerList = menu.ref_by_path("Players")
-		    menu.trigger_command(PlayerList, "")
-        end)
         local FearSelf = FearRoot:list("Self Features")
         local FearVehicles = FearRoot:list("Vehicles Features")
         local FearOnline = FearRoot:list("Online Features")
@@ -1497,7 +1492,7 @@
                 FearToggleGod = FearVehicleSess:toggle_loop("Toggle Invincible Cars", {}, "Turn On/Off Invincible Car, exception don't use weaponized weapons, I will not recommend you use.\nNOTE: It will be absurd to enable the features make causing griefing constantly.\nNOTE: It will applicable for 'Friendly Features'.", function() end)
                 FearToggleCustom = FearVehicleSess:toggle_loop("Toggle Upgrade Cars", {}, "Toggle On/Off for Maximum Car.\nNOTE: It will applicable for 'Friendly Features'.", function()end)
                 FearPlateIndex = FearVehicleSess:slider("Plate Color", {"fplatecolor"}, "Choose Plate Color.\nNOTE: It will applicable for 'Friendly Features'.", 0, 5, 0, 1, function()end)
-                FearVehicleSess:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.\nWrite 'default' to get revert plate.\nNOTE: It will applicable for 'Friendly Features'.", function(name)
+                FearVehicleSess:text_input("Plate Name", {"fearplateall"}, "Apply Plate Name when summoning vehicles.\nNOTE: It will also too apply to 'Friendly Features' spawning vehicles.\nYou are not allowed to write more than 8 characters.\nNOTE: It will applicable for 'Friendly Features'.", function(name)
                     FearPlateName = name:sub(1, 8)
                 end)
 
@@ -1762,7 +1757,7 @@
                     end
                 end)
 
-                FearSessionL:toggle_loop("I don't like Silencers", {''}, "Remove all weapons to all players while trying to use silencer weapons.\n\nToggle 'Exclude Self' to avoid using these features", function()
+                FearSessionL:toggle_loop("I don't like Silencers", {}, "Remove all weapons to all players while trying to use silencer weapons.\n\nToggle 'Exclude Self' to avoid using these features", function()
                     for _, pid in pairs(players.list(FearToggleSelf)) do
                         if FearSession() and WEAPON.IS_PED_CURRENT_WEAPON_SILENCED(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)) == true and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
@@ -2229,11 +2224,12 @@
         local FearPlayerName = players.get_name(pid)
 
         FearPlayer:divider(FearScriptV1)
-        local FearFriendlyList = FearPlayer:list("Friendly Features")
-        local FearNeutralList = FearPlayer:list("Neutral Features", {}, "")
-        local FearGriefingList = FearPlayer:list("Griefing Features", {}, "")
-        local FearAttackList = FearPlayer:list("Attack Features", {}, "")
-        FearPlayer:toggle("Fast Spectate", {"fearsp"}, "Spectate "..FearPlayerName, function(toggle)
+        local FearScriptP = FearPlayer:list("FearScript Tools", {"fearscript"}, "", function()end)
+        local FearFriendlyList = FearScriptP:list("Friendly Features")
+        local FearNeutralList = FearScriptP:list("Neutral Features", {}, "")
+        local FearGriefingList = FearScriptP:list("Griefing Features", {}, "")
+        local FearAttackList = FearScriptP:list("Attack Features", {}, "")
+        FearScriptP:toggle("Fast Spectate", {"fearsp"}, "Spectate "..FearPlayerName, function(toggle)
             if toggle then
                 FearCommands("spectate"..FearPlayerName.." on")
                 FearToast(FearScriptNotif.."\nYou are currently spectating "..FearPlayerName)
@@ -2375,22 +2371,10 @@
 
             FearGriefingList:divider("FearGriefing Advanced")
             FearGriefingList:divider("Game Tweaks")
-            local FearWanted = FearGriefingList:list("Wanted Features",{},"")
             local FearBounty = FearGriefingList:list("Bounty Features",{},"")
 
             FearGriefingList:divider("Player Tweaks")
             local FearCage = FearGriefingList:list("Cage Options")
-
-            FearGriefingList:action("Put Fire to "..FearPlayerName, {'fburn'}, "Burning "..FearPlayerName.." to the death. Nothing can't stop the fire.\n\nNOTE: You can't burn Modder/Glitched Godmode or Godmode User.", function() 
-                if FearSession() then
-                    local targetIDP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
-                    if FearPlayerName and PLAYER.GET_PLAYER_INVINCIBLE(targetIDP) == false then
-                        FIRE.START_ENTITY_FIRE(targetIDP) 
-                    end
-                    FearTime(150)
-                end
-                FearTime(5000)
-            end)
             
             FearGriefingList:toggle_loop("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
@@ -2833,31 +2817,6 @@
                         ENTITY.FREEZE_ENTITY_POSITION(Container, true)
                         WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
                     end)
-
-            ----=================----
-            --- Wanted   Features
-            ----=================----        
-
-                FearWanted:divider("FearWanted Advanced")
-                FearWantedStar = FearWanted:slider("Wanted Level",{"fearwp"}, "Chose the amount of the wanted level offered automatically.", 0, 5, 0 , 1, function(value)end)
-                
-                FearWanted:toggle("Auto Wanted Level", {"fearautow"}, "Put the guy cops and make sure cops come to his home." ,function()
-                    if FearSession() then
-                        if players.set_wanted_level(pid, menu.get_value(FearWantedStar)) ~= menu.get_value(FearWantedStar) then
-                            PLAYER.SET_PLAYER_WANTED_LEVEL(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), menu.get_value(FearWantedStar), false)
-                        end
-                    end
-                    util.yield(1000)
-                end, nil, nil, COMMANDPERM_RUDE)
-
-                FearWanted:action("Manual Wanted Level", {"fearmanualw"}, "Put the guy cops and make sure cops come to his home." ,function()
-                    if FearSession() then
-                        if players.set_wanted_level(pid, menu.get_value(FearWantedStar)) ~= menu.get_value(FearWantedStar) then
-                            PLAYER.SET_PLAYER_WANTED_LEVEL(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), menu.get_value(FearWantedStar), false)
-                        end
-                    end
-                    util.yield(1000)
-                end)
 
             ----=================----
             --- Bounty   Features
@@ -3440,7 +3399,7 @@
         --- Nuke Special Advanced Tools
         ----===========================----        
 
-        FearAttackList:action_slider("Crash Button", {}, "", {"Simple Nuke","American Button", "Putin Button"}, function(select)
+        FearAttackList:action_slider("Crash Button Method", {}, "", {"Simple Nuke","American Button", "Putin Button", "Fragment Crash"}, function(select)
             if select == 1 then 
                 FearToast(FearScriptNotif.."\nNuke Button on " ..FearPlayerName)
                 FearBoomCrash(pid, FearPlayerName)
@@ -3488,7 +3447,7 @@
                 util.yield(8000)
                 menu.trigger_commands("anticrashcamera off")
                 FearToast(FearScriptNotif.."\n"..FearPlayerName.. " has been nuked by american hydrogen bomb Castle Bravo.")
-            else
+            elseif select == 3 then
                 local objective = pid
                 menu.trigger_commands("anticrashcamera on")
                 menu.trigger_commands("potatomode on")
@@ -3538,21 +3497,19 @@
                 util.yield(8000)
                 menu.trigger_commands("anticrashcamera off")
                 FearToast(FearScriptNotif.."\n"..FearPlayerName.. " has been nuked by the greatest president Vladimir Putin.\nThe End of the World has begun.")
+            else
+                local object = entities.create_object(util.joaat("prop_fragtest_cnst_04"), ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)))
+                OBJECT.BREAK_OBJECT_FRAGMENT_CHILD(object, 1, false)
+                util.yield(1000)
+                entities.delete_by_handle(object)
             end
         end)
 
         ----============================----
         --- Standard Crash & Kick Player
-        ----============================----  
+        ----============================----       
 
-        FearAttackList:action("Fragment Crash", {"ffcrash"}, "Skid from Rebound 'GameCrunch Crash'", function()
-            local object = entities.create_object(util.joaat("prop_fragtest_cnst_04"), ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)))
-            OBJECT.BREAK_OBJECT_FRAGMENT_CHILD(object, 1, false)
-            util.yield(1000)
-            entities.delete_by_handle(object)
-        end)      
-
-        FearAttackList:action("Force Breakup ".. FearPlayerName, {"fbreakupmax"}, "Force "..FearPlayerName.." to leave the session.\nNOTE: You can't kick Stand Users if Stand User Identification has been activated.\nIt will be useful if you want kick Players using Host Spoof Token (Aggressive/Spot) but reverse side.", function()
+        FearAttackList:action("Force Breakup ", {"fbreakup"}, "Force "..FearPlayerName.." to leave the session.\nNOTE: You can't kick Stand Users if Stand User Identification has been activated.\nIt will be useful if you want kick Players using Host Spoof Token (Aggressive/Spot) but reverse side.", function()
             FearCommands("breakup"..FearPlayerName)
             FearCommands("kick"..FearPlayerName)
             FearCommands("confusionkick"..FearPlayerName)
