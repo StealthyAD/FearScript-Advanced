@@ -2399,9 +2399,7 @@
             FearGriefing:toggle_loop("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
                     if FearPlayerName then
-                        WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
-                    else
-                        WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), false)
+                        FearCommands("disarm"..FearPlayerName)
                     end
                     util.yield(150)
                 end
