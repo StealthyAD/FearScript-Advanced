@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29.11"
+    local FearVersion = "0.29.12"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.6
@@ -2084,11 +2084,6 @@
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
             end)
-            FearUpdates:action("Update Library", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
-                if auto_updater.run_auto_update(library_update) then
-                    FearToast(FearScriptNotif.."\nNo updates found.")
-                end
-		    end)
 
             FearMiscs:divider("FearScript Credits")
             FearMiscs:hyperlink("StealthyAD", "https://github.com/StealthyAD")
