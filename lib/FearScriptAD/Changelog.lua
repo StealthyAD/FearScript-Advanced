@@ -26,6 +26,10 @@
 
     FearChangelog:divider("FearScript Changelog")
 
+        FearChangelog:action("Patch 0.29.12", {}, "", function()
+            FearHelp(FearHelpNot.."\nWhat's New?\n\n- Minor improvements.")
+        end)
+
         FearChangelog:action("Patch 0.29.11", {}, "", function()
             FearHelp(FearHelpNot.."\nWhat's New?\n\n- Updated about auto_updater which creates a lot of bug.")
         end)
