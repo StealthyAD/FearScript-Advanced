@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.29.12"
+    local FearVersion = "0.30"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.7
@@ -420,6 +420,16 @@
                 set_vehicle_into_drift_mode(vehicle)
             end
         end
+    end
+
+    local function SendRequest(hash, timeout)
+        timeout = timeout or 3
+        STREAMING.REQUEST_MODEL(hash)
+        local end_time = os.time() + timeout
+        repeat
+            util.yield()
+        until STREAMING.HAS_MODEL_LOADED(hash) or os.time() >= end_time
+        return STREAMING.HAS_MODEL_LOADED(hash)
     end
 
     ------=============================------
@@ -1269,6 +1279,14 @@
                 end
             end)
 
+            FearVehicles:toggle_loop("Boost Heli Engine", {}, "Enable the feature will make helicopter faster than 1 second\nDisable the feature will able to stop engine and continue.", function()
+                if entities.get_user_vehicle_as_handle() ~= 0 then
+                    VEHICLE.SET_HELI_BLADES_FULL_SPEED(entities.get_user_vehicle_as_handle())
+                else
+                    VEHICLE.SET_HELI_BLADES_SPEED(entities.get_user_vehicle_as_handle(), 0)
+                end
+            end)
+
             FearVehicles:toggle_loop("Stealth Godmode Vehicle", {}, "Toggle Stealth Godmode vehicle.\n\nNOTE: Most Menus will not able to detect as vehicle god mode, exception biggest menus can detect such as Stand, 2Take1.", function()
                 ENTITY.SET_ENTITY_PROOFS(entities.get_user_vehicle_as_handle(), true, true, true, true, true, 0, 0, true)
                 ENTITY.SET_ENTITY_PROOFS(PED.GET_VEHICLE_PED_IS_IN(players.user(), false), false, false, false, false, false, 0, 0, false)
@@ -1278,6 +1296,20 @@
                 local current_car = entities.get_user_vehicle_as_handle()
                 if VEHICLE.GET_VEHICLE_COUNTERMEASURE_AMMO(current_car) < 100 then
                     VEHICLE.SET_VEHICLE_COUNTERMEASURE_AMMO(current_car, 400)
+                end
+            end)
+
+            FearA10Warthog = FearVehicles:toggle_loop("A-10 Warthog Avenger", {}, "Only Works on the B-11. Makes the Cannon like how it is in Real Life, you could make BRRRTTT.", function(on)
+                if VEHICLE.IS_VEHICLE_MODEL(entities.get_user_vehicle_as_handle(), 1692272545) then
+                    local A10_while_using = entities.get_user_vehicle_as_handle()
+                    local CorCanPosition = ENTITY.GET_ENTITY_BONE_POSTION(A10_while_using, ENTITY.GET_ENTITY_BONE_INDEX_BY_NAME(A10_while_using, "weapon_1a"))
+                    local target = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(A10_while_using, 0, 175, 0)
+                    if PAD.IS_CONTROL_PRESSED(114, 114) then
+                        MISC.SHOOT_SINGLE_BULLET_BETWEEN_COORDS(CorCanPosition['x'], CorCanPosition['y'], CorCanPosition['z'], target['x']+math.random(-3,3), target['y']+math.random(-3,3), target['z']+math.random(-3,3), 100.0, true, 3800181289, players.user_ped(), true, false, 100.0)
+                    end
+                else
+                    util.toast(FearScriptNotif.."\nYou have to be in a B-11 Strikeforce to use the feature.")
+                    menu.trigger_command(FearA10Warthog, "off")
                 end
             end)
 
@@ -1356,6 +1388,16 @@
                     local vehicle = entities.get_user_vehicle_as_handle()
                     if vehicle ~= 0 then
                         VEHICLE.SET_VEHICLE_DIRT_LEVEL(vehicle, FearDustCar)
+                    end
+                end)
+
+                FearVehicleSettings:divider("Vehicle Tweaks")
+
+                FearVehicleSettings:slider("Change Vehicle Seat", {}, "Change Vehicle Seat while driving.", -1, 8, -1, 1, function(value)
+                    if PED.IS_PED_IN_ANY_VEHICLE(players.user_ped(), false) then
+                        PED.SET_PED_INTO_VEHICLE(players.user_ped(), PED.GET_VEHICLE_PED_IS_IN(players.user_ped(), false), value)
+                    else
+                        FearToast(FearScriptNotif.."\nHey, we can't recognize where do you sit. Change your sit, first.")
                     end
                 end)
 
@@ -2337,6 +2379,7 @@
             local FearBounty = FearGriefingList:list("Bounty Features",{},"")
 
             FearGriefingList:divider("Player Tweaks")
+            local FearCage = FearGriefingList:list("Cage Options")
 
             FearGriefingList:action("Put Fire to "..FearPlayerName, {'fburn'}, "Burning "..FearPlayerName.." to the death. Nothing can't stop the fire.\n\nNOTE: You can't burn Modder/Glitched Godmode or Godmode User.", function() 
                 if FearSession() then
@@ -2408,16 +2451,6 @@
                 end
             end)
 
-            FearGriefingList:action("Cage "..FearPlayerName, {}, "", function()
-                local player_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
-                if not PED.IS_PED_IN_ANY_VEHICLE(player_ped) then
-                    local modelHash = util.joaat("prop_gold_cont_01")
-                    local pos = ENTITY.GET_ENTITY_COORDS(player_ped)
-                    local obj = Create_Network_Object(modelHash, pos.x, pos.y, pos.z)
-                    ENTITY.FREEZE_ENTITY_POSITION(obj, true)
-                end
-            end)
-
             FearGriefingList:action("Send Dog Attack", {}, "", function()
                 local player_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                 local modelHash = util.joaat("A_C_Chop")
@@ -2439,7 +2472,7 @@
                 Increase_Ped_Combat_Attributes(ChopPed)
             end)
 
-            FearGriefingList:action("Quick Strike", {"ffstrike"}, "Launch Airstrike to "..FearPlayerName.."\nNOTE: It will randomly spawned how many missiles will drop on the player.", function()
+            FearGriefingList:action("Quick Airstrike", {"ffstrike"}, "Launch Airstrike to "..FearPlayerName.."\nNOTE: It will randomly spawned how many missiles will drop on the player.", function()
                 local pidPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                 local abovePed = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(pidPed, 0, 0, 8)
                 local missileCount = RNGCount(8, 48)
@@ -2741,6 +2774,65 @@
                     util.yield()
                 end
             end, nil, nil, COMMANDPERM_RUDE)
+
+                ----=================----
+                ---   Cage Features
+                ----=================----     
+
+                    FearCage:divider("FearGriefing Cage")
+                    FearCage:action("Normal Cage", {}, "", function()
+                        local player_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        if not PED.IS_PED_IN_ANY_VEHICLE(player_ped) then
+                            local modelHash = util.joaat("prop_gold_cont_01")
+                            local pos = ENTITY.GET_ENTITY_COORDS(player_ped)
+                            local obj = Create_Network_Object(modelHash, pos.x, pos.y, pos.z)
+                            ENTITY.FREEZE_ENTITY_POSITION(obj, true)
+                        end
+                    end)
+
+                    FearCage:action("Electric Cage", {}, "Same as Cage but if he tries to move, he will gonna eletrocute himself.", function(on_click)
+                        SpawnObjects = {}
+                        get_vtable_entry_pointer = function(address, index)
+                            return memory.read_long(memory.read_long(address) + (8 * index))
+                        end
+                        local FTotalCage = 6
+                        local FElectricBox = util.joaat("prop_elecbox_12")
+                        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local pos = ENTITY.GET_ENTITY_COORDS(ped)
+                        pos.z = pos.z - 0.5
+                        SendRequest(FElectricBox)
+                        local temp_v3 = v3.new(0, 0, 0)
+                        for i = 1, FTotalCage do
+                            local angle = (i / FTotalCage) * 360
+                            temp_v3.z = angle
+                            local obj_pos = temp_v3:toDir()
+                            obj_pos:mul(2.5)
+                            obj_pos:add(pos)
+                            for offs_z = 1, 5 do
+                                local ElecCages = entities.create_object(FElectricBox, obj_pos)
+                                SpawnObjects[#SpawnObjects + 1] = ElecCages
+                                ENTITY.SET_ENTITY_ROTATION(ElecCages, 90.0, 0.0, angle, 2, 0)
+                                obj_pos.z = obj_pos.z + 0.75
+                                ENTITY.FREEZE_ENTITY_POSITION(ElecCages, true)
+                            end
+                        end
+                    end)
+
+                    FearCage:action("Container Box", {}, "Same as Cage, but container, we will remove his weapon for life.", function()
+                        SpawnObjects = {}
+                        get_vtable_entry_pointer = function(address, index)
+                            return memory.read_long(memory.read_long(address) + (8 * index))
+                        end
+                        local ContainerBox = util.joaat("prop_container_ld_pu")
+                        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                        local pos = ENTITY.GET_ENTITY_COORDS(ped)
+                        SendRequest(ContainerBox)
+                        pos.z = pos.z - 1
+                        local Container = entities.create_object(ContainerBox, pos, 0)
+                        SpawnObjects[#SpawnObjects + 1] = container
+                        ENTITY.FREEZE_ENTITY_POSITION(Container, true)
+                        WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
+                    end)
 
             ----=================----
             --- Wanted   Features
