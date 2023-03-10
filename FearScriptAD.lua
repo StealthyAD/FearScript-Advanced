@@ -749,6 +749,7 @@
                     script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
                     verify_file_begins_with="--",
                     check_interval=default_check_interval,
+                    is_required=true,
                 },
                 {
                     name="Standify",
@@ -756,6 +757,7 @@
                     script_relpath="lib/FearScriptAD/Functions/Standify.lua",
                     verify_file_begins_with="--",
                     check_interval=default_check_interval,
+                    is_required=true,
                 },
                 {
                     name="Changelog",
@@ -836,9 +838,6 @@
         local FearVehicles = FearRoot:list("Vehicles Features")
         local FearOnline = FearRoot:list("Online Features")
         local FearWorld = FearRoot:list("World Features")
-        require "FearScriptAD.Functions.Standify"
-        require "FearScriptAD.Functions.CruiseMissile"
-        require "FearScriptAD.Changelog" -- Import Changelog Update 
         local FearMiscs = FearRoot:list("Miscellaneous")
 
         ------==============------
