@@ -800,19 +800,21 @@
         })
 
         local librarylib = {
+            {
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/CruiseMissile.lua",
             script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
             verify_file_begins_with="--",
-        },
-        {
-            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
-            script_relpath="lib/FearScriptAD/Functions/Standify.lua",
-            verify_file_begins_with="--",
-        },
-        {
-            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
-            script_relpath="lib/FearScriptAD/Changelog.lua",
-            verify_file_begins_with="--"
+            },
+            {
+                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
+                script_relpath="lib/FearScriptAD/Functions/Standify.lua",
+                verify_file_begins_with="--",
+            },
+            {
+                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
+                script_relpath="lib/FearScriptAD/Changelog.lua",
+                verify_file_begins_with="--"
+            }
         }
 
         auto_updater.run_auto_update(librarylib)
