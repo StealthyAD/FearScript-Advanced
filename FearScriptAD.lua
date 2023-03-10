@@ -743,6 +743,33 @@
             check_interval=86400,
             silent_updates=true,
         }
+
+        local cruiselib = {
+            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/CruiseMissile.lua",
+            script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
+            switch_to_branch=selected_branch,
+            verify_file_begins_with="--",
+            check_interval=86400,
+            silent_updates=true,
+        }
+
+        local changeloglib = {
+            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
+            script_relpath="lib/FearScriptAD/Changelog.lua",
+            switch_to_branch=selected_branch,
+            verify_file_begins_with="--",
+            check_interval=86400,
+            silent_updates=true,
+        }
+
+        local standifylib = {
+            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
+            script_relpath="lib/FearScriptAD/Functions/Standify.lua",
+            switch_to_branch=selected_branch,
+            verify_file_begins_with="--",
+            check_interval=86400,
+            silent_updates=true,
+        }
         
         -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
         local status, auto_updater = pcall(require, "auto-updater")
@@ -774,25 +801,6 @@
             verify_file_begins_with="--",
         })
 
-        local librarylib = {
-            {
-            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/CruiseMissile.lua",
-            script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
-            verify_file_begins_with="--",
-            },
-            {
-                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
-                script_relpath="lib/FearScriptAD/Functions/Standify.lua",
-                verify_file_begins_with="--",
-            },
-            {
-                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
-                script_relpath="lib/FearScriptAD/Changelog.lua",
-                verify_file_begins_with="--",
-            },
-        }
-
-        auto_updater.run_auto_update(librarylib)
         auto_updater.run_auto_update(auto_update_config)
 
     ------===============------
@@ -2064,8 +2072,18 @@
             end)
 
             FearUpdates:action("Update Library", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
-                librarylib.check_interval = 0
-                if auto_updater.run_auto_update(librarylib) then
+                standifylib.check_interval = 0
+                if auto_updater.run_auto_update(standifylib) then
+                    FearToast(FearScriptNotif.."\nNo updates found.")
+                end
+
+                changeloglib.check_interval = 0
+                if auto_updater.run_auto_update(changeloglib) then
+                    FearToast(FearScriptNotif.."\nNo updates found.")
+                end
+
+                cruiselib.check_interval = 0
+                if auto_updater.run_auto_update(cruiselib) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
             end)
