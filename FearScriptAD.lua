@@ -765,8 +765,8 @@
             script_relpath="lib/FearScriptAD/Changelog.lua",
             verify_file_begins_with="--",
             switch_to_branch=selected_branch,
-            verify_file_begins_with="--",
             check_interval=86400,
+            is_required=true,
             silent_updates=true,
         }
 
