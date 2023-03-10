@@ -2086,6 +2086,13 @@
                 end
             end)
 
+            FearUpdates:action("Update Library", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
+                auto_update_config.check_interval = 0
+                if auto_updater.run_auto_update(librarylib) then
+                    FearToast(FearScriptNotif.."\nNo updates found.")
+                end
+            end)
+
             FearMiscs:divider("FearScript Credits")
             FearMiscs:hyperlink("StealthyAD", "https://github.com/StealthyAD")
 	        FearMiscs:hyperlink("GitHub Source", "https://github.com/StealthyAD/FearScript-Advanced")
