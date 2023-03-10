@@ -742,44 +742,35 @@
             verify_file_begins_with="--",
             check_interval=86400,
             silent_updates=true,
-            dependencies={
-                {
-                    name="CruiseMissile",
-                    source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/CruiseMissile.lua",
-                    script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
-                    verify_file_begins_with="--",
-                    check_interval=default_check_interval,
-                    is_required=true,
-                },
-                {
-                    name="Standify",
-                    source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
-                    script_relpath="lib/FearScriptAD/Functions/Standify.lua",
-                    verify_file_begins_with="--",
-                    check_interval=default_check_interval,
-                    is_required=true,
-                },
-                {
-                    name="Changelog",
-                    source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
-                    script_relpath="lib/FearScriptAD/Changelog.lua",
-                    verify_file_begins_with="--",
-                    check_interval=default_check_interval,
-                    is_required=true,
-                },
-            }
         }
 
-        for _, dependency in pairs(auto_update_config.dependencies) do
-            if dependency.is_required then
-                if dependency.loaded_lib == nil then
-                    util.toast("Error loading lib "..dependency.name, TOAST_ALL)
-                else
-                    local var_name = dependency.name
-                    _G[var_name] = dependency.loaded_lib
-                end
-            end
-        end
+        local library_update = {
+            {
+                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/CruiseMissile.lua",
+                script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
+                switch_to_branch=selected_branch,
+                verify_file_begins_with="--",
+                check_interval=default_check_interval,
+                silent_updates=true,
+            },
+            {
+                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
+                script_relpath="lib/FearScriptAD/Functions/Standify.lua",
+                switch_to_branch=selected_branch,
+                verify_file_begins_with="--",
+                check_interval=default_check_interval,
+                silent_updates=true,
+            },
+            {
+                name="Changelog",
+                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
+                script_relpath="lib/FearScriptAD/Changelog.lua",
+                switch_to_branch=selected_branch,
+                verify_file_begins_with="--",
+                check_interval=default_check_interval,
+                silent_updates=true,
+            },
+        }
         
         -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
         local status, auto_updater = pcall(require, "auto-updater")
@@ -838,6 +829,9 @@
         local FearVehicles = FearRoot:list("Vehicles Features")
         local FearOnline = FearRoot:list("Online Features")
         local FearWorld = FearRoot:list("World Features")
+        require "FearScriptAD.Changelog"
+        require "FearScriptAD.Functions.Standify"
+        require "FearScriptAD.Functions.CruiseMissile"
         local FearMiscs = FearRoot:list("Miscellaneous")
 
         ------==============------
@@ -2073,6 +2067,10 @@
             FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
                 auto_update_config.check_interval = 0
                 if auto_updater.run_auto_update(auto_update_config) then
+                    FearToast(FearScriptNotif.."\nNo updates found.")
+                end
+
+                if auto_updater.run_auto_update(library_update) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
 		    end)
