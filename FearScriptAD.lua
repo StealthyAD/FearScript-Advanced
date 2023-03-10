@@ -735,6 +735,7 @@
         ----=============================================----
     
         local default_check_interval = 604800
+        local selected_branch = AUTO_UPDATE_BRANCHES[SELECTED_BRANCH_INDEX][1]
         local auto_update_config = {
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/FearScriptAD.lua",
             script_relpath=SCRIPT_RELPATH,
@@ -749,6 +750,7 @@
                     script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
                     verify_file_begins_with="--",
                     check_interval=default_check_interval,
+                    is_required=true,
                 },
                 {
                     name="Standify",
@@ -756,18 +758,16 @@
                     script_relpath="lib/FearScriptAD/Functions/Standify.lua",
                     verify_file_begins_with="--",
                     check_interval=default_check_interval,
+                    is_required=true,
+                },
+                {
+                    source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
+                    script_relpath="lib/FearScriptAD/Changelog.lua",
+                    verify_file_begins_with="--",
+                    check_interval=default_check_interval,
+                    is_required=true,
                 },
             }
-        }
-
-        local update_changelog = {
-            source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
-            script_relpath="lib/FearScriptAD/Changelog.lua",
-            verify_file_begins_with="--",
-            switch_to_branch=selected_branch,
-            check_interval=86400,
-            is_required=true,
-            silent_updates=true,
         }
 
         for _, dependency in pairs(auto_update_config.dependencies) do
