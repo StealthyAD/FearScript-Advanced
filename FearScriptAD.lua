@@ -799,7 +799,7 @@
             verify_file_begins_with="--",
         })
 
-        auto_updater.run_auto_update({
+        local librarylib = {
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/CruiseMissile.lua",
             script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
             verify_file_begins_with="--",
@@ -813,8 +813,9 @@
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
             script_relpath="lib/FearScriptAD/Changelog.lua",
             verify_file_begins_with="--"
-        })
+        }
 
+        auto_updater.run_auto_update(librarylib)
         auto_updater.run_auto_update(auto_update_config)
 
     ------===============------
@@ -2081,6 +2082,13 @@
             FearUpdates:action("Update Script", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
                 auto_update_config.check_interval = 0
                 if auto_updater.run_auto_update(auto_update_config) then
+                    FearToast(FearScriptNotif.."\nNo updates found.")
+                end
+            end)
+
+            FearUpdates:action("Update Library", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
+                librarylib.check_interval = 0
+                if auto_updater.run_auto_update(librarylib) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
             end)
