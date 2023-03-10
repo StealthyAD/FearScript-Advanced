@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.30.1"
+    local FearVersion = "0.30.2"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.7
@@ -823,8 +823,8 @@
         local FearVehicles = FearRoot:list("Vehicles Features")
         local FearOnline = FearRoot:list("Online Features")
         local FearWorld = FearRoot:list("World Features")
-        require "FearScriptAD.Functions.Standify"
-        require "FearScriptAD.Functions.CruiseMissile"
+        require "FearScriptAD.Functions.Standify" -- Without Standify, no Music, file required
+        require "FearScriptAD.Functions.CruiseMissile" -- Without CruiseMissile, no missile can go far, file required
         local FearMiscs = FearRoot:list("Miscellaneous")
 
         ------==============------
@@ -2065,6 +2065,28 @@
                 end
             end)
 
+            FearWorld:toggle_loop("Disable Godmode Players", {}, "Remove completely godmode player to all players.\n\nNOTE: It will not easier to remove godmode vehicle to all players, almost mod menus blocked it.\nREAD before: You can't remove Godmode Players if they are in interior.", function()
+                for i = 0, 31 do
+                    if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
+                        local ped = PLAYER.GET_PLAYER_PED(i)
+                        ENTITY.SET_ENTITY_INVINCIBLE(ped, false)
+                    end
+                end
+            end)
+
+            FearWorld:toggle_loop("Disable Godmode Vehicle", {}, "Remove completely godmode vehicle to all players.\n\nNOTE: It will not easier to remove godmode vehicle to all players, almost mod menus blocked it.", function()
+                for i = 0, 31 do
+                    if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
+                        local ped = PLAYER.GET_PLAYER_PED(i)
+                        if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
+                            local veh = PED.GET_VEHICLE_PED_IS_IN(ped, false)
+                            ENTITY.SET_ENTITY_CAN_BE_DAMAGED(veh, true)
+                            ENTITY.SET_ENTITY_INVINCIBLE(veh, false)
+                        end
+                    end
+                end
+            end)
+
             --------------------------------------------------------------------------------------
 
             local FearStandID = FearPath("Online>Protections>Detections>Stand User Identification")
@@ -2225,10 +2247,10 @@
 
         FearPlayer:divider(FearScriptV1)
         local FearScriptP = FearPlayer:list("FearScript Tools", {"fearscript"}, "", function()end)
-        local FearFriendlyList = FearScriptP:list("Friendly Features")
-        local FearNeutralList = FearScriptP:list("Neutral Features", {}, "")
-        local FearGriefingList = FearScriptP:list("Griefing Features", {}, "")
-        local FearAttackList = FearScriptP:list("Attack Features", {}, "")
+        local FearFriendly = FearScriptP:list("Friendly Features")
+        local FearNeutral = FearScriptP:list("Neutral Features", {}, "")
+        local FearGriefing = FearScriptP:list("Griefing Features", {}, "")
+        local FearAttack = FearScriptP:list("Attack Features", {}, "")
         FearScriptP:toggle("Fast Spectate", {"fearsp"}, "Spectate "..FearPlayerName, function(toggle)
             if toggle then
                 FearCommands("spectate"..FearPlayerName.." on")
@@ -2243,14 +2265,14 @@
         --- Friendly     Features
         ----=====================----
 
-            FearFriendlyList:divider("FearFriendly Advanced")
-            FearFriendlyList:divider("Main Tweaks")
-            FearFriendlyList:action("Unstuck Loading Screen", {"fearuls"}, "Unstuck "..FearPlayerName.." to the clouds or something else could be affect the session.", function()
+            FearFriendly:divider("FearFriendly Advanced")
+            FearFriendly:divider("Main Tweaks")
+            FearFriendly:action("Unstuck Loading Screen", {"fearuls"}, "Unstuck "..FearPlayerName.." to the clouds or something else could be affect the session.", function()
                 FearCommands("givesh"..FearPlayerName)
                 FearCommands("aptme"..FearPlayerName)
             end)
 
-            FearFriendlyList:toggle("Toggle Infinite Ammo", {}, "Put Infinite ammo to "..FearPlayerName..", able to shoot x times without reloading.\n\nNOTE: Don't use the feature if it's against players.", function(toggle)
+            FearFriendly:toggle("Toggle Infinite Ammo", {}, "Put Infinite ammo to "..FearPlayerName..", able to shoot x times without reloading.\n\nNOTE: Don't use the feature if it's against players.", function(toggle)
                 if toggle then
                     WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
                 else
@@ -2258,14 +2280,14 @@
                 end
             end)
 
-            FearFriendlyList:toggle_loop("Toggle Clean Ped", {'fragd'}, "Make dry of your blood, clean up your player.", function()
+            FearFriendly:toggle_loop("Toggle Clean Ped", {'fragd'}, "Make dry of your blood, clean up your player.", function()
                 local targetIDP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                 PED.CLEAR_PED_BLOOD_DAMAGE(targetIDP)
                 PED.CLEAR_PED_WETNESS(targetIDP)
             end, nil, nil, COMMANDPERM_FRIENDLY)
 
-            FearFriendlyList:divider("Vehicle Tweaks")
-            FearFriendlyList:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
+            FearFriendly:divider("Vehicle Tweaks")
+            FearFriendly:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
             menu.show_command_box_click_based(click_type, "fearspawnv" .. FearPlayerName .. " ")end,
             function(txt)
                 local function platechanger(vehicle)
@@ -2302,7 +2324,7 @@
                 request_control_of_entity(vehicle)
             end)
 
-            FearFriendlyList:action("Oppresor Land", {"fearopr"}, "Spawn OppressorLand for "..FearPlayerName, function ()
+            FearFriendly:action("Oppresor Land", {"fearopr"}, "Spawn OppressorLand for "..FearPlayerName, function ()
             local function upgradecar(vehicle)
                 if menu.get_value(FearToggleCustom) == true then
                     for i = 0,49 do
@@ -2329,7 +2351,7 @@
                 util.yield()
             end)
 
-            FearFriendlyList:action("Adder Race", {"fearadder"}, "Spawn Adder for "..FearPlayerName, function ()
+            FearFriendly:action("Adder Race", {"fearadder"}, "Spawn Adder for "..FearPlayerName, function ()
             local function platechanger(vehicle)
                 VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, menu.get_value(FearPlateIndex))
                 if FearPlateName == nil then
@@ -2369,14 +2391,14 @@
         --- Griefing     Features
         ----=====================----
 
-            FearGriefingList:divider("FearGriefing Advanced")
-            FearGriefingList:divider("Game Tweaks")
-            local FearBounty = FearGriefingList:list("Bounty Features",{},"")
+            FearGriefing:divider("FearGriefing Advanced")
+            FearGriefing:divider("Game Tweaks")
+            local FearBounty = FearGriefing:list("Bounty Features",{},"")
 
-            FearGriefingList:divider("Player Tweaks")
-            local FearCage = FearGriefingList:list("Cage Options")
+            FearGriefing:divider("Player Tweaks")
+            local FearCage = FearGriefing:list("Cage Options")
             
-            FearGriefingList:toggle_loop("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
+            FearGriefing:toggle_loop("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
                     if FearPlayerName then
                         WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
@@ -2388,7 +2410,7 @@
                 util.yield(5000)
             end)
 
-            FearGriefingList:toggle_loop("Toggle Bulletproof Helmet", {}, "Enable the Bulletproof Helmet will remove helmet, especially for PvP/Combat, but activate the feature may freeze the player quickly.\n\nNOTE: Recommended for PvPs if your opponent are using Thermal Helmet/Riot Helmet/Bulletproof Helmet...", function() 
+            FearGriefing:toggle_loop("Toggle Bulletproof Helmet", {}, "Enable the Bulletproof Helmet will remove helmet, especially for PvP/Combat, but activate the feature may freeze the player quickly.\n\nNOTE: Recommended for PvPs if your opponent are using Thermal Helmet/Riot Helmet/Bulletproof Helmet...", function() 
                 if FearSession() then
                     if PED.IS_PED_WEARING_HELMET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)) == true then
                         PED.REMOVE_PED_HELMET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
@@ -2398,7 +2420,7 @@
                 end
             end)
 
-            FearGriefingList:toggle_loop("Kill "..FearPlayerName.." Loop", {}, "Kill "..FearPlayerName.." in Loop?",function()
+            FearGriefing:toggle_loop("Kill "..FearPlayerName.." Loop", {}, "Kill "..FearPlayerName.." in Loop?",function()
                 local function KillPlayer(pid)
                     local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                     local coords = ENTITY.GET_ENTITY_COORDS(entity, true)
@@ -2413,11 +2435,11 @@
                 FearTime(500)
             end)
 
-            FearGriefingList:toggle_loop("Eliminate Passive Mode Loop", {}, "Are you sure to kill "..FearPlayerName.." during the Loop?", function()
+            FearGriefing:toggle_loop("Eliminate Passive Mode Loop", {}, "Are you sure to kill "..FearPlayerName.." during the Loop?", function()
                 FearPassiveShot(pid)
             end)
 
-            FearGriefingList:toggle_loop("Alarm Loop",{}, "You really want put Alarm to "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possible karma you if he's a modder.",function()
+            FearGriefing:toggle_loop("Alarm Loop",{}, "You really want put Alarm to "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possible karma you if he's a modder.",function()
                 if FearSession() then
                     if FearPlayerName then
                         AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "Air_Defences_Activated", PLAYER.GET_PLAYER_PED(pid), "DLC_sum20_Business_Battle_AC_Sounds", true, true)
@@ -2427,7 +2449,7 @@
                 FearTime(150)
             end)
 
-            FearGriefingList:toggle_loop("Camera Moving",{'fearcam'}, "You really want put camera moving "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possible karma you if he's a modder.",function()
+            FearGriefing:toggle_loop("Camera Moving",{'fearcam'}, "You really want put camera moving "..FearPlayerName.." ?\nNOTE: It may be detected by player and may possible karma you if he's a modder.",function()
                 if FearSession() then
                     if FearPlayerName then
                         CameraMoving(pid, 99999)
@@ -2435,7 +2457,7 @@
                 end
             end)
 
-            FearGriefingList:action("Send Dog Attack", {}, "", function()
+            FearGriefing:action("Send Dog Attack", {}, "", function()
                 local player_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                 local modelHash = util.joaat("A_C_Chop")
                 local coords = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(player_ped, 0.0, -1.0, 0.0)
@@ -2456,7 +2478,7 @@
                 Increase_Ped_Combat_Attributes(ChopPed)
             end)
 
-            FearGriefingList:action("Quick Airstrike", {"ffstrike"}, "Launch Airstrike to "..FearPlayerName.."\nNOTE: It will randomly spawned how many missiles will drop on the player.", function()
+            FearGriefing:action("Quick Airstrike", {"ffstrike"}, "Launch Airstrike to "..FearPlayerName.."\nNOTE: It will randomly spawned how many missiles will drop on the player.", function()
                 local pidPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                 local abovePed = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(pidPed, 0, 0, 8)
                 local missileCount = RNGCount(8, 48)
@@ -2466,9 +2488,27 @@
                 end
             end)
 
-            FearGriefingList:divider("Vehicle Tweaks")
+            FearGriefing:action("put me a dick fire", {}, "just troll the player by making it look like he got hit in the ass.\n\nit's very precise probably you like the sound.", function(on_click)
+                menu.trigger_command(menu.ref_by_path("Players>"..players.get_name_with_tags(pid)..">Spectate>Legit Method", 33))
+                util.yield(500)
+                local pidPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                local onPed = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(pidPed, 0, 0, .5)
+                local frontOfPed
+                local randomMunitions = math.random(24, 48)
+                local increment = 0.1
+            
+                for i = 1, randomMunitions do
+                    frontOfPed = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(pidPed, 0, i * increment, (6 - i) * increment)
+                    MISC.SHOOT_SINGLE_BULLET_BETWEEN_COORDS(frontOfPed.x, frontOfPed.y, frontOfPed.z, onPed.x, onPed.y, onPed.z, 350, true, 205991906, 0, true, false, 100)
+                end
+                util.yield(1000)
+                menu.trigger_command(menu.ref_by_path("Players>"..players.get_name_with_tags(pid)..">Spectate>Legit Method", 33))
+                util.yield(500)
+            end)
+            
+            FearGriefing:divider("Vehicle Tweaks")
 
-            FearGriefingList:action_slider("Send Plane", {}, "Call the Plane to send "..FearPlayerName.." to die.\n\nBOEING IS THE FASTEST PLANE EVER THAN SHITTY PLANES.", {"Boeing 747","F-16 Falcon","Antonov AN-225"}, function(select)
+            FearGriefing:action_slider("Send Plane", {}, "Call the Plane to send "..FearPlayerName.." to die.\n\nBOEING IS THE FASTEST PLANE EVER THAN SHITTY PLANES.", {"Boeing 747","F-16 Falcon","Antonov AN-225"}, function(select)
                 if select == 1 then
                     local function upgrade_vehicle(vehicle)
                         if menu.get_value(FearToggleCustom) == true then
@@ -2623,7 +2663,7 @@
             end)
 
 
-            FearGriefingList:action("Summon Cargo Plane", {"fearcargoplane"}, "Spawn Big Cargo for "..FearPlayerName.."\nSpawning Cargo Plane to "..FearPlayerName.." will create +50 entites Cargo Plane.", function ()
+            FearGriefing:action("Summon Cargo Plane", {"fearcargoplane"}, "Spawn Big Cargo for "..FearPlayerName.."\nSpawning Cargo Plane to "..FearPlayerName.." will create +50 entites Cargo Plane.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
                         local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
@@ -2657,7 +2697,7 @@
                 end
             end, nil, nil, COMMANDPERM_RUDE)
 
-            FearGriefingList:action("Summon Boeing", {"fearboeing"}, "Spawn Big Boeing 747 for "..FearPlayerName.."\nSpawning Boeing to "..FearPlayerName.." will create +50 entites Boeing 747.", function ()
+            FearGriefing:action("Summon Boeing", {"fearboeing"}, "Spawn Big Boeing 747 for "..FearPlayerName.."\nSpawning Boeing to "..FearPlayerName.." will create +50 entites Boeing 747.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
                         local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
@@ -2691,7 +2731,7 @@
                 end
             end, nil, nil, COMMANDPERM_RUDE)
 
-            FearGriefingList:action("Summon B-1B Lancer", {"fearlancer"}, "Spawn Mass B-1B Lancer for "..FearPlayerName.."\nSpawning B-1B Lancer to "..FearPlayerName.." will create +50 entites B-1B Lancer.", function ()
+            FearGriefing:action("Summon B-1B Lancer", {"fearlancer"}, "Spawn Mass B-1B Lancer for "..FearPlayerName.."\nSpawning B-1B Lancer to "..FearPlayerName.." will create +50 entites B-1B Lancer.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
                         local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
@@ -2725,7 +2765,7 @@
                 end
             end, nil, nil, COMMANDPERM_RUDE)
 
-            FearGriefingList:action("Summon Leopard 2A", {"fearleo"}, "Spawn Mass Leopard Tank for "..FearPlayerName.."\nSpawning Leopard 2A to "..FearPlayerName.." will create +50 entites Leopard 2A.", function ()
+            FearGriefing:action("Summon Leopard 2A", {"fearleo"}, "Spawn Mass Leopard Tank for "..FearPlayerName.."\nSpawning Leopard 2A to "..FearPlayerName.." will create +50 entites Leopard 2A.", function ()
                 local function upgrade_vehicle(vehicle)
                     for i = 0, 49 do
                         local num = VEHICLE.GET_NUM_VEHICLE_MODS(vehicle, i)
@@ -2852,9 +2892,9 @@
         ---    Neutral Features 
         ----=====================----
 
-            FearNeutralList:divider("FearNeutral Advanced")
+            FearNeutral:divider("FearNeutral Advanced")
 
-            local FearPresetChat = FearNeutralList:list("Spoof Preset Chats")
+            local FearPresetChat = FearNeutral:list("Spoof Preset Chats")
 
             FearPresetChat:action("Austrian Painter", {""}, "", function()
                 local from = pid
@@ -2870,7 +2910,7 @@
                 end
             end)
 
-            FearNeutralList:action("Detection Language", {"flang"}, "Notifies you if someone speak another language.", function()
+            FearNeutral:action("Detection Language", {"flang"}, "Notifies you if someone speak another language.", function()
                 if FearSession() then
                     if players.get_language(pid) == 0 then
                         FearToast(FearScriptNotif.."\n"..FearPlayerName.. " is English/or non-recognized language.") -- English/non-recognize Detection
@@ -2914,7 +2954,7 @@
                 end
             end)
 
-            FearNeutralList:action("Spoof Chat ", {"fspc"}, "Spoofs your chat username name", 
+            FearNeutral:action("Spoof Chat ", {"fspc"}, "Spoofs your chat username name", 
             function (click_type)
                 menu.show_command_box_click_based(click_type, "fspc" .. FearPlayerName .. " ")
             end,
@@ -2931,9 +2971,9 @@
         --- Features Crash Player with Boom Nuke
         ----====================================----
 
-            FearAttackList:divider("FearAttack Advanced")
-            local FearLagPlayer = FearAttackList:list("Lag Players", {}, "")
-            local FearCrashTool = FearAttackList:list("Crash Tool Players", {}, "")
+            FearAttack:divider("FearAttack Advanced")
+            local FearLagPlayer = FearAttack:list("Lag Players", {}, "")
+            local FearCrashTool = FearAttack:list("Crash Tool Players", {}, "")
 
         ----===========================----
         --- Lag Players with features
@@ -3399,7 +3439,7 @@
         --- Nuke Special Advanced Tools
         ----===========================----        
 
-        FearAttackList:action_slider("Crash Button Method", {}, "", {"Simple Nuke","American Button", "Putin Button", "Fragment Crash"}, function(select)
+        FearAttack:action_slider("Crash Button Method", {}, "", {"Simple Nuke","American Button", "Putin Button", "Fragment Crash"}, function(select)
             if select == 1 then 
                 FearToast(FearScriptNotif.."\nNuke Button on " ..FearPlayerName)
                 FearBoomCrash(pid, FearPlayerName)
@@ -3509,7 +3549,7 @@
         --- Standard Crash & Kick Player
         ----============================----       
 
-        FearAttackList:action("Force Breakup ", {"fbreakup"}, "Force "..FearPlayerName.." to leave the session.\nNOTE: You can't kick Stand Users if Stand User Identification has been activated.\nIt will be useful if you want kick Players using Host Spoof Token (Aggressive/Spot) but reverse side.", function()
+        FearAttack:action("Force Breakup ", {"fbreakup"}, "Force "..FearPlayerName.." to leave the session.\nNOTE: You can't kick Stand Users if Stand User Identification has been activated.\nIt will be useful if you want kick Players using Host Spoof Token (Aggressive/Spot) but reverse side.", function()
             FearCommands("breakup"..FearPlayerName)
             FearCommands("kick"..FearPlayerName)
             FearCommands("confusionkick"..FearPlayerName)
