@@ -829,9 +829,9 @@
         local FearVehicles = FearRoot:list("Vehicles Features")
         local FearOnline = FearRoot:list("Online Features")
         local FearWorld = FearRoot:list("World Features")
-        require "FearScriptAD.Changelog"
         require "FearScriptAD.Functions.Standify"
         require "FearScriptAD.Functions.CruiseMissile"
+        require "FearScriptAD.Changelog"
         local FearMiscs = FearRoot:list("Miscellaneous")
 
         ------==============------
@@ -2064,12 +2064,14 @@
             FearMiscs:divider("FearScript Miscs")
             FearMiscs:readonly("FearScript Version: "..FearVersion)
             FearMiscs:readonly("Stand Version: "..FearSEdition)
-            FearMiscs:action("Check for Updates", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
+            local FearUpdates = FearMiscs:list("Update Config")
+            FearUpdates:action("Update Script", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
                 auto_update_config.check_interval = 0
                 if auto_updater.run_auto_update(auto_update_config) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
-
+            end)
+            FearUpdates:action("Update Library", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
                 if auto_updater.run_auto_update(library_update) then
                     FearToast(FearScriptNotif.."\nNo updates found.")
                 end
