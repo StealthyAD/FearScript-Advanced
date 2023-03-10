@@ -743,31 +743,6 @@
             check_interval=86400,
             silent_updates=true,
         }
-
-        local library_update = {
-            {
-                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/CruiseMissile.lua",
-                script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
-                verify_file_begins_with="--",
-                check_interval=default_check_interval,
-                silent_updates=true,
-            },
-            {
-                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
-                script_relpath="lib/FearScriptAD/Functions/Standify.lua",
-                verify_file_begins_with="--",
-                check_interval=default_check_interval,
-                silent_updates=true,
-            },
-            {
-                name="Changelog",
-                source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
-                script_relpath="lib/FearScriptAD/Changelog.lua",
-                verify_file_begins_with="--",
-                check_interval=default_check_interval,
-                silent_updates=true,
-            },
-        }
         
         -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
         local status, auto_updater = pcall(require, "auto-updater")
@@ -813,8 +788,8 @@
             {
                 source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Changelog.lua",
                 script_relpath="lib/FearScriptAD/Changelog.lua",
-                verify_file_begins_with="--"
-            }
+                verify_file_begins_with="--",
+            },
         }
 
         auto_updater.run_auto_update(librarylib)
