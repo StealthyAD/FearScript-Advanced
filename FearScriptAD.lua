@@ -1764,7 +1764,6 @@
                         ENTITY.SET_ENTITY_INVINCIBLE(vehicle, menu.get_value(FearToggleGod))
                         upgrade_vehicle(vehicle)
                         request_control_of_entity(vehicle)
-                        FearToast(FearScriptNotif.."\nAlright, you have spawned everyone.")
                         FearTime()
                     end
                 end)
