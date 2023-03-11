@@ -2635,6 +2635,21 @@
 
             FearGriefing:divider("Player Tweaks")
             local FearCage = FearGriefing:list("Cage Options")
+
+            FearGriefing:action("Kill "..FearPlayerName, {}, "Do you really want kill "..FearPlayerName.." ?\nIt will affect car if he's in interior.",function()
+                local function KillPlayer(pid)
+                    local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                    local coords = ENTITY.GET_ENTITY_COORDS(entity, true)
+                    FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'] + 2, 7, 1000, false, true, 0)
+                end
+                if FearSession() then
+                    if FearPlayerName then
+                        KillPlayer(pid)
+                    end
+                    FearTime(150)
+                end
+                FearTime(500)
+            end)
             
             FearGriefing:toggle_loop("Disarm Entire Weapons",{}, "Disarm "..FearPlayerName.."?\nNOTE: It will block Custom Weapon Loadout.",function()
                 if FearSession() then
@@ -2654,21 +2669,6 @@
                         PED.REMOVE_PED_HELMET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), false)
                     end
                 end
-            end)
-
-            FearGriefing:action("Kill "..FearPlayerName, {}, "Kill "..FearPlayerName.." in Loop?",function()
-                local function KillPlayer(pid)
-                    local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
-                    local coords = ENTITY.GET_ENTITY_COORDS(entity, true)
-                    FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'] + 2, 7, 1000, false, true, 0)
-                end
-                if FearSession() then
-                    if FearPlayerName then
-                        KillPlayer(pid)
-                    end
-                    FearTime(150)
-                end
-                FearTime(500)
             end)
 
             FearGriefing:toggle_loop("Kill "..FearPlayerName.." Loop", {}, "Kill "..FearPlayerName.." in Loop?",function()
