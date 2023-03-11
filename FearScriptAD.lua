@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.30.3"
+    local FearVersion = "0.30.5"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.7
@@ -555,7 +555,7 @@
             util.create_thread(function()
                 util.create_tick_handler(function()
                     WEAPON.REMOVE_ALL_PROJECTILES_OF_TYPE(projectile, false)
-                    return remove_projectiles
+                    return RemoveProjectiles
                 end)
             end)
         end,
@@ -682,7 +682,7 @@
             return false 
         end,
 
-        explodePlayer = function(ped, loop)
+        explodePlayer = function(ped, loop) -- Required for Nuke Session
             local pos = ENTITY.GET_ENTITY_COORDS(ped)
             local blamedPlayer = PLAYER.PLAYER_PED_ID() 
             if blameExpPlayer and blameExp then 
@@ -720,7 +720,7 @@
             util.yield(wait_for)
         end,
 
-        explode_all = function(earrape_type, wait_for)
+        explode_all = function(earrape_type, wait_for) -- Required for Nuke Session
             for i=0, 31, 1 do
                 coords = Fear.get_coords(PLAYER.GET_PLAYER_PED(i))
                 FIRE.ADD_EXPLOSION(coords.x, coords.y, coords.z, 0, 100, true, false, 150, false)
@@ -736,6 +736,70 @@
             util.yield(wait_for)
         end,
     }
+
+    local function OverrideCamOffset(distance) -- Required for Nuke Session
+        local cam_rot = CAM.GET_GAMEPLAY_CAM_ROT(2)
+        local cam_pos = CAM.GET_GAMEPLAY_CAM_COORD()
+        local direction = Fear.rotation_to_direction(cam_rot)
+        local destination = 
+        { 
+            x = cam_pos.x + direction.x * distance, 
+            y = cam_pos.y + direction.y * distance, 
+            z = cam_pos.z + direction.z * distance 
+        }
+        return destination
+    end
+
+    local function CameraPerspective(flag, distance) -- Required for Nuke Session
+        local ptr1, ptr2, ptr3, ptr4 = memory.alloc(), memory.alloc(), memory.alloc(), memory.alloc()
+        local cam_rot = CAM.GET_GAMEPLAY_CAM_ROT(0)
+        local cam_pos = CAM.GET_GAMEPLAY_CAM_COORD()
+        local direction = Fear.rotation_to_direction(cam_rot)
+        local destination = 
+        { 
+            x = cam_pos.x + direction.x * distance, 
+            y = cam_pos.y + direction.y * distance, 
+            z = cam_pos.z + direction.z * distance 
+        }
+        SHAPETEST.GET_SHAPE_TEST_RESULT(
+            SHAPETEST.START_EXPENSIVE_SYNCHRONOUS_SHAPE_TEST_LOS_PROBE(
+                cam_pos.x, 
+                cam_pos.y, -
+                cam_pos.z, 
+                destination.x, 
+                destination.y, 
+                destination.z, 
+                flag, 
+                -1, 
+                1
+            ), ptr1, ptr2, ptr3, ptr4)
+        local p1 = memory.read_int(ptr1)
+        local p2 = memory.read_vector3(ptr2)
+        local p3 = memory.read_vector3(ptr3)
+        local p4 = memory.read_int(ptr4)
+        memory.free(ptr1)
+        memory.free(ptr2)
+        memory.free(ptr3)
+        memory.free(ptr4)
+        return {p1, p2, p3, p4}
+    end
+
+    local function GetPlayerDirection() -- Required for Nuke Session
+        local c1 = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER.PLAYER_PED_ID(), 0, 5, 0)
+        local res = CameraPerspective(-1, 1000)
+        local c2
+    
+        if res[1] ~= 0 then
+            c2 = res[2]
+        else
+            c2 = OverrideCamOffset(1000)
+        end
+    
+        c2.x = (c2.x - c1.x) * 1000
+        c2.y = (c2.y - c1.y) * 1000
+        c2.z = (c2.z - c1.z) * 1000
+        return c2, c1
+    end
 
         ----=============================================----
         ---                Updates Features
@@ -834,6 +898,7 @@
             FearSelf:divider("FearScript Self")
             local FearWeapons = FearSelf:list("Weapons")
             local FearAnimations = FearSelf:list("Animations")
+            local FearAnimals = FearSelf:list("Animals")
             local FearWantedSelf = FearSelf:list("Wanted Settings")
             FearSelf:action("Simple Ragdoll", {}, "Just fall yourself on the ground.", function()
                 PED.SET_PED_TO_RAGDOLL(players.user_ped(), 2500, 0, 0, false, false, false) 
@@ -970,6 +1035,61 @@
             ------=================------  
 
                 FearWeapons:divider("FearSelf Weapons")
+                local FearNukeWeap = FearWeapons:list("Nuke Weapons")
+
+                    ------=================------
+                    ---   Nukes   Functions
+                    ------=================------  
+                    FearNukeWeap:divider("FearWeapons Nuke")
+                    local NukeToggleActive = FearNukeWeap:toggle("Nuclear Weapon", {}, "Compatible only explosive weapon. Make sure you shoot like a mortar.", function(toggle)
+                        NukeActive = toggle	
+                        if NukeActive then
+                            if animals_running then menu.trigger_command(exp_animal_toggle, "off") end
+                            util.create_tick_handler(function()
+                                local selectedWeapon = WEAPON.GET_SELECTED_PED_WEAPON(PLAYER.PLAYER_PED_ID())
+                                local weaponTable = {-1312131151, 1672152130, 125959754, -1568386805}
+                                if string.find(table.concat(weaponTable, ","), tostring(selectedWeapon)) and PED.IS_PED_SHOOTING(PLAYER.PLAYER_PED_ID()) then
+                                    if not RemoveProjectiles then 
+                                        RemoveProjectiles = true 
+                                        Fear.disableProjectileLoop(selectedWeapon)
+                                    end
+                                    util.create_thread(function()
+                                        local hash = util.joaat("w_arena_airmissile_01a")
+                                        STREAMING.REQUEST_MODEL(hash)
+                                        Fear.yieldModelLoad(hash)
+                                        local cam_rot = CAM.GET_FINAL_RENDERED_CAM_ROT(2)   
+                                        local dir, pos = GetPlayerDirection()
+                                        local bomb = OBJECT.CREATE_OBJECT_NO_OFFSET(hash, pos.x, pos.y, pos.z, true, true, false)
+                                        ENTITY.APPLY_FORCE_TO_ENTITY(bomb, 0, dir.x, dir.y, dir.z, 0.0, 0.0, 0.0, 0, true, false, true, false, true)
+                                        ENTITY.SET_ENTITY_ROTATION(bomb, cam_rot.x, cam_rot.y, cam_rot.z, 1, true)
+                                        while not ENTITY.HAS_ENTITY_COLLIDED_WITH_ANYTHING(bomb) do util.yield() end
+                                        local nukePos = ENTITY.GET_ENTITY_COORDS(bomb, true)
+                                        entities.delete(bomb)
+                                        LaunchNuke(nukePos)
+                                    end)
+                                else
+                                    RemoveProjectiles = false
+                                end
+                            end)
+                        end
+                    end)
+                    
+                    local nuke_height = 20
+                    FearNukeWeap:slider("Height Nuke", {'fnukeheight'}, "", 20, 100, nuke_height, 10, function(value)
+                        nuke_height = value
+                    end)
+
+                    function LaunchNuke(pos)	
+                        for a = 0, nuke_height, 4 do
+                            FIRE.ADD_EXPLOSION(pos.x, pos.y, pos.z + a, 8, 10, true, false, 1, false)	
+                            util.yield(50)
+                        end
+                        local offsets = {{8, 8}, {8, -8}, {-8, 8}, {-8, -8}}
+                        for _, offset in ipairs(offsets) do
+                            FIRE.ADD_EXPLOSION(pos.x + offset[1], pos.y + offset[2], pos.z + nuke_height, 82, 10, true, false, 1, false)
+                        end
+                    end
+
                 FearWeapons:toggle("Authorize Fire Friendly", {}, "Allow shoot your teammates if he's in the CEO/MC.", function(toggle)
                     PED.SET_CAN_ATTACK_FRIENDLY(PLAYER.PLAYER_PED_ID(), toggle, false)
                 end)
@@ -1030,6 +1150,52 @@
                     FearTime(900)
                     WEAPON.REFILL_AMMO_INSTANTLY(PLAYER.PLAYER_PED_ID())
                     end
+                end)
+
+                FearWeapons:toggle("Lock-On Bypass", {}, "", function()
+                    local PlayerTargetPED = players.user_ped()
+                    if WEAPON.GET_SELECTED_PED_WEAPON(PLAYER.PLAYER_PED_ID()) == 1672152130 then
+                        PLAYER.SET_PLAYER_LOCKON_RANGE_OVERRIDE(Fear.PlayerTargetPED, 99999)
+                    end
+                end)
+
+                ------==================------
+                ---   Animals  Functions
+                ------==================------  
+
+                FearAnimals:divider("FearSelf Animals")
+                FearAnimals:toggle_loop("Polish Cow", {}, "", function()
+                    if not custom_pet or not ENTITY.DOES_ENTITY_EXIST(custom_pet) then
+                        local pet = util.joaat("a_c_cow")
+                        Fear.request_model(pet)
+                        local pos = players.get_position(players.user())
+                        custom_pet = entities.create_ped(28, pet, pos, 0)
+                        PED.SET_PED_COMPONENT_VARIATION(custom_pet, 0, 0, 1, 0)
+                        ENTITY.SET_ENTITY_INVINCIBLE(custom_pet, true)
+                    end
+                    NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(custom_pet)
+                    TASK.TASK_FOLLOW_TO_OFFSET_OF_ENTITY(custom_pet, players.user_ped(), 0, -0.3, 0, 7.0, -1, 1.5, true)
+                    util.yield(2500)
+                end, function()
+                    entities.delete_by_handle(custom_pet)
+                    custom_pet = nil
+                end)
+
+                FearAnimals:toggle_loop("Canadian Deer", {}, "", function()
+                    if not custom_pet or not ENTITY.DOES_ENTITY_EXIST(custom_pet) then
+                        local pet = util.joaat("a_c_deer")
+                        Fear.request_model(pet)
+                        local pos = players.get_position(players.user())
+                        custom_pet = entities.create_ped(28, pet, pos, 0)
+                        PED.SET_PED_COMPONENT_VARIATION(custom_pet, 0, 0, 1, 0)
+                        ENTITY.SET_ENTITY_INVINCIBLE(custom_pet, true)
+                    end
+                    NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(custom_pet)
+                    TASK.TASK_FOLLOW_TO_OFFSET_OF_ENTITY(custom_pet, players.user_ped(), 0, -0.3, 0, 7.0, -1, 1.5, true)
+                    util.yield(2500)
+                end, function()
+                    entities.delete_by_handle(custom_pet)
+                    custom_pet = nil
                 end)
                             
         ------==================------
@@ -1423,6 +1589,11 @@
                     FearCommands("givesh"..players.get_name(players.user()))
                 end)
 
+                FearOnline:toggle_loop("Enforce Nightclub", {""}, "Boost your popularity and keep safe.", function()
+                    menu.trigger_command(menu.ref_by_path("Online>Quick Progress>Set Nightclub Popularity", 38), 100)
+                    util.yield(2000)
+                end)
+
             ------================------
             ---   Session Features
             ------================------
@@ -1720,7 +1891,7 @@
                             end
                         end
                     end)
-                end)
+                end)                                                                
 
             ----=====================================================----
             ---                 Game Tweaks
@@ -1790,6 +1961,60 @@
                         if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
                             FearCommands("aptme"..players.get_name(pid))
                             end
+                        end
+                    end)
+                end)
+
+                local timerStarted = false
+                FearWarningNuke = FearSessionL:action("Putin Button Session", {}, "I love Vladimir Putin but we need to click to erase these western pigs.", function(type)
+                    menu.show_warning(FearWarningNuke, type, "Do you really want send Putin to invade WW3?\nYou might be detected by modder and it will cost karma.", function()
+                        if not timerStarted then
+                            timerStarted = true
+                            for i = 5, 1, -1 do
+                                local delay = (i > 2 and i % 2 == 1) and 125 or 500
+                                util.toast(FearScriptNotif.."\nReady to Explode?\n"..i.." seconds to detonate.")
+                                util.yield(750)
+                                Fear.play_all("5_SEC_WARNING", "HUD_MINI_GAME_SOUNDSET", delay)
+                                util.yield(delay)
+                            end
+                            util.toast(FearScriptNotif.."\nDetonation Ready, you are ready to nuke the session.")
+                            Fear.play_all("Air_Defences_Activated", "DLC_sum20_Business_Battle_AC_Sounds", 3000)
+                            for i = 0, 31 do
+                                if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
+                                    local ped = PLAYER.GET_PLAYER_PED(i)
+                                    ENTITY.SET_ENTITY_INVINCIBLE(ped, false)
+                                end
+                            end
+                            for i = 0, 31 do
+                                if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
+                                    local ped = PLAYER.GET_PLAYER_PED(i)
+                                    PED.SET_PED_CAN_BE_KNOCKED_OFF_VEHICLE(ped, true)
+                                    PED.SET_PED_CAN_BE_SHOT_IN_VEHICLE(ped, true)
+                                    PED.SET_PED_CONFIG_FLAG(ped, 32, false)
+                                    PED.SET_PED_CONFIG_FLAG(ped, 223, false)
+                                    PED.SET_PED_CONFIG_FLAG(ped, 224, false)
+                                    PED.SET_PED_CONFIG_FLAG(ped, 228, false)
+                                    PED.SET_PED_CONFIG_FLAG(ped, 118, false)
+                                end
+                            end
+                            Fear.explode_all(EARRAPE_FLASH, 0, 150)
+                            util.yield(1000)
+                            Fear.explode_all(EARRAPE_BED)
+                            Fear.explode_all(EARRAPE_NONE)
+                            local playersKilled = 0
+                            for i = 0, 31 do
+                                if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
+                                    local ped = PLAYER.GET_PLAYER_PED(i)
+                                    local health = ENTITY.GET_ENTITY_HEALTH(ped)
+                                    if health <= 0 then
+                                        playersKilled = playersKilled + 1
+                                    end
+                                end
+                            end
+                            util.toast(FearScriptNotif.."\nDetonation complete!\n"..playersKilled.." players has been eliminated.")
+                            timerStarted = false
+                        else
+                            util.toast("Timer already started!")
                         end
                     end)
                 end)
@@ -2078,7 +2303,7 @@
                     end
                 end
             end)
-
+                       
             FearWorld:divider("Vehicle Tweaks")
             FearWorld:action("Blow up your vehicle", {}, "Destroy your own car while using, previous car or current car.\n\nNOTE: Without Godmode, you will instantly die with explosion or burnt-out vehicle.", function()
                 local vehicle = entities.get_user_vehicle_as_handle()
