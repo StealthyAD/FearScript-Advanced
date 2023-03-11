@@ -2656,6 +2656,21 @@
                 end
             end)
 
+            FearGriefing:action("Kill "..FearPlayerName, {}, "Kill "..FearPlayerName.." in Loop?",function()
+                local function KillPlayer(pid)
+                    local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+                    local coords = ENTITY.GET_ENTITY_COORDS(entity, true)
+                    FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'] + 2, 7, 1000, false, true, 0)
+                end
+                if FearSession() then
+                    if FearPlayerName then
+                        KillPlayer(pid)
+                    end
+                    FearTime(150)
+                end
+                FearTime(500)
+            end)
+
             FearGriefing:toggle_loop("Kill "..FearPlayerName.." Loop", {}, "Kill "..FearPlayerName.." in Loop?",function()
                 local function KillPlayer(pid)
                     local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
