@@ -2636,7 +2636,7 @@
             FearGriefing:divider("Player Tweaks")
             local FearCage = FearGriefing:list("Cage Options")
 
-            FearGriefing:action("Kill "..FearPlayerName, {}, "Do you really want kill "..FearPlayerName.." ?\nIt will affect car if he's in interior.",function()
+            FearGriefing:action("Kill "..FearPlayerName, {}, "Do you really want kill "..FearPlayerName.." ?\nNOTE: It will affect car if he's in interior or Godmode.",function()
                 local function KillPlayer(pid)
                     local entity = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
                     local coords = ENTITY.GET_ENTITY_COORDS(entity, true)
