@@ -820,7 +820,6 @@
         local cruiselib = {
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/CruiseMissile.lua",
             script_relpath="lib/FearScriptAD/Functions/CruiseMissile.lua",
-            switch_to_branch=selected_branch,
             verify_file_begins_with="--",
             check_interval=86400,
             silent_updates=true,
@@ -829,7 +828,6 @@
         local standifylib = {
             source_url="https://raw.githubusercontent.com/StealthyAD/FearScript-Advanced/main/lib/FearScriptAD/Functions/Standify.lua",
             script_relpath="lib/FearScriptAD/Functions/Standify.lua",
-            switch_to_branch=selected_branch,
             verify_file_begins_with="--",
             check_interval=86400,
             silent_updates=true,
