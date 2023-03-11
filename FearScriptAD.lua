@@ -1590,10 +1590,8 @@
                 FearOnline:toggle("Toggle Stand User ID", {"fearstandid"}, "Toggle Stand Users ID Verification.\nNOTE: Toggle Stand User ID will not able to do something like Kick/Crash.", function(toggle)
                 if toggle then
                     FearCommand(FearStandID, "on")
-                    FearToast(FearScriptNotif.."\nStand User ID has been turned on.")
                 else
                     FearCommand(FearStandID, "off")
-                    FearToast(FearScriptNotif.."\nStand User ID has been turned off.")
                     end
                 end)
             
