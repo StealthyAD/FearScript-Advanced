@@ -2015,13 +2015,18 @@
                                     end
                                 end
                             end
-                            util.toast(FearScriptNotif.."\nDetonation complete!\n"..playersKilled.." players has been eliminated.")
+                            if playersKilled == 0 then
+                                util.toast(FearScriptNotif.."\nDetonation complete!\nNo one has been eliminated.")
+                            else
+                                util.toast(FearScriptNotif.."\nDetonation complete!\n"..playersKilled.." player(s) has been eliminated.")
+                            end
                             timerStarted = false
                         else
                             util.toast(FearScriptNotif.."\nI'm sorry but the timer has already started.")
                         end
                     end)
                 end)
+                
 
                 FearTPWarning = FearSessionL:action("Random Teleport Homogenous", {'feartprandho'}, "Teleport the entire session into random apartment?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function(type)
                     menu.show_warning(FearTPWarning, type, "Do you really want teleport the entire session to the random apartment?\nNOTE: Teleporting all players will cost a fight against players.", function()
