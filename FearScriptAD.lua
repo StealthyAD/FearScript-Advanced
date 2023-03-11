@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.30.2"
+    local FearVersion = "0.30.3"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.7
@@ -876,7 +876,7 @@
                     PLAYER.SET_PLAYER_INVINCIBLE(PLAYER.PLAYER_PED_ID(), false)
                 end
             end)
-
+            
             ------=====================------
             ---   Wanted SELF Functions
             ------=====================------  
@@ -888,6 +888,11 @@
             FearWantedSelf:slider_float("Wanted Level Multiplier", {'fwlmut'}, "If you set the wanted multiplier to a low value 0.01 and a cop see you shoot a ped in face you wil still get a wanted level. \n\n1.0 is the default value and it will automatically be reset when Finished Mission has been set. \n\nMore than 2 will be able to get more cops while put more wanted multiplier." , 0, 1000, 0, 10, function(value)
                 SWLevel.WantedMUT = value * 0.01
             end)
+
+            FearWantedSelf:toggle("Police ignores you", {}, "", function(toggle)
+                PLAYER.SET_POLICE_IGNORE_PLAYER(players.user_ped(), toggle)
+            end)
+
             FearWantedSelf:toggle_loop("Set Wanted Level Multiplier", {}, "", function()
                 PLAYER.SET_WANTED_LEVEL_MULTIPLIER(SWLevel.WantedMUT)
             end)
@@ -1399,13 +1404,29 @@
         ------================------
 
             FearOnline:divider("FearScript Online")
+            local FearSessionL = FearOnline:list("Session")
             local FearToggleSelf = true
+            
+
+                local FearStandID = FearPath("Online>Protections>Detections>Stand User Identification")
+                FearOnline:toggle("Toggle Stand User ID", {"fearstandid"}, "Toggle Stand Users ID Verification.\nNOTE: Toggle Stand User ID will not able to do something like Kick/Crash.", function(toggle)
+                if toggle then
+                    FearCommand(FearStandID, "on")
+                    FearToast(FearScriptNotif.."\nStand User ID has been turned on.")
+                else
+                    FearCommand(FearStandID, "off")
+                    FearToast(FearScriptNotif.."\nStand User ID has been turned off.")
+                    end
+                end)
+            
+                FearOnline:toggle_loop("Bruteforce Script Host", {}, "Brute Force Script Host to unlock some features such as unfreeze clouds, loading screen, etc...", function()
+                    FearCommands("givesh"..players.get_name(players.user()))
+                end)
 
             ------================------
             ---   Session Features
             ------================------
 
-            local FearSessionL = FearOnline:list("Session")
             FearSessionL:divider("FearOnline Session")
             player_count = FearSessionL:divider(get_player_count())
 
@@ -2045,6 +2066,19 @@
                 FearTime()
             end)
 
+            FearWorld:toggle("Toggle Blackout", {}, "", function(toggle)
+                GRAPHICS.SET_ARTIFICIAL_LIGHTS_STATE(toggle)
+            end) 
+
+            FearWorld:toggle_loop("Disable Godmode Players", {}, "Remove completely godmode player to all players.\n\nNOTE: It will not easier to remove godmode vehicle to all players, almost mod menus blocked it.\nREAD before: You can't remove Godmode Players if they are in interior.", function()
+                for i = 0, 31 do
+                    if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
+                        local ped = PLAYER.GET_PLAYER_PED(i)
+                        ENTITY.SET_ENTITY_INVINCIBLE(ped, false)
+                    end
+                end
+            end)
+
             FearWorld:divider("Vehicle Tweaks")
             FearWorld:action("Blow up your vehicle", {}, "Destroy your own car while using, previous car or current car.\n\nNOTE: Without Godmode, you will instantly die with explosion or burnt-out vehicle.", function()
                 local vehicle = entities.get_user_vehicle_as_handle()
@@ -2063,15 +2097,6 @@
                 end
             end)
 
-            FearWorld:toggle_loop("Disable Godmode Players", {}, "Remove completely godmode player to all players.\n\nNOTE: It will not easier to remove godmode vehicle to all players, almost mod menus blocked it.\nREAD before: You can't remove Godmode Players if they are in interior.", function()
-                for i = 0, 31 do
-                    if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
-                        local ped = PLAYER.GET_PLAYER_PED(i)
-                        ENTITY.SET_ENTITY_INVINCIBLE(ped, false)
-                    end
-                end
-            end)
-
             FearWorld:toggle_loop("Disable Godmode Vehicle", {}, "Remove completely godmode vehicle to all players.\n\nNOTE: It will not easier to remove godmode vehicle to all players, almost mod menus blocked it.", function()
                 for i = 0, 31 do
                     if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
@@ -2083,24 +2108,7 @@
                         end
                     end
                 end
-            end)
-
-            --------------------------------------------------------------------------------------
-
-            local FearStandID = FearPath("Online>Protections>Detections>Stand User Identification")
-            FearOnline:toggle("Toggle Stand User ID", {"fearstandid"}, "Toggle Stand Users ID Verification.\nNOTE: Toggle Stand User ID will not able to do something like Kick/Crash.", function(toggle)
-            if toggle then
-                FearCommand(FearStandID, "on")
-                FearToast(FearScriptNotif.."\nStand User ID has been turned on.")
-            else
-                FearCommand(FearStandID, "off")
-                FearToast(FearScriptNotif.."\nStand User ID has been turned off.")
-                end
-            end)
-
-            FearOnline:toggle_loop("Bruteforce Script Host", {}, "Brute Force Script Host to unlock some features such as unfreeze clouds, loading screen, etc...", function()
-                FearCommands("givesh"..players.get_name(players.user()))
-            end)
+            end)   
 
         ------===============------
         ---   Miscs Functions
@@ -2137,7 +2145,7 @@
 
                 local FearMiscsOptions = FearMiscs:list("Miscs Options")
                 FearMiscsOptions:divider("FearMiscs Options")
-                FearMiscsOptions:slider("Radar Zoom Size", {'fradarzoom'}, "You will able to zoom the radar what are you doing right now.\n\nNOTE: Pressing Z or W, depending on your keyboard type, resets the zoom to zero by default.", 0, 1400, 0, 1, function(value) HUD.SET_RADAR_ZOOM(value) end)
+                FearMiscsOptions:slider_float("Radar Zoom Size", {'fradarzoom'}, "You will able to zoom the radar what are you doing right now.\n\nNOTE: Pressing Z or W, depending on your keyboard type, resets the zoom to zero by default.", 0, 1400, 0, 1, function(value) HUD.SET_RADAR_ZOOM(value) end)
                 FearMiscsOptions:toggle("Display Money", {}, "", function(toggle)
                     if toggle then
                         HUD.SET_MULTIPLAYER_WALLET_CASH()
@@ -2205,7 +2213,7 @@
                 show_custom_rockstar_alert("The Rockstar Game Services are Unavailable right now.~n~Please Return to Grand Theft Auto V.")
             end)
 
-            FearAlert:action("Case Support", {"fcasesupport"}, "A Fake 'Servives Unavailable' Message.", function()
+            FearAlert:action("Case Support", {"fcasesupport"}, "A Fake 'Support Channel' Message.", function()
                 show_custom_rockstar_alert("Remember, if you find this, this is not the Support Channel.~n~Return to Grand Theft Auto V.")
             end)
             
@@ -2270,19 +2278,13 @@
                 FearCommands("aptme"..FearPlayerName)
             end)
 
-            FearFriendly:toggle("Toggle Infinite Ammo", {}, "Put Infinite ammo to "..FearPlayerName..", able to shoot x times without reloading.\n\nNOTE: Don't use the feature if it's against players.", function(toggle)
+            FearFriendly:toggle("Toggle Infinite Ammo", {}, "Put Infinite ammo to "..FearPlayerName..", able to shoot x times without reloading.\nI'm not sure if the function works to players.\n\nNOTE: Don't use the feature if it's against players.", function(toggle)
                 if toggle then
                     WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
                 else
                     WEAPON.SET_PED_INFINITE_AMMO_CLIP(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), false)
                 end
             end)
-
-            FearFriendly:toggle_loop("Toggle Clean Ped", {'fragd'}, "Make dry of your blood, clean up your player.", function()
-                local targetIDP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
-                PED.CLEAR_PED_BLOOD_DAMAGE(targetIDP)
-                PED.CLEAR_PED_WETNESS(targetIDP)
-            end, nil, nil, COMMANDPERM_FRIENDLY)
 
             FearFriendly:divider("Vehicle Tweaks")
             FearFriendly:action("Spawn vehicle", {"fearspawnv"}, "Summon variable car for " ..FearPlayerName.."\nNOTE: You can spawn every each vehicle of your choice.", function (click_type)
