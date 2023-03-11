@@ -16,7 +16,7 @@
 ]]--
 
     local aalib = require("aalib")
-    local FearStandify_ver = "0.20.5"
+    local FearStandify_ver = "0.20.7"
     local FearScriptStandify = "> FearScript Standify "..FearStandify_ver
     local FearPlaySound = aalib.play_sound
     local SND_ASYNC<const> = 0x0001
