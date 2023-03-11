@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.30.5"
+    local FearVersion = "0.30.6"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.7
@@ -940,6 +940,10 @@
                     FIRE.STOP_ENTITY_FIRE(PLAYER.PLAYER_PED_ID())
                     PLAYER.SET_PLAYER_INVINCIBLE(PLAYER.PLAYER_PED_ID(), false)
                 end
+            end)
+
+            FearSelf:toggle("Reduce Footsteps", {}, "", function(toggle) -- Everyone use the part of the script, but I will add this if they need this.
+                AUDIO.SET_PED_FOOTSTEPS_EVENTS_ENABLED(PLAYER.PLAYER_PED_ID(), not toggle)
             end)
             
             ------=====================------
@@ -2014,7 +2018,7 @@
                             util.toast(FearScriptNotif.."\nDetonation complete!\n"..playersKilled.." players has been eliminated.")
                             timerStarted = false
                         else
-                            util.toast("Timer already started!")
+                            util.toast(FearScriptNotif.."\nI'm sorry but the timer has already started.")
                         end
                     end)
                 end)
