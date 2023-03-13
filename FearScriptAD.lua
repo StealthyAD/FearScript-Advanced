@@ -23,17 +23,32 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.31.1"
+    local FearVersion = "0.31.2"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.9
     local FearToast = util.toast
+
+    local aalib = require("aalib")
+    local FPlaySound = aalib.play_sound
+    local SND_ASYNC<const> = 0x0001
+    local SND_FILENAME<const> = 0x00020000
 
     local ScriptDir <const> = filesystem.scripts_dir()
     local required_files <const> = {
         "lib\\FearScriptAD\\Functions\\Standify.lua",
         "lib\\FearScriptAD\\Functions\\CruiseMissile.lua",
     }
+
+    local script_store_dir_nuke = filesystem.store_dir() .. SCRIPT_NAME .. '/nuke' -- Redirects to %appdata%\Stand\Lua Scripts\store\FearScriptAD\putin
+    if not filesystem.is_dir(script_store_dir_nuke) then
+        filesystem.mkdirs(script_store_dir_nuke)
+    end
+
+    local script_store_dir_stop = filesystem.store_dir() .. SCRIPT_NAME .. '/stop_sounds' 
+    if not filesystem.is_dir(script_store_dir_stop) then
+        filesystem.mkdirs(script_store_dir_stop)
+    end
 
     for _, file in pairs(required_files) do
         local file_path = ScriptDir .. file
@@ -54,6 +69,15 @@
 
         while not STREAMING.HAS_NAMED_PTFX_ASSET_LOADED(asset) do
             util.yield()
+        end
+    end
+
+    local function join_path(parent, child)
+        local sub = parent:sub(-1)
+        if sub == "/" or sub == "\\" then
+            return parent .. child
+        else
+            return parent .. "/" .. child
         end
     end
 
@@ -2204,11 +2228,12 @@
                 end)
 
                 local timerStarted = false
-                FearWarningNuke = FearSessionL:action("Putin Button Session", {}, "I love Vladimir Putin but we need to click to erase these western pigs.", function(type)
+                FearWarningNuke = FearSessionL:action("Putin Button Session", {}, "I love Vladimir Putin but we need to click to erase these western pigs.\nBecome a great soviet man comrade.", function(type)
                     menu.show_warning(FearWarningNuke, type, "Do you really want send Putin to invade WW3?\nYou might be detected by modder and it will cost karma.", function()
                         if not timerStarted then
+                            FPlaySound(join_path(script_store_dir_nuke, "nuke.wav"), SND_FILENAME | SND_ASYNC)
                             timerStarted = true
-                            local countdownSeconds = 5
+                            local countdownSeconds = 10
                             local function playWarningSound()
                                 Fear.play_all("5_SEC_WARNING", "HUD_MINI_GAME_SOUNDSET", 500)
                             end
@@ -2217,7 +2242,7 @@
                                 playWarningSound(delay)
                                 util.toast(FearScriptNotif.."\nReady to Explode?\n"..i.." seconds to detonate.")
                                 util.yield(delay + 750)
-                            end                       
+                            end                                                   
                             util.toast(FearScriptNotif.."\nDetonation Ready, you are ready to nuke the session.")
                             Fear.play_all("Air_Defences_Activated", "DLC_sum20_Business_Battle_AC_Sounds", 3000)
                             for i = 0, 31 do
@@ -2267,6 +2292,7 @@
                         else
                             util.toast(FearScriptNotif.."\nI'm sorry but the timer has already started.")
                         end
+                        FPlaySound(join_path(script_store_dir_stop, "stop.wav"), SND_FILENAME | SND_ASYNC)
                     end)
                 end)
 
