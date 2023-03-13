@@ -1206,7 +1206,7 @@
                         end
                     end)
 
-                    FearNukeWeap:toggle_loop("Improved Nuke Weapon", {}, "Improving old feature but it's better than old.\nBig Radius", function()
+                    FearNukeWeap:toggle_loop("Improved Nuke Weapon", {}, "Improving old feature but it's better than old.\nBig Radius. It will affect the radius zone atleast 1 km or 1.5 km.", function()
                         if PED.IS_PED_SHOOTING(players.user_ped()) then
                             local hash = util.joaat("prop_military_pickup_01")
                             request_model(hash)
