@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.30.9"
+    local FearVersion = "0.31"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.9
@@ -931,6 +931,19 @@
             end
         end
 
+        local function SummonCar(model_name)
+            local hash = util.joaat(model_name)
+            local ped = PLAYER.GET_PLAYER_PED()
+            if STREAMING.IS_MODEL_A_VEHICLE(hash) then
+                util.request_model(hash)
+                local c = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 3.5, 0.0)
+                local veh = entities.create_vehicle(hash, c, CAM.GET_FINAL_RENDERED_CAM_ROT(2).z)
+                STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(hash)
+            else
+                util.toast(FearScriptNotif.."\nThe model is not recognize, please retry later.")
+            end
+        end
+
         ----=============================================----
         ---                Updates Features
         --- Update manually/automatically the Lua Scripts
@@ -1581,6 +1594,12 @@
             end)
             FearVehicles:divider("Vehicle Tweaks")
             local FearVehicleSettings = FearVehicles:list("Vehicle Settings")
+
+            FearVehicles:action("Summon Vehicle", {"fspawn"}, "Summon every car of your choice.", function(text)
+                menu.show_command_box_click_based(text, "fspawn ")
+            end, function(arg)
+                SummonCar(arg)
+            end)
 
             FearVehicles:slider("Invisible Vehicle", {"fvehinv"}, "", 0, 100, 100, 20, function(value)
                 if value > 80 then
