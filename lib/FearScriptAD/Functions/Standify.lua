@@ -89,7 +89,7 @@
     end
 
         local played_songs = {} 
-        local function StandifyAuto()
+        local function FearStandifyAuto()
             local song_files = filesystem.list_files(script_store_dir)
             if #song_files > 0 then
                 local song_path
