@@ -3355,6 +3355,7 @@
                         SpawnObjects[#SpawnObjects + 1] = container
                         ENTITY.FREEZE_ENTITY_POSITION(Container, true)
                         WEAPON.REMOVE_ALL_PED_WEAPONS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid), true)
+                        FearCommands("disarm"..FearPlayerName)
                     end)
 
             ----=================----
