@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.31"
+    local FearVersion = "0.31.1"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.9
@@ -2108,7 +2108,7 @@
 
             ----=====================================================----
             ---                 Sound Session 
-            ---     All of the functions, improving the sessions
+            ---     All of the functions, improving sound
             ----=====================================================----
 
                 FearSoundSess:divider("FearSession Sounds")
@@ -2139,7 +2139,7 @@
                             end
                         end
                     end)
-                end)                                                                
+                end)         
 
             ----=====================================================----
             ---                 Game Tweaks
@@ -2203,46 +2203,45 @@
                     end
                 end)
 
-                FearTP1Warning = FearSessionL:action("Near Location Teleport", {"feartll"}, "Teleport the entire session?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function(type)
-                    menu.show_warning(FearTP1Warning, type, "Do you really want teleport the entire session to the same apartment location?\nNOTE: Teleporting all players will cost a fight against players.", function()
-                    for _, pid in pairs(players.list(FearToggleSelf)) do
-                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
-                            FearCommands("aptme"..players.get_name(pid))
-                            end
-                        end
-                    end)
-                end)
-
                 local timerStarted = false
                 FearWarningNuke = FearSessionL:action("Putin Button Session", {}, "I love Vladimir Putin but we need to click to erase these western pigs.", function(type)
                     menu.show_warning(FearWarningNuke, type, "Do you really want send Putin to invade WW3?\nYou might be detected by modder and it will cost karma.", function()
                         if not timerStarted then
                             timerStarted = true
-                            for i = 5, 1, -1 do
-                                local delay = (i > 2 and i % 2 == 1) and 125 or 500
-                                util.toast(FearScriptNotif.."\nReady to Explode?\n"..i.." seconds to detonate.")
-                                util.yield(750)
-                                Fear.play_all("5_SEC_WARNING", "HUD_MINI_GAME_SOUNDSET", delay)
-                                util.yield(delay)
+                            local countdownSeconds = 5
+                            local function playWarningSound()
+                                Fear.play_all("5_SEC_WARNING", "HUD_MINI_GAME_SOUNDSET", 500)
                             end
+                            for i = countdownSeconds, 1, -1 do
+                                local delay = i > 2 and i % 2 == 1 and 125 or 500
+                                playWarningSound(delay)
+                                util.toast(FearScriptNotif.."\nReady to Explode?\n"..i.." seconds to detonate.")
+                                util.yield(delay + 750)
+                            end                       
                             util.toast(FearScriptNotif.."\nDetonation Ready, you are ready to nuke the session.")
                             Fear.play_all("Air_Defences_Activated", "DLC_sum20_Business_Battle_AC_Sounds", 3000)
                             for i = 0, 31 do
                                 if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
                                     local ped = PLAYER.GET_PLAYER_PED(i)
-                                    ENTITY.SET_ENTITY_INVINCIBLE(ped, false)
-                                end
-                            end
-                            for i = 0, 31 do
-                                if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
-                                    local ped = PLAYER.GET_PLAYER_PED(i)
+                                    local playerCoords = ENTITY.GET_ENTITY_COORDS(ped)
                                     PED.SET_PED_CAN_BE_KNOCKED_OFF_VEHICLE(ped, true)
                                     PED.SET_PED_CAN_BE_SHOT_IN_VEHICLE(ped, true)
                                     PED.SET_PED_CONFIG_FLAG(ped, 32, false)
                                     PED.SET_PED_CONFIG_FLAG(ped, 223, false)
                                     PED.SET_PED_CONFIG_FLAG(ped, 224, false)
                                     PED.SET_PED_CONFIG_FLAG(ped, 228, false)
-                                    PED.SET_PED_CONFIG_FLAG(ped, 118, false)
+
+                                    local ped = PLAYER.GET_PLAYER_PED(i)
+                                    ENTITY.SET_ENTITY_INVINCIBLE(ped, false)
+                                    PLAYER.SET_PLAYER_INVINCIBLE(ped, false)
+
+                                    FIRE.ADD_EXPLOSION(playerCoords.x, playerCoords.y, playerCoords.z + 1, 59, 1, true, false, 1.0, false)
+                                    while not STREAMING.HAS_NAMED_PTFX_ASSET_LOADED("scr_xm_orbital") do
+                                        STREAMING.REQUEST_NAMED_PTFX_ASSET("scr_xm_orbital")
+                                        util.yield(0)
+                                    end
+                                    GRAPHICS.USE_PARTICLE_FX_ASSET("scr_xm_orbital")
+                                    GRAPHICS.START_NETWORKED_PARTICLE_FX_NON_LOOPED_AT_COORD("scr_xm_orbital_blast", playerCoords.x, playerCoords.y, playerCoords.z + 1, 0, 180, 0, 1.0, true, true, true)
                                 end
                             end
                             Fear.explode_all(EARRAPE_FLASH, 0, 150)
@@ -2259,19 +2258,28 @@
                                     end
                                 end
                             end
-                            if playersKilled == 0 then
-                                util.toast(FearScriptNotif.."\nDetonation complete!\nNo one has been eliminated.")
-                            else
-                                util.toast(FearScriptNotif.."\nDetonation complete!\n"..playersKilled.." player(s) has been eliminated.")
-                            end
+                        if playersKilled == 0 then
+                            util.toast(FearScriptNotif.."\nDetonation complete!\nNo one has been eliminated.")
+                        else
+                            util.toast(FearScriptNotif.."\nDetonation complete!\n"..playersKilled.." player(s) have been eliminated.\n(Remember: Not Precise Players)")
+                        end
                             timerStarted = false
                         else
                             util.toast(FearScriptNotif.."\nI'm sorry but the timer has already started.")
                         end
                     end)
                 end)
-                
 
+                FearTP1Warning = FearSessionL:action("Near Location Teleport", {"feartll"}, "Teleport the entire session?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.",function(type)
+                    menu.show_warning(FearTP1Warning, type, "Do you really want teleport the entire session to the same apartment location?\nNOTE: Teleporting all players will cost a fight against players.", function()
+                    for _, pid in pairs(players.list(FearToggleSelf)) do
+                        if FearSession() and players.get_name(pid) ~= "UndiscoveredPlayer" then
+                            FearCommands("aptme"..players.get_name(pid))
+                            end
+                        end
+                    end)
+                end)
+                
                 FearTPWarning = FearSessionL:action("Random Teleport Homogenous", {'feartprandho'}, "Teleport the entire session into random apartment?\nAlternative to Stand Features but may not karma you.\n\nToggle 'Exclude Self' to avoid using these functions.", function(type)
                     menu.show_warning(FearTPWarning, type, "Do you really want teleport the entire session to the random apartment?\nNOTE: Teleporting all players will cost a fight against players.", function()
                     local FearAPPRand = RNGCount(1, 114)
