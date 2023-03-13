@@ -16,7 +16,7 @@
 ]]--
 
     local aalib = require("aalib")
-    local FearStandify_ver = "0.20.8"
+    local FearStandify_ver = "0.20.9"
     local FearScriptStandify = "> FearScript Standify "..FearStandify_ver
     local FearPlaySound = aalib.play_sound
     local SND_ASYNC<const> = 0x0001
@@ -88,10 +88,8 @@
         return nil
     end
 
-    local played_songs = {} 
-    local function FearStandifyAuto()
-        random_enabled = not random_enabled
-        if random_enabled and current_sound_handle == nil then
+        local played_songs = {} 
+        local function StandifyAuto()
             local song_files = filesystem.list_files(script_store_dir)
             if #song_files > 0 then
                 local song_path
@@ -101,14 +99,11 @@
                 played_songs[song_path] = true 
                 AutoPlay(song_path)
                 local song_title = string.match(song_path, ".+\\([^%.]+)%.%w+$")
-                FearToast(FearScriptStandify.. "\nRandom music selected: " .. song_title)
+                StandifyToast("> Standify "..SCRIPT_VERSION.. ForceTranslate("\nRandom music selected: ") .. song_title)
             else
-                FearToast(FearScriptStandify.. "\nThere is no music in the storage folder.")
+                StandifyToast("> Standify "..SCRIPT_VERSION.. ForceTranslate("\nThere is no music in the storage folder."))
             end
-        elseif not random_enabled and current_sound_handle then
-            current_sound_handle = nil
         end
-    end
 
     local FearRoot = menu.my_root()
     local FearStandify = FearRoot:list("Standify", {}, "Standify, script related to music.\nCreated by StealthyAD.")
