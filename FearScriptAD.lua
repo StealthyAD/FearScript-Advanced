@@ -1581,8 +1581,13 @@
             end)
             FearVehicles:divider("Vehicle Tweaks")
             local FearVehicleSettings = FearVehicles:list("Vehicle Settings")
-            FearVehicles:toggle_loop("Toggle Engine", {}, "Cut off/On your Engine", function()
-                FearCommands("turnengineoff")
+
+            FearVehicles:slider("Invisible Vehicle", {"fvehinv"}, "", 0, 100, 100, 20, function(value)
+                if value > 80 then
+                    ENTITY.RESET_ENTITY_ALPHA(entities.get_user_vehicle_as_handle())
+                else
+                    ENTITY.SET_ENTITY_ALPHA(entities.get_user_vehicle_as_handle(), value * 2.55, false)
+                end
             end)
 
             FearVehicles:toggle("Toggle No Traffic", {}, "Toggle On/Off Traffic if NPC are driving.\nNOTE: It will affects nearby players who drive.\nChanging the session will revert back Normal Traffic NPC.", function(on)
