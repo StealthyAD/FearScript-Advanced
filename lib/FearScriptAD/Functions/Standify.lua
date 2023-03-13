@@ -89,7 +89,7 @@
     end
 
         local played_songs = {} 
-        local function FearStandifyAuto()
+        local function StandifyAuto()
             local song_files = filesystem.list_files(script_store_dir)
             if #song_files > 0 then
                 local song_path
@@ -99,9 +99,9 @@
                 played_songs[song_path] = true 
                 AutoPlay(song_path)
                 local song_title = string.match(song_path, ".+\\([^%.]+)%.%w+$")
-                StandifyToast("> Standify "..SCRIPT_VERSION.. ForceTranslate("\nRandom music selected: ") .. song_title)
+                FearToast(FearScriptStandify.. "\nRandom music selected: " .. song_title)
             else
-                StandifyToast("> Standify "..SCRIPT_VERSION.. ForceTranslate("\nThere is no music in the storage folder."))
+                FearToast(FearScriptStandify.. "\nThere is no music in the storage folder.")
             end
         end
 
@@ -177,7 +177,7 @@
         ----=====================================================----
 
         FearStandify:action("Play Random Music", {'fstandrand'}, "Play a random music.\nNOTE: You have each interval to click the action to select random music.", function(selected_index)
-            FearStandifyAuto()
+            StandifyAuto()
         end)
 
         ----================================================----
