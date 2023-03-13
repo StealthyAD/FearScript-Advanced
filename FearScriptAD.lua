@@ -1206,13 +1206,13 @@
                         end
                     end)
 
-                    FearNukeWeap:toggle_loop("Improved Nuke Weapon", {}, "Improving old feature but it's better than old.\nBig Radius. It will affect the radius zone atleast 1 km or 1.5 km.", function()
+                    FearNukeWeap:toggle_loop("Improved Nuke Weapon", {}, "Improving old feature but it's better than old.\nBig Radius. It will affect the radius zone atleast 1.5 km.\n\nWARNING: You can shoot only one time single-usage, it means, you can't shoot another Nuke.", function()
                         if PED.IS_PED_SHOOTING(players.user_ped()) then
                             local hash = util.joaat("prop_military_pickup_01")
                             request_model(hash)
                             local player_pos = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(players.user_ped(), 0.0, 5.0, 3.0)
-                            local dir = {}
-                            local c2 = {}
+                            local dir = v3.new()
+                            local c2 = v3.new(0,0,0)
                               c2 = get_offset_from_gameplay_camera(1000)
                               dir.x = (c2.x - player_pos.x) * 1000
                               dir.y = (c2.y - player_pos.y) * 1000
@@ -1229,7 +1229,7 @@
                             entities.delete_by_handle(nuke)
                             CreateNuke(nukePos)
                         end
-                    end)
+                    end)    
 
                     FearNukeWeap:toggle_loop("Orbital Gun Weapon", {}, "Shoot everywhere to orbital player without reason.", function()
                         local last_hit_coords = v3.new()
