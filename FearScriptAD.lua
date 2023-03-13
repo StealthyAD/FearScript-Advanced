@@ -1254,6 +1254,25 @@
                         end
                     end
 
+                FearWeapons:action("Fill Instantly Ammo", {}, "Fill instantly Ammo all of your weapons.", function() -- Skid from another script but useless thing because Stand has another feature
+                    local WeaponHashes = { -- Added Hash Weapons 
+                        0x1B06D571,0xBFE256D4,0x5EF9FEC4,0x22D8FE39,0x3656C8C1,0x99AEEB3B,0xBFD21232,0x88374054,0xD205520E,0x83839C4,0x47757124,
+                        0xDC4DB296,0xC1B3C3D1,0xCB96392F,0x97EA20B8,0xAF3696A1,0x2B5EF5EC,0x917F6C8C,0x13532244,0x2BE6766B,0x78A97CD0,0xEFE7E2DF,
+                        0xA3D4D34,0xDB1AA450,0xBD248B55,0x476BF155,0x1D073A89,0x555AF99A,0x7846A318,0xE284C527,0x9D61E50F,0xA89CB99E,0x3AABBBAA,
+                        0xEF951FBB,0x12E82D3D,0xBFEFFF6D,0x394F415C,0x83BF0278,0xFAD1F1C9,0xAF113F99,0xC0A3098D,0x969C3D67,0x7F229F94,0x84D6FAFD,
+                        0x624FE830,0x9D07F764,0x7FD62962,0xDBBD7280,0x61012683,0x5FC3C11,0xC472FE2,0xA914799,0xC734385A,0x6A6C02E0,0xB1CA77B1,
+                        0xA284510B,0x4DD2DC56,0x42BF8A85,0x7F7497E5,0x6D544C99,0x63AB0442,0x781FE4A,0xB62D1F67,0x93E220BD,0xA0973D5E,0xFDBC8A50,
+                        0x497FACC3,0x24B17070,0x2C3731D9,0xAB564B93,0x787F0BB,0xBA45E8B8,0x23C9F95C,0xFEA23564,0xDB26713A,0x1BC4FDB9,0xD1D5F52B,0x45CD9CF3
+                    }
+            
+                    for k,v in WeaponHashes do
+                        local MaxAmmo = memory.alloc_int()
+                        WEAPON.GET_MAX_AMMO(players.user_ped(), v, MaxAmmo)
+                        MaxAmmo = memory.read_int(MaxAmmo)
+                        WEAPON.SET_PED_AMMO(players.user_ped(), v, MaxAmmo, false) 
+                    end
+                end)
+
                 FearWeapons:toggle("Authorize Fire Friendly", {}, "Allow shoot your teammates if he's in the CEO/MC.", function(toggle)
                     PED.SET_CAN_ATTACK_FRIENDLY(PLAYER.PLAYER_PED_ID(), toggle, false)
                 end)
@@ -2262,9 +2281,12 @@
 
             FearWorld:divider("FearScript World")    
             local FearDestroyWorld = FearWorld:list("Panic Tools", {}, "Alternative to Menyoo called 'Massacre Mode', but slightly better with improvements.")
+            local FearGodFeatures = FearWorld:list("Godmode Tools", {}, "Able to toggle Godmode (Disable Only) for all players.")
+            local FearWeatherTime = FearWorld:list("Weather & Time Tools")
+
 
                 ----=====================================================----
-                ---                 Griefing Tools
+                ---                 Panic Tools
                 ---  All of the functions of world which change the mind
                 ----=====================================================----
                     FearDestroyWorld:divider("FearWorld Panic Mode")  
@@ -2404,11 +2426,67 @@
                     menu.on_blur(groundpoint_slider, function()
                         is_groundpoint_slider_onFocus = false
                     end)
+                    ----=====================================================----
+                    ---                 Godmode Tools
+                    ---  All of the functions of world which change the mind
+                    ----=====================================================----
+                    FearGodFeatures:divider("FearWorld Godmode Tools")
+                    FearGodFeatures:toggle_loop("Disable Godmode Players", {}, "Remove completely godmode player to all players.\n\nNOTE: It will not easier to remove godmode vehicle to all players, almost mod menus blocked it.\nREAD before: You can't remove Godmode Players if they are in interior.", function()
+                        for i = 0, 31 do
+                            if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
+                                local ped = PLAYER.GET_PLAYER_PED(i)
+                                ENTITY.SET_ENTITY_INVINCIBLE(ped, false)
+                            end
+                        end
+                    end)
+        
+                    FearGodFeatures:toggle_loop("Disable Godmode Vehicle", {}, "Remove completely godmode vehicle to all players.\n\nNOTE: It will not easier to remove godmode vehicle to all players, almost mod menus blocked it.", function()
+                        for i = 0, 31 do
+                            if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
+                                local ped = PLAYER.GET_PLAYER_PED(i)
+                                if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
+                                    local veh = PED.GET_VEHICLE_PED_IS_IN(ped, false)
+                                    ENTITY.SET_ENTITY_CAN_BE_DAMAGED(veh, true)
+                                    ENTITY.SET_ENTITY_INVINCIBLE(veh, false)
+                                end
+                            end
+                        end
+                    end) 
+
+                    ----=====================================================----
+                    ---                 Weather & Time Tools
+                    ---     All of the functions, changing the weather & time
+                    ----=====================================================----
+
+                    FearWeatherTime:divider("FearWorld Weather & Time")
+                    FearWeatherTime:slider("Choose Clock Time", {"fctime"}, "Only works locally", 0, 23, 12, 1, function(hours)
+                        local command = menu.ref_by_path('World>Atmosphere>Clock>Time', 37)
+                        local args = tostring(hours)..", 0, 0"
+                        menu.trigger_command(command, args)
+                    end)
+        
+                    FearWeatherTime:toggle("Pause Clock Time", {}, "Only works locally", function(state)
+                        CLOCK.PAUSE_CLOCK(state)
+                        toggle_freeze_clock = state
+                    end, toggle_freeze_clock)
+                
+                    local WeatherTypes = {"CLEAR","EXTRASUNNY","CLOUDS","OVERCAST","RAIN","CLEARING","THUNDER","SMOG","FOGGY","XMAS","SNOW","SNOWLIGHT","BLIZZARD","HALLOWEEN","NEUTRAL"}
+                    FearWeatherTime:list_select("Choose Weather", {}, "Only works locally",
+                    {
+                        {"Clear"},{"Extra Sunny"},{"Clouds"},{"Overcast"},{"Rain"},{"Clear"},{"Thunder"},{"Smog"},{"Foggy"},{"xMas"},{"Snow"},{"Snowlight"},{"Blizzard"},{"Halloween"},{"Neutral"}
+                    },
+                    1, function(index)
+                        MISC.SET_WEATHER_TYPE_NOW_PERSIST(WeatherTypes[index])
+                    end)
 
             ----=====================================================----
             ---                 World Features - Main
             ---     All of the functions, changing the mind of world
             ----=====================================================----
+
+            FearWorld:toggle("Toggle Blackout", {}, "", function(toggle)
+                GRAPHICS.SET_ARTIFICIAL_LIGHTS_STATE(toggle)
+            end) 
 
             local positions = {
                 v3.new(125.72, -1146.2, 222.75),
@@ -2501,20 +2579,6 @@
                 FearTime()
             end)
 
-            FearWorld:toggle("Toggle Blackout", {}, "", function(toggle)
-                GRAPHICS.SET_ARTIFICIAL_LIGHTS_STATE(toggle)
-            end) 
-
-            FearWorld:toggle_loop("Disable Godmode Players", {}, "Remove completely godmode player to all players.\n\nNOTE: It will not easier to remove godmode vehicle to all players, almost mod menus blocked it.\nREAD before: You can't remove Godmode Players if they are in interior.", function()
-                for i = 0, 31 do
-                    if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
-                        local ped = PLAYER.GET_PLAYER_PED(i)
-                        ENTITY.SET_ENTITY_INVINCIBLE(ped, false)
-                    end
-                end
-            end)
-                       
-            FearWorld:divider("Vehicle Tweaks")
             FearWorld:action("Blow up your vehicle", {}, "Destroy your own car while using, previous car or current car.\n\nNOTE: Without Godmode, you will instantly die with explosion or burnt-out vehicle.", function()
                 local vehicle = entities.get_user_vehicle_as_handle()
                 if vehicle ~= 0 then
@@ -2530,20 +2594,7 @@
                         VEHICLE.EXPLODE_VEHICLE_IN_CUTSCENE(vehicle)
                     end
                 end
-            end)
-
-            FearWorld:toggle_loop("Disable Godmode Vehicle", {}, "Remove completely godmode vehicle to all players.\n\nNOTE: It will not easier to remove godmode vehicle to all players, almost mod menus blocked it.", function()
-                for i = 0, 31 do
-                    if NETWORK.NETWORK_IS_PLAYER_CONNECTED(i) then
-                        local ped = PLAYER.GET_PLAYER_PED(i)
-                        if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
-                            local veh = PED.GET_VEHICLE_PED_IS_IN(ped, false)
-                            ENTITY.SET_ENTITY_CAN_BE_DAMAGED(veh, true)
-                            ENTITY.SET_ENTITY_INVINCIBLE(veh, false)
-                        end
-                    end
-                end
-            end)   
+            end)  
 
         ------===============------
         ---   Miscs Functions
