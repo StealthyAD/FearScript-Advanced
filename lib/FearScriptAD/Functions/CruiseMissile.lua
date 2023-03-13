@@ -54,7 +54,7 @@
     ---   Cruise Missile
     ------==============------
 
-    local FearCruiseMissile_ver = "0.34.4"
+    local FearCruiseMissile_ver = "0.34.6"
     local FearCruiseMissileNTF = "> FearScript CruiseMissile "..FearCruiseMissile_ver
     FearCruiseMissile:divider("FearScript CruiseMissile "..FearCruiseMissile_ver)
     local FearPresetMissile = FearCruiseMissile:list("Cruise Missile Presets")
