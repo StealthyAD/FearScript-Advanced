@@ -23,7 +23,7 @@
     util.require_natives(1663599433)
 
     local FearRoot = menu.my_root()
-    local FearVersion = "0.30.8"
+    local FearVersion = "0.30.9"
     local FearScriptNotif = "> FearScript Advanced "..FearVersion
     local FearScriptV1 = "FearScript Advanced "..FearVersion
     local FearSEdition = 100.7
@@ -800,6 +800,136 @@
         c2.z = (c2.z - c1.z) * 1000
         return c2, c1
     end
+        function request_model(hash)
+            local timeout = 3
+            STREAMING.REQUEST_MODEL(hash)
+            local end_time = os.time() + timeout
+            repeat util.yield() until STREAMING.HAS_MODEL_LOADED(hash) or os.time() >= end_time
+            return STREAMING.HAS_MODEL_LOADED(hash)
+        end
+        
+        function get_distance_between(pos1, pos2) -- Credits to kektram for this function
+            if math.type(pos1) == "integer" then
+                pos1 = ENTITY.GET_ENTITY_COORDS(pos1)
+            end
+            if math.type(pos2) == "integer" then 
+                pos2 = ENTITY.GET_ENTITY_COORDS(pos2)
+            end
+            return pos1:distance(pos2)
+        end
+        
+        function get_offset_from_gameplay_camera(distance)
+            local cam_rot = CAM.GET_GAMEPLAY_CAM_ROT(0)
+            local cam_pos = CAM.GET_GAMEPLAY_CAM_COORD()
+            local direction = v3.toDir(cam_rot)
+            local destination = {
+            x = cam_pos.x + direction.x * distance, 
+            y = cam_pos.y + direction.y * distance, 
+            z = cam_pos.z + direction.z * distance 
+            }
+            return destination
+        end
+
+        local function RequestOrbitalCannon(Position) -- Skid from METEOR SCRIPT, because it was always used
+            local player_ped = players.user_ped()
+            FIRE.ADD_EXPLOSION(Position.x, Position.y, Position.z + 1, 59, 1, true, false, 1.0, false)
+            while not STREAMING.HAS_NAMED_PTFX_ASSET_LOADED("scr_xm_orbital") do
+                STREAMING.REQUEST_NAMED_PTFX_ASSET("scr_xm_orbital")
+                util.yield(0)
+            end
+            GRAPHICS.USE_PARTICLE_FX_ASSET("scr_xm_orbital")
+            GRAPHICS.START_NETWORKED_PARTICLE_FX_NON_LOOPED_AT_COORD("scr_xm_orbital_blast", Position.x, Position.y, Position.z + 1, 0, 180, 0, 1.0, true, true, true)
+            for i = 1, 4 do
+                AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "DLC_XM_Explosions_Orbital_Cannon", player_ped, 0, true, false)
+            end
+        end
+
+        local function CreateNuke(Position, Named) -- Shortcut of Nuke Features bcz too lazy to get high line codes
+            local Owner
+            if Named then
+                Owner = players.user_ped()
+            else
+                Owner = 0
+            end
+            local function spawn_explosion()
+                while not STREAMING.HAS_NAMED_PTFX_ASSET_LOADED("scr_xm_orbital") do
+                    STREAMING.REQUEST_NAMED_PTFX_ASSET("scr_xm_orbital")
+                    util.yield(0)
+                end
+                FIRE.ADD_EXPLOSION(Position.x, Position.y, Position.z, 59, 1, true, false, 5.0, false)
+                GRAPHICS.USE_PARTICLE_FX_ASSET("scr_xm_orbital")
+                GRAPHICS.START_NETWORKED_PARTICLE_FX_NON_LOOPED_AT_COORD("scr_xm_orbital_blast", Position.x, Position.y, Position.z, 0, 180, 0, 4.5, true, true, true)
+            end
+            for i = 1, 7 do
+                spawn_explosion()
+            end
+            for i=-30,30,10 do
+                for j=-30,30,10 do
+                    if i~=0 or j~=0 then
+                        FIRE.ADD_EXPLOSION(Position.x+i, Position.y+j, Position.z, 59, 1.0, true, false, 1.0, false)
+                    end
+                end
+            end
+        
+            for i = 1, 4 do
+                AUDIO.PLAY_SOUND_FROM_ENTITY(-1, "DLC_XM_Explosions_Orbital_Cannon", players.user_ped(), 0, true, false)
+            end
+            
+            FIRE.ADD_EXPLOSION(Position.x+10, Position.y+30, Position.z, 59, 1.0, true, false, 1.0, false)
+            FIRE.ADD_EXPLOSION(Position.x+30, Position.y+10, Position.z, 59, 1.0, true, false, 1.0, false)
+            FIRE.ADD_EXPLOSION(Position.x-30, Position.y-10, Position.z, 59, 1.0, true, false, 1.0, false)
+            FIRE.ADD_EXPLOSION(Position.x-10, Position.y-30, Position.z, 59, 1.0, true, false, 1.0, false)
+            FIRE.ADD_EXPLOSION(Position.x-10, Position.y+30, Position.z, 59, 1.0, true, false, 1.0, false)
+            FIRE.ADD_EXPLOSION(Position.x-30, Position.y+10, Position.z, 59, 1.0, true, false, 1.0, false)
+            FIRE.ADD_EXPLOSION(Position.x+30, Position.y-10, Position.z, 59, 1.0, true, false, 1.0, false)
+            FIRE.ADD_EXPLOSION(Position.x+10, Position.y-30, Position.z, 59, 1.0, true, false, 1.0, false)
+            -- Définir les coordonnées z de chaque explosion
+            local coords = {1, 3, 5, 7, 10, 12, 15, 17}
+        
+            while not STREAMING.HAS_NAMED_PTFX_ASSET_LOADED("scr_xm_orbital") do
+                STREAMING.REQUEST_NAMED_PTFX_ASSET("scr_xm_orbital")
+                util.yield(0)
+            end
+        
+            for i = 1, #coords do
+                if coords[i] % 2 ~= 0 then
+                    FIRE.ADD_EXPLOSION(Position.x, Position.y, Position.z+coords[i], 59, 1, true, false, 5.0, false)
+                end
+                GRAPHICS.USE_PARTICLE_FX_ASSET("scr_xm_orbital")
+                GRAPHICS.START_NETWORKED_PARTICLE_FX_NON_LOOPED_AT_COORD("scr_xm_orbital_blast", Position.x, Position.y, Position.z+coords[i], 0, 180, 0, 1.5, true, true, true)
+                util.yield(10)
+            end
+            GRAPHICS.START_NETWORKED_PARTICLE_FX_NON_LOOPED_AT_COORD("scr_xm_orbital_blast", Position.x, Position.y, Position.z+80, 0, 0, 0, 3, true, true, true)
+        
+            for pid = 0, 31 do
+                if players.exists(pid) and get_distance_between(players.get_position(pid), Position) < 200 then
+                    local pid_pos = players.get_position(pid)
+                    FIRE.ADD_EXPLOSION(pid_pos.x, pid_pos.y, pid_pos.z, 59, 1.0, true, false, 1.0, false)
+                end
+            end
+        
+            local peds = entities.get_all_pickups_as_handles()
+            for i = 1, #peds do
+                if get_distance_between(peds[i], Position) < 400 and NETWORK.NETWORK_GET_PLAYER_INDEX_FROM_PED(peds[i]) ~= players.user() then
+                    NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(peds[i])
+                    local ped_pos = ENTITY.GET_ENTITY_COORDS(peds[i], false)
+                    FIRE.ADD_EXPLOSION(ped_pos.x, ped_pos.y, ped_pos.z, 3, 1.0, true, false, 0.1, false)
+                    PED.SET_PED_TO_RAGDOLL(peds[i], 1000, 1000, 0, false, false, false)
+                end
+            end
+        
+            local vehicles = entities.get_all_vehicles_as_handles()
+            for i = 1, #vehicles do
+                if get_distance_between(vehicles[i], Position) < 400 then
+                    NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(vehicles[i])
+                    VEHICLE.SET_VEHICLE_PETROL_TANK_HEALTH(vehicles[i], -999.90002441406)
+                    VEHICLE.EXPLODE_VEHICLE(vehicles[i], true, false)
+                elseif get_distance_between(vehicles[i], Position) < 400 then
+                    NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(vehicles[i])
+                    VEHICLE.SET_VEHICLE_ENGINE_HEALTH(vehicles[i], -4000)
+                end
+            end
+        end
 
         ----=============================================----
         ---                Updates Features
@@ -1037,7 +1167,7 @@
             ------=================------  
 
                 FearWeapons:divider("FearSelf Weapons")
-                local FearNukeWeap = FearWeapons:list("Nuke Weapons")
+                local FearNukeWeap = FearWeapons:list("Nuke / Orbital Weapons")
 
                     ------=================------
                     ---   Nukes   Functions
@@ -1073,6 +1203,38 @@
                                     RemoveProjectiles = false
                                 end
                             end)
+                        end
+                    end)
+
+                    FearNukeWeap:toggle_loop("Improved Nuke Weapon", {}, "Improving old feature but it's better than old.\nBig Radius", function()
+                        if PED.IS_PED_SHOOTING(players.user_ped()) then
+                            local hash = util.joaat("prop_military_pickup_01")
+                            request_model(hash)
+                            local player_pos = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(players.user_ped(), 0.0, 5.0, 3.0)
+                            local dir = {}
+                            local c2 = {}
+                              c2 = get_offset_from_gameplay_camera(1000)
+                              dir.x = (c2.x - player_pos.x) * 1000
+                              dir.y = (c2.y - player_pos.y) * 1000
+                              dir.z = (c2.z - player_pos.z) * 1000
+                            local nuke = OBJECT.CREATE_OBJECT_NO_OFFSET(hash, player_pos.x, player_pos.y, player_pos.z, true, false, false)
+                              ENTITY.SET_ENTITY_NO_COLLISION_ENTITY(nuke, players.user_ped(), false)
+                              ENTITY.APPLY_FORCE_TO_ENTITY(nuke, 0, dir.x, dir.y, dir.z, 0.0, 0.0, 0.0, 0, true, false, true, false, true)
+                              ENTITY.SET_ENTITY_HAS_GRAVITY(nuke, true)
+                    
+                              while not ENTITY.HAS_ENTITY_COLLIDED_WITH_ANYTHING(nuke) and not ENTITY.IS_ENTITY_IN_WATER(nuke) do
+                                util.yield(0)
+                              end
+                            local nukePos = ENTITY.GET_ENTITY_COORDS(nuke, true)
+                            entities.delete_by_handle(nuke)
+                            CreateNuke(nukePos)
+                        end
+                    end)
+
+                    FearNukeWeap:toggle_loop("Orbital Gun Weapon", {}, "Shoot everywhere to orbital player without reason.", function()
+                        local last_hit_coords = v3.new()
+                        if WEAPON.GET_PED_LAST_WEAPON_IMPACT_COORD(players.user_ped(), last_hit_coords) then
+                            RequestOrbitalCannon(last_hit_coords)
                         end
                     end)
                     
